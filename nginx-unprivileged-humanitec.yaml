@@ -1,0 +1,31 @@
+externals:
+  dns:
+    type: dns
+profile: humanitec/default-module
+spec:
+  containers:
+    nginx-unprivileged:
+      files: {}
+      image: nginxinc/nginx-unprivileged:latest
+      resources:
+        limits:
+          cpu: '0.250'
+          memory: 256Mi
+        requests:
+          cpu: '0.025'
+          memory: 64Mi
+      variables: {}
+      volume_mounts: {}
+  ingress:
+    rules:
+      externals.dns:
+        http:
+          '*':
+            port: 80
+            type: default
+  service:
+    ports:
+      tcp:
+        container_port: 8080
+        protocol: TCP
+        service_port: 80
