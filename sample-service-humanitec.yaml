@@ -1,0 +1,21 @@
+externals:
+  my-db:
+    type: postgres
+profile: humanitec/default-module
+spec:
+  containers:
+    sample-service:
+      files: {}
+      image: >-
+        us-east4-docker.pkg.dev/mathieu-benoit-gcp/containers/sample-service:1.2.1
+      resources:
+        limits:
+          cpu: '0.250'
+          memory: 256Mi
+        requests:
+          cpu: '0.025'
+          memory: 64Mi
+      variables:
+        CONNECTION_STRING: >-
+          postgresql://${externals.my-db.username}:${externals.my-db.password}@${externals.my-db.host}:${externals.my-db.port}/${externals.my-db.name}
+      volume_mounts: {}
