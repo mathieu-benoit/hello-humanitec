@@ -15,11 +15,11 @@ spec:
           cpu: '0.025'
           memory: 64Mi
       variables:
-        DB_DATABASE: ${resources.my-db.name}
-        DB_HOST: ${resources.my-db.host}
-        DB_PASSWORD: ${resources.my-db.password}
-        DB_PORT: ${resources.my-db.port}
-        DB_USER: ${resources.my-db.username}
+        DB_DATABASE: ${externals.my-db.name}
+        DB_HOST: ${externals.my-db.host}
+        DB_PASSWORD: ${externals.my-db.password}
+        DB_PORT: ${externals.my-db.port}
+        DB_USER: ${externals.my-db.username}
         PORT: '3000'
       volume_mounts: {}
   service:
