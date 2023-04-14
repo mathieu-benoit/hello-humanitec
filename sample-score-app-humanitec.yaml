@@ -1,0 +1,30 @@
+externals:
+  my-db:
+    type: postgres
+profile: humanitec/default-module
+spec:
+  containers:
+    sample-score-app:
+      files: {}
+      image: registry.humanitec.io/public/sample-score-app:latest
+      resources:
+        limits:
+          cpu: '0.250'
+          memory: 256Mi
+        requests:
+          cpu: '0.025'
+          memory: 64Mi
+      variables:
+        DB_DATABASE: ${resources.my-db.name}
+        DB_HOST: ${resources.my-db.host}
+        DB_PASSWORD: ${resources.my-db.password}
+        DB_PORT: ${resources.my-db.port}
+        DB_USER: ${resources.my-db.username}
+        PORT: '3000'
+      volume_mounts: {}
+  service:
+    ports:
+      tcp:
+        container_port: 3000
+        protocol: TCP
+        service_port: 80
