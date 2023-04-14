@@ -1,0 +1,25 @@
+externals:
+  dns:
+    type: dns
+profile: humanitec/default-module
+spec:
+  containers:
+    nginx:
+      files: {}
+      image: nginx:latest
+      resources:
+        limits:
+          cpu: '0.250'
+          memory: 256Mi
+        requests:
+          cpu: '0.025'
+          memory: 64Mi
+      variables: {}
+      volume_mounts: {}
+  ingress:
+    rules:
+      externals.dns:
+        http:
+          '*':
+            port: 80
+            type: default
