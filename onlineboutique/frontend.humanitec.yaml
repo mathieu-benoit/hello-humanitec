@@ -1,0 +1,52 @@
+externals:
+  dns:
+    type: dns
+profile: humanitec/default-module
+spec:
+  containers:
+    frontend:
+      files: {}
+      image: gcr.io/google-samples/microservices-demo/frontend:v0.6.0
+      liveness_probe:
+        headers:
+          Cookie: shop_session-id=x-liveness-probe
+        path: /_healthz
+        port: 8080
+        type: http
+      readiness_probe:
+        headers:
+          Cookie: shop_session-id=x-readiness-probe
+        path: /_healthz
+        port: 8080
+        type: http
+      resources:
+        limits:
+          cpu: '0.250'
+          memory: 256Mi
+        requests:
+          cpu: '0.025'
+          memory: 64Mi
+      variables:
+        AD_SERVICE_ADDR: ${modules.adservice.service.name}:9555
+        CART_SERVICE_ADDR: ${modules.cartservice.service.name}:7070
+        CHECKOUT_SERVICE_ADDR: ${modules.checkoutservice.service.name}:5050
+        CURRENCY_SERVICE_ADDR: ${modules.currencyservice.service.name}:7000
+        ENABLE_PROFILER: '0'
+        PORT: '8080'
+        PRODUCT_CATALOG_SERVICE_ADDR: ${modules.productcatalogservice.service.name}:3550
+        RECOMMENDATION_SERVICE_ADDR: ${modules.recommendationservice.service.name}:8080
+        SHIPPING_SERVICE_ADDR: ${modules.shippingservice.service.name}:50051
+      volume_mounts: {}
+  ingress:
+    rules:
+      externals.dns:
+        http:
+          '*':
+            port: 80
+            type: default
+  service:
+    ports:
+      http:
+        container_port: 8080
+        protocol: TCP
+        service_port: 80
