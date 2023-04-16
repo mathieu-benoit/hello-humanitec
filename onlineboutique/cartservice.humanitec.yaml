@@ -23,7 +23,7 @@ spec:
           cpu: '0.025'
           memory: 64Mi
       variables:
-        REDIS_ADDR: ${modules.redis.service.name}:6379
+        REDIS_ADDR: ${modules.redis.service.name}:6379,password=${modules.redis.credentials.password},user=${modules.redis.credentials.username}
       volume_mounts: {}
   service:
     ports:
