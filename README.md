@@ -78,11 +78,11 @@ flowchart LR
             checkoutservice-->currencyservice
             checkoutservice-->shippingservice{{shippingservice}}
             checkoutservice-->productcatalogservice{{productcatalogservice}}
-            checkoutservice-->cartservice
+            checkoutservice-->cartservice{{cartservice}}
             frontend-->cartservice
-            frontend-->cartservice
-            cartservice{{cartservice}}-->redis[(redis)]
             recommendationservice{{recommendationservice}}-->productcatalogservice
+            cartservice-.->cartservice-ksa[/cartservice-ksa\]
+            cartservice-->redis[(redis)]
         end
         nginx-->frontend
     end
@@ -90,7 +90,8 @@ flowchart LR
     memorystore-dev-connection-.->memorystore-dev[(memorystore-dev)]
     onlineboutique-app-->onlineboutique-dev
     cartservice-->memorystore-dev
-    cartservice-->spanner-dev[(spanner-dev)]
+    spanner-reader-gsa-->spanner-dev[(spanner-dev)]
+    cartservice-ksa-->spanner-reader-gsa[\spanner-reader-gsa/]
   end
 ```
 
