@@ -18,7 +18,7 @@ flowchart LR
         gke-dev-connection>gke-dev-connection]
     end
   end
-  subgraph GCP
+  subgraph Google Cloud
     direction TB
     subgraph GKE-dev
         subgraph ingress-controller
@@ -63,7 +63,7 @@ flowchart LR
         memorystore-dev-connection>memorystore-dev-connection]
     end
   end
-  subgraph GCP
+  subgraph Google Cloud
     direction TB
     subgraph GKE-dev
         subgraph ingress-controller
