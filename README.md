@@ -1,5 +1,38 @@
 # hello-humanitec
 
+```mermaid
+flowchart LR
+  subgraph Humanitec
+    subgraph development
+        subgraph Apps
+            subgraph Workloads
+                i1 -->f1
+            end
+        end
+        subgraph Resources
+            custom-namespace
+            gke-dev-connection
+            memorystore-dev-connection
+        end
+    end
+  end
+  subgraph GCP
+    direction TB
+    subgraph GKE-dev
+        subgraph onlineboutique-dev
+            frontend-->cartservice
+            cartservice-->redis
+        end
+        subgraph sample-apps-dev
+            sample-app-->sample-service
+            sample-service-->postgresql
+        end
+    end
+    cartservice-->memorystore-dev
+    cartservice-->spanner-dev
+  end
+```
+
 ```
 PROJECT_ID=FIXME
 gcloud config set project ${PROJECT_ID}
