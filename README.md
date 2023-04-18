@@ -9,27 +9,27 @@ flowchart LR
         direction LR
         subgraph sample-apps
             direction LR
-            sample-app-workload[sample-app]
-            sample-service-workload[sample-service]
+            sample-app-workload([sample-app])
+            sample-service-workload([sample-service])
         end
     end
     subgraph Resources
-        custom-namespace
-        gke-dev-connection
+        custom-namespace>custom-namespace]
+        gke-dev-connection>gke-dev-connection]
     end
   end
   subgraph GCP
     direction TB
     subgraph GKE-dev
         subgraph ingress-controller
-            nginx
+            nginx{{nginx}}
         end
         subgraph sample-apps-dev
-            sample-app-->sample-service
+            sample-app{{sample-app}}-->sample-service{{sample-service}}
         end
         nginx-->sample-app
     end
-    sample-service-->cloud-sql-dev
+    sample-service-->cloud-sql-dev[(cloud-sql-dev)]
   end
   sample-apps-->sample-apps-dev
   gke-dev-connection-.->GKE-dev
@@ -44,53 +44,53 @@ flowchart LR
         direction LR
         subgraph onlineboutique-app
             direction LR
-            adservice-workload[adservice]
-            cartservice-workload[cartservice]
-            checkoutservice-workload[checkoutservice]
-            currencyservice-workload[currencyservice]
-            emailservice-workload[emailservice]
-            frontend-workload[frontend]
-            paymentservice-workload[paymentservice]
-            productcatalogservice-workload[productcatalogservice]
-            recommendationservice-workload[recommendationservice]
-            shippingservice-workload[shippingservice]
-            redis-workload[redis]
+            adservice-workload([adservice])
+            cartservice-workload([cartservice])
+            checkoutservice-workload([checkoutservice])
+            currencyservice-workload([currencyservice])
+            emailservice-workload([emailservice])
+            frontend-workload([frontend])
+            paymentservice-workload([paymentservice])
+            productcatalogservice-workload([productcatalogservice])
+            recommendationservice-workload([recommendationservice])
+            shippingservice-workload([shippingservice])
+            redis-workload([redis])
         end
     end
     subgraph Resources
-        custom-namespace
-        gke-dev-connection
-        memorystore-dev-connection
+        custom-namespace>custom-namespace]
+        gke-dev-connection>gke-dev-connection]
+        memorystore-dev-connection>memorystore-dev-connection]
     end
   end
   subgraph GCP
     direction TB
     subgraph GKE-dev
         subgraph ingress-controller
-            nginx
+            nginx{{nginx}}
         end
         subgraph onlineboutique-dev
-            frontend-->adservice
-            frontend-->checkoutservice
-            frontend-->currencyservice
-            checkoutservice-->emailservice
-            checkoutservice-->paymentservice
+            frontend{{frontend}}-->adservice{{adservice}}
+            frontend-->checkoutservice{{checkoutservice}}
+            frontend-->currencyservice{{currencyservice}}
+            checkoutservice-->emailservice{{emailservice}}
+            checkoutservice-->paymentservice{{paymentservice}}
             checkoutservice-->currencyservice
-            checkoutservice-->shippingservice
-            checkoutservice-->productcatalogservice
+            checkoutservice-->shippingservice{{shippingservice}}
+            checkoutservice-->productcatalogservice{{productcatalogservice}}
             checkoutservice-->cartservice
             frontend-->cartservice
             frontend-->cartservice
-            cartservice-->redis
-            recommendationservice-->productcatalogservice
+            cartservice{{cartservice}}-->redis[(redis)]
+            recommendationservice{{recommendationservice}}-->productcatalogservice
         end
         nginx-->frontend
     end
     gke-dev-connection-.->GKE-dev
-    memorystore-dev-connection-.->memorystore-dev
+    memorystore-dev-connection-.->memorystore-dev[(memorystore-dev)]
     onlineboutique-app-->onlineboutique-dev
     cartservice-->memorystore-dev
-    cartservice-->spanner-dev
+    cartservice-->spanner-dev[(spanner-dev)]
   end
 ```
 
