@@ -16,7 +16,7 @@ gcloud container clusters create ${CLUSTER_NAME} \
     --zone ${ZONE} \
     --workload-pool=${PROJECT_ID}.svc.id.goog \
     --enable-master-authorized-networks \
-	--master-authorized-networks 34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32 \
+    --master-authorized-networks 34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32 \
     --no-enable-google-cloud-access
 ```
 
@@ -29,7 +29,7 @@ gcloud container clusters create ${CLUSTER_NAME} \
     --zone ${ZONE} \
     --workload-pool=${PROJECT_ID}.svc.id.goog \
     --enable-master-authorized-networks \
-	--master-authorized-networks 34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32 \
+    --master-authorized-networks 34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32 \
     --no-enable-google-cloud-access \
     --enable-workload-vulnerability-scanning \
     --enable-workload-config-audit
