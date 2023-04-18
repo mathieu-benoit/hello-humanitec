@@ -61,6 +61,8 @@ flowchart LR
         custom-namespace>custom-namespace]
         gke-dev-connection>gke-dev-connection]
         memorystore-dev-connection>memorystore-dev-connection]
+        custom-sa>custom-sa]
+        custom-workload-with-sa>custom-workload-with-sa]
     end
   end
   subgraph Google Cloud
