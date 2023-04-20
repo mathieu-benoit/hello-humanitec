@@ -24,6 +24,9 @@ flowchart LR
   logging-reader-gsa-.->cloud-logging
 ```
 
+- [GSA to access Cloud Logging](#gsa-to-access-cloud-logging)
+- [Custom Workload resource definition](#custom-workload-resource-definition)
+
 ```bash
 PROJECT_ID=FIXME
 gcloud config set project ${PROJECT_ID}
