@@ -39,9 +39,9 @@ kubectl apply \
 
 Let’s grab the Public IP address of that Ingress Controller:
 ```bash
-kubectl get svc ingress-nginx-controller \
+INGRESS_IP=$(kubectl get svc ingress-nginx-controller \
     -n ingress-nginx \
-    -o jsonpath="{.status.loadBalancer.ingress[*].ip}"
+    -o jsonpath="{.status.loadBalancer.ingress[*].ip}")
 ```
 
 ## GSA to access GKE
@@ -60,4 +60,36 @@ Let’s download locally the GSA key:
 ```bash
 gcloud iam service-accounts keys create ${SA_NAME}.json \
     --iam-account ${SA_ID}
+```
+
+## Create the GKE connection in Humanitec
+
+```
+curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs \
+  -X POST \
+  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+  -H "Content-Type: application/json" \
+  --data-binary '
+{
+  "id": "my-cluster",
+  "name": "My Cluster",
+  "type": "k8s-cluster",
+  "criteria": [
+    {
+      "env_type": "development"
+    }
+  ],
+  "driver_type": "humanitec/k8s-cluster-gke",
+  "driver_inputs": {
+    "values": {
+      "loadbalancer": ${INGRESS_IP}
+      "name": ${CLUSTER_NAME}
+      "project_id":${PROJECT_ID}
+      "zone": ${ZONE}
+    },
+    "secrets": {
+      "credentials": $(cat ${SA_NAME}.json)
+    }
+  }
+}'
 ```
