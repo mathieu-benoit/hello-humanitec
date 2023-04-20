@@ -57,7 +57,8 @@ cat <<EOF > custom-workload.yaml
 id: custom-workload
 type: workload
 driver_type: template
-driver_inputs:values:
+driver_inputs:
+  values:
     templates:
       outputs: |
         update:
