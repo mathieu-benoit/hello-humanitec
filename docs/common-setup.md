@@ -90,8 +90,9 @@ criteria:
   - {}
 EOF
 yq -o json custom-workload.yaml > custom-workload.json
+DATA_BINARY=$(cat custom-workload.json)
 curl -X POST "https://app.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  -d @custom-workload.json
+  -d "$DATA_BINARY"
 ```
