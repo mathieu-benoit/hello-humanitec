@@ -59,3 +59,39 @@ flowchart LR
     cartservice-ksa-->spanner-reader-gsa[\spanner-reader-gsa/]
   end
 ```
+
+
+### Custom Service Account resource definition
+
+```bash
+cat <<EOF > custom-sa.yaml
+id: custom-sa
+name: custom-sa
+type: k8s-service-account
+driver_type: humanitec/template
+driver_inputs:
+  values:
+    templates:
+      init: |
+        name: \${context.env.id}-\${context.app.id}-\${context.res.id}
+      manifests: |
+        service-account.yaml:
+          location: namespace
+          data:
+            apiVersion: v1
+            kind: ServiceAccount
+            metadata:
+              annotations:
+                iam.gke.io/gcp-service-account: ${SPANNER_DB_USER_GSA_ID}
+              name: {{ .init.name }}
+      outputs: |
+        name: {{ .init.name }}
+criteria:
+  - {}
+EOF
+yq -o json custom-sa.yaml > custom-sa.json
+curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+  	-H "Content-Type: application/json" \
+	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+  	-d @custom-sa.json
+```
