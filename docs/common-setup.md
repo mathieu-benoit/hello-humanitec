@@ -62,15 +62,15 @@ driver_inputs:
   values:
     templates:
       init: |
-      	serviceAccountName: \${context.env.id}-\${context.app.id}-\${context.res.id}
+        serviceAccountName: \${context.env.id}-\${context.app.id}-\${context.res.id}
       manifests: |
-      	service-account.yaml:
-	  location: namespace
-	  data:
-	    apiVersion: v1
-	    kind: ServiceAccount
-	    metadata:
-	      name: {{ .init.serviceAccountName }}
+        service-account.yaml:
+          location: namespace
+          data:
+            apiVersion: v1
+            kind: ServiceAccount
+            metadata:
+              name: {{ .init.serviceAccountName }}
       outputs: |
         update:
           - op: add
