@@ -65,6 +65,8 @@ gcloud iam service-accounts keys create ${SA_NAME}.json \
 ## Create the GKE connection in Humanitec
 
 ```
+HUMANITEC_ORG=FIXME
+HUMANITEC_TOKEN=FIXME
 curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs \
   -X POST \
   -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
