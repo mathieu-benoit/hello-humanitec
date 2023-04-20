@@ -4,9 +4,6 @@ flowchart LR
     subgraph development
     end
     subgraph Resources
-        custom-namespace>custom-namespace]
-        custom-sa>custom-sa]
-        custom-workload>custom-workload]
         gke-dev-connection>gke-dev-connection]
     end
   end
