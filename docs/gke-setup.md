@@ -105,7 +105,11 @@ gcloud container clusters create ${CLUSTER_NAME} \
     --no-enable-google-cloud-access \
     --service-account ${GKE_NODE_SA_ID} \
     --enable-workload-vulnerability-scanning \
-    --enable-workload-config-audit
+    --enable-workload-config-audit \
+    --enable-confidential-nodes \
+    --release-channel rapid \
+    --enable-dataplane-v2 \
+    --shielded-secure-boot
 ```
 
 ## Ingress controller
