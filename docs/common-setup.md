@@ -11,7 +11,4 @@ flowchart LR
         custom-workload>custom-workload]
     end
   end
-  subgraph Google Cloud
-    gke-admin-gsa
-  end
 ```
