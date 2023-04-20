@@ -71,7 +71,7 @@ curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs \
   -X POST \
   -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
   -H "Content-Type: application/json" \
-  --data-binary '
+  --data-binary "
 {
   "id": "my-cluster",
   "name": "My Cluster",
@@ -93,5 +93,5 @@ curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs \
       "credentials": $(cat ${SA_NAME}.json)
     }
   }
-}'
+}"
 ```
