@@ -6,7 +6,9 @@ REGION=northamerica-northeast1
 ZONE=${REGION}-a
 ```
 
-## Minimum setup:
+
+
+## GKE cluster
 ```
 gcloud services enable container.googleapis.com
 
@@ -25,4 +27,19 @@ gcloud services enable containersecurity.googleapis.com
 
 --enable-workload-vulnerability-scanning \
 --enable-workload-config-audit
+```
+
+## Ingress controller
+
+Deploy the Ingress Controller:
+```
+kubectl apply \
+    -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/cloud/deploy.yaml
+```
+
+Let’s grab the Public IP address of that Ingress Controller:
+```
+kubectl get svc ingress-nginx-controller \
+    -n ingress-nginx \
+    -o jsonpath="{.status.loadBalancer.ingress[*].ip}"
 ```
