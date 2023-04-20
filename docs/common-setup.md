@@ -90,11 +90,8 @@ criteria:
   - {}
 EOF
 yq -o json custom-workload.yaml > custom-workload.json
-curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  	-H "Content-Type: application/json"
 curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  -d @custom-workload.json
+  	-H "Content-Type: application/json" \
+	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+  	-d @custom-workload.json
 ```
