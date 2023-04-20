@@ -12,3 +12,20 @@ flowchart LR
     end
   end
 ```
+
+```bash
+PROJECT_ID=FIXME
+gcloud config set project ${PROJECT_ID}
+```
+
+### GSA to access Cloud Logging
+
+```bash
+LOGGING_READER_SA_NAME=humanitec-logging-dev
+LOGGING_READER_SA_ID=${LOGGING_READER_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
+gcloud iam service-accounts create ${LOGGING_READER_SA_NAME} \
+	--display-name=${LOGGING_READER_SA_NAME}
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+	--member "serviceAccount:${LOGGING_READER_SA_ID}" \
+	--role "roles/logging.viewer"
+```
