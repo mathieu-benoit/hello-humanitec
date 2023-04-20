@@ -11,7 +11,6 @@ flowchart LR
     end
     subgraph Resources
         custom-namespace>custom-namespace]
-        custom-sa>custom-sa]
         custom-workload>custom-workload]
 	logging-connection>logging-connection]
     end
