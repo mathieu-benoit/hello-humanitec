@@ -12,7 +12,7 @@ flowchart LR
   end
   subgraph Google Cloud
     direction TB
-    gke-admin-gsa
+    gke-admin-gsa[\gke-admin-gsa/]
     subgraph GKE-dev
         subgraph ingress-controller
             nginx{{nginx}}
