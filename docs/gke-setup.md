@@ -76,7 +76,7 @@ flowchart LR
 ```bash
 # Least Privilege Service Account for default node pool
 gcloud services enable cloudresourcemanager.googleapis.com
-GKE_NODE_SA_NAME=${CLUSTER_NAME}-sa
+GKE_NODE_SA_NAME=${CLUSTER_NAME}
 GKE_NODE_SA_ID=${GKE_NODE_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
 gcloud iam service-accounts create ${GKE_NODE_SA_NAME} \
   --display-name=${GKE_NODE_SA_NAME}
@@ -133,12 +133,12 @@ INGRESS_IP=$(kubectl get svc ingress-nginx-controller \
 ## GSA to access GKE
 
 ```bash
-SA_NAME=humanitec-dev
-SA_ID=${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
-gcloud iam service-accounts create ${SA_NAME} \
-	--display-name=${SA_NAME}
+GKE_ADMIN_SA_NAME=humanitec-dev
+GKE_ADMIN_SA_ID=${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
+gcloud iam service-accounts create ${GKE_ADMIN_SA_NAME} \
+	--display-name=${GKE_ADMIN_SA_NAME}
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-	--member "serviceAccount:${SA_ID}" \
+	--member "serviceAccount:${GKE_ADMIN_SA_ID}" \
 	--role "roles/container.admin"
 ```
 
