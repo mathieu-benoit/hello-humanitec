@@ -75,9 +75,9 @@ driver_inputs:
               fsGroup: 1000
               runAsGroup: 1000
               runAsUser: 1000
-          {{- range $containerId, $value := .resource.spec.containers }}
+          {{- range \$containerId, \$value := .resource.spec.containers }}
           - op: add
-            path: /spec/containers/{{ $containerId }}/securityContext
+            path: /spec/containers/{{ \$containerId }}/securityContext
             value:
               privileged: false
               allowPrivilegeEscalation: false
@@ -90,9 +90,11 @@ criteria:
   - {}
 EOF
 yq -o json custom-workload.yaml > custom-workload.json
-DATA_BINARY=$(cat custom-workload.json)
-curl -X POST "https://app.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps \
+	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+  	-H "Content-Type: application/json"
+curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  -d "$DATA_BINARY"
+  -d @custom-workload.json
 ```
