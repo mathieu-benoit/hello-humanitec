@@ -144,8 +144,8 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 
 Let’s download locally the GSA key:
 ```bash
-gcloud iam service-accounts keys create ${SA_NAME}.json \
-    --iam-account ${SA_ID}
+gcloud iam service-accounts keys create ${GKE_ADMIN_SA_NAME}.json \
+    --iam-account ${GKE_ADMIN_SA_ID}
 ```
 
 ## Create the GKE connection in Humanitec
@@ -176,7 +176,7 @@ curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs \
       "zone": ${ZONE}
     },
     "secrets": {
-      "credentials": $(cat ${SA_NAME}.json)
+      "credentials": $(cat ${GKE_ADMIN_SA_NAME}.json)
     }
   }
 }"
