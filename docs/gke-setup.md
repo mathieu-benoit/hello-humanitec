@@ -4,6 +4,7 @@ gcloud config set project ${PROJECT_ID}
 CLUSTER_NAME=gke-dev
 REGION=northamerica-northeast1
 ZONE=${REGION}-a
+HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32"
 ```
 
 ## GKE cluster
@@ -26,14 +27,14 @@ flowchart LR
   subgraph Google Cloud
     direction TB
     gke-admin-gsa[\gke-admin-gsa/]
-    subgraph GKE-dev
+    subgraph gke-cluster-dev
         subgraph ingress-controller
             nginx{{nginx}}
         end
     end
   end
   gke-dev-connection-.->gke-admin-gsa
-  gke-admin-gsa-.->GKE-dev
+  gke-admin-gsa-.->gke-cluster-dev
 ```
 
 ```bash
@@ -42,7 +43,7 @@ gcloud container clusters create ${CLUSTER_NAME} \
     --scopes cloud-platform \
     --workload-pool=${PROJECT_ID}.svc.id.goog \
     --enable-master-authorized-networks \
-    --master-authorized-networks 34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32 \
+    --master-authorized-networks ${HUMANITEC_IP_ADDRESSES} \
     --no-enable-google-cloud-access
 ```
 
@@ -60,14 +61,16 @@ flowchart LR
   subgraph Google Cloud
     direction TB
     gke-admin-gsa[\gke-admin-gsa/]
-    subgraph GKE-dev
+    subgraph gke-cluster-dev
         subgraph ingress-controller
             nginx{{nginx}}
         end
     end
+    gke-cluster-dev-.->gke-node-gsa[\gke-node-gsa/]
+    gke-node-gsa-.->artifact-registry((artifact-registry))
   end
   gke-dev-connection-.->gke-admin-gsa
-  gke-admin-gsa-.->GKE-dev
+  gke-admin-gsa-.->gke-cluster-dev
 ```
 
 ```bash
@@ -82,15 +85,15 @@ for r in $roles; do gcloud projects add-iam-policy-binding ${PROJECT_ID} --membe
   
 ## Artifact Registry
 gcloud services enable artifactregistry.googleapis.com
-CONTAINERS_REGISTRY_NAME=containers
-gcloud artifacts repositories create $containerRegistryName \
-    --location $region \
-    --repository-format docker
 gcloud services enable containeranalysis.googleapis.com
 gcloud services enable containerscanning.googleapis.com
-gcloud artifacts repositories add-iam-policy-binding $containerRegistryName \
-    --location $region \
-    --member "serviceAccount:$gkeSaId" \
+CONTAINERS_REGISTRY_NAME=containers
+gcloud artifacts repositories create ${CONTAINERS_REGISTRY_NAME} \
+    --location ${REGION} \
+    --repository-format docker
+gcloud artifacts repositories add-iam-policy-binding ${CONTAINERS_REGISTRY_NAME} \
+    --location ${REGION} \
+    --member "serviceAccount:${GKE_NODE_SA_ID}" \
     --role roles/artifactregistry.reader
 
 # GKE Security posture
@@ -101,7 +104,7 @@ gcloud container clusters create ${CLUSTER_NAME} \
     --scopes cloud-platform \
     --workload-pool=${PROJECT_ID}.svc.id.goog \
     --enable-master-authorized-networks \
-    --master-authorized-networks 34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32 \
+    --master-authorized-networks ${HUMANITEC_IP_ADDRESSES} \
     --no-enable-google-cloud-access \
     --service-account ${GKE_NODE_SA_ID} \
     --enable-workload-vulnerability-scanning \
