@@ -1,3 +1,26 @@
+```mermaid
+flowchart LR
+  subgraph Humanitec
+    subgraph development
+    end
+    subgraph Resources
+        custom-namespace>custom-namespace]
+        custom-sa>custom-sa]
+        custom-workload>custom-workload]
+        gke-dev-connection>gke-dev-connection]
+    end
+  end
+  subgraph Google Cloud
+    direction TB
+    subgraph GKE-dev
+        subgraph ingress-controller
+            nginx{{nginx}}
+        end
+    end
+    gke-dev-connection-.->GKE-dev
+  end
+```
+
 ```bash
 PROJECT_ID=FIXME
 gcloud config set project ${PROJECT_ID}
