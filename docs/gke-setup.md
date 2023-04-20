@@ -133,7 +133,7 @@ INGRESS_IP=$(kubectl get svc ingress-nginx-controller \
 ## GSA to access GKE
 
 ```bash
-GKE_ADMIN_SA_NAME=humanitec-dev
+GKE_ADMIN_SA_NAME=humanitec-gke-dev
 GKE_ADMIN_SA_ID=${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
 gcloud iam service-accounts create ${GKE_ADMIN_SA_NAME} \
 	--display-name=${GKE_ADMIN_SA_NAME}
