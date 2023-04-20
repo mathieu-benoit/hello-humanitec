@@ -1,4 +1,4 @@
-```
+```bash
 PROJECT_ID=FIXME
 gcloud config set project ${PROJECT_ID}
 CLUSTER_NAME=gke-dev
@@ -9,7 +9,7 @@ ZONE=${REGION}-a
 
 
 ## GKE cluster
-```
+```bash
 gcloud services enable container.googleapis.com
 
 gcloud container clusters create ${CLUSTER_NAME} \
@@ -22,7 +22,7 @@ gcloud container clusters create ${CLUSTER_NAME} \
 ```
 
 Other options:
-```
+```bash
 gcloud services enable containersecurity.googleapis.com
 
 --enable-workload-vulnerability-scanning \
@@ -32,14 +32,32 @@ gcloud services enable containersecurity.googleapis.com
 ## Ingress controller
 
 Deploy the Ingress Controller:
-```
+```bash
 kubectl apply \
     -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/cloud/deploy.yaml
 ```
 
 Let’s grab the Public IP address of that Ingress Controller:
-```
+```bash
 kubectl get svc ingress-nginx-controller \
     -n ingress-nginx \
     -o jsonpath="{.status.loadBalancer.ingress[*].ip}"
+```
+
+## GSA to access GKE
+
+```bash
+SA_NAME=humanitec-dev
+SA_ID=${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
+gcloud iam service-accounts create ${SA_NAME} \
+	--display-name=${SA_NAME}
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+	--member "serviceAccount:${SA_ID}" \
+	--role "roles/container.admin"
+```
+
+Let’s download locally the GSA key:
+```bash
+gcloud iam service-accounts keys create ${SA_NAME}.json \
+    --iam-account ${SA_ID}
 ```
