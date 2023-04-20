@@ -27,6 +27,9 @@ flowchart LR
 ```bash
 PROJECT_ID=FIXME
 gcloud config set project ${PROJECT_ID}
+
+HUMANITEC_ORG=FIXME
+HUMANITEC_TOKEN=FIXME
 ```
 
 ### GSA to access Cloud Logging
@@ -45,4 +48,48 @@ Let’s download locally the GSA key:
 ```bash
 gcloud iam service-accounts keys create ${LOGGING_READER_SA_NAME}.json \
     --iam-account ${LOGGING_READER_SA_ID}
+```
+
+### Custom Workload resource definition
+
+```bash
+cat <<EOF > custom-workload.yaml
+id: custom-workload
+type: workload
+driver_type: template
+driver_inputs:values:
+    templates:
+      outputs: |
+        update:
+          - op: add
+            path: /spec/serviceAccountName
+            value: {{ .init.serviceAccountName }}
+          - op: add
+            path: /spec/securityContext
+            value:
+              seccompProfile:
+                type: RuntimeDefault
+              runAsNonRoot: true
+              fsGroup: 1000
+              runAsGroup: 1000
+              runAsUser: 1000
+          {{- range $containerId, $value := .resource.spec.containers }}
+          - op: add
+            path: /spec/containers/{{ $containerId }}/securityContext
+            value:
+              privileged: false
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+          {{- end }}
+criteria:
+  - {}
+EOF
+yq -o json custom-workload.yaml > custom-workload.json
+curl -X POST "https://app.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+  -d @custom-workload.json
 ```
