@@ -1,3 +1,11 @@
+```
+PROJECT_ID=FIXME
+gcloud config set project ${PROJECT_ID}
+CLUSTER_NAME=gke-dev
+REGION=northamerica-northeast1
+ZONE=${REGION}-a
+```
+
 ## Minimum setup:
 ```
 gcloud services enable container.googleapis.com
