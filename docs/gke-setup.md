@@ -71,6 +71,29 @@ flowchart LR
 ```
 
 ```bash
+# Least Privilege Service Account for default node pool
+gcloud services enable cloudresourcemanager.googleapis.com
+GKE_NODE_SA_NAME=${CLUSTER_NAME}-sa
+GKE_NODE_SA_ID=${GKE_NODE_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
+gcloud iam service-accounts create ${GKE_NODE_SA_NAME} \
+  --display-name=${GKE_NODE_SA_NAME}
+roles="roles/logging.logWriter roles/monitoring.metricWriter roles/monitoring.viewer"
+for r in $roles; do gcloud projects add-iam-policy-binding ${PROJECT_ID} --member "serviceAccount:${GKE_NODE_SA_ID}" --role $r; done
+  
+## Artifact Registry
+gcloud services enable artifactregistry.googleapis.com
+CONTAINERS_REGISTRY_NAME=containers
+gcloud artifacts repositories create $containerRegistryName \
+    --location $region \
+    --repository-format docker
+gcloud services enable containeranalysis.googleapis.com
+gcloud services enable containerscanning.googleapis.com
+gcloud artifacts repositories add-iam-policy-binding $containerRegistryName \
+    --location $region \
+    --member "serviceAccount:$gkeSaId" \
+    --role roles/artifactregistry.reader
+
+# GKE Security posture
 gcloud services enable containersecurity.googleapis.com
 
 gcloud container clusters create ${CLUSTER_NAME} \
@@ -80,6 +103,7 @@ gcloud container clusters create ${CLUSTER_NAME} \
     --enable-master-authorized-networks \
     --master-authorized-networks 34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32 \
     --no-enable-google-cloud-access \
+    --service-account ${GKE_NODE_SA_ID} \
     --enable-workload-vulnerability-scanning \
     --enable-workload-config-audit
 ```
