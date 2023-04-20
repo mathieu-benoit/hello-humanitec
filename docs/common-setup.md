@@ -18,6 +18,7 @@ flowchart LR
   subgraph Google Cloud
     direction TB
     logging-reader-gsa[\logging-reader-gsa/]
+    cloud-logging((cloud-logging))
   end
   logging-connection-.->logging-reader-gsa
   logging-reader-gsa-.->cloud-logging
