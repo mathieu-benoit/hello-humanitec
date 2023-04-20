@@ -77,6 +77,9 @@ driver_inputs:
       outputs: |
         update:
           - op: add
+            path: /spec/automountServiceAccountToken
+            value: false
+	  - op: add
             path: /spec/serviceAccountName
             value: {{ .init.serviceAccountName }}
           - op: add
