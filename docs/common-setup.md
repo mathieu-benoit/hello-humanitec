@@ -55,8 +55,9 @@ gcloud iam service-accounts keys create ${LOGGING_READER_SA_NAME}.json \
 ```bash
 cat <<EOF > custom-workload.yaml
 id: custom-workload
+name: custom-workload
 type: workload
-driver_type: template
+driver_type: humanitec/template
 driver_inputs:
   values:
     templates:
