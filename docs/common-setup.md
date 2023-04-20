@@ -5,12 +5,23 @@ flowchart LR
   subgraph Humanitec
     subgraph development
     end
+    subgraph staging
+    end
+    subgraph production
+    end
     subgraph Resources
         custom-namespace>custom-namespace]
         custom-sa>custom-sa]
         custom-workload>custom-workload]
+	logging-connection>logging-connection]
     end
   end
+  subgraph Google Cloud
+    direction TB
+    logging-reader-gsa[\logging-reader-gsa/]
+  end
+  logging-connection-.->logging-reader-gsa
+  logging-reader-gsa-.->cloud-logging
 ```
 
 ```bash
