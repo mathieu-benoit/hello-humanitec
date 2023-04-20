@@ -29,3 +29,9 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 	--member "serviceAccount:${LOGGING_READER_SA_ID}" \
 	--role "roles/logging.viewer"
 ```
+
+Let’s download locally the GSA key:
+```bash
+gcloud iam service-accounts keys create ${LOGGING_READER_SA_NAME}.json \
+    --iam-account ${LOGGING_READER_SA_ID}
+```
