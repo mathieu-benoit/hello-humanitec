@@ -64,16 +64,6 @@ driver_type: humanitec/template
 driver_inputs:
   values:
     templates:
-      init: |
-        serviceAccountName: \${context.env.id}-\${context.app.id}-\${context.res.id}
-      manifests: |
-        service-account.yaml:
-          location: namespace
-          data:
-            apiVersion: v1
-            kind: ServiceAccount
-            metadata:
-              name: {{ .init.serviceAccountName }}
       outputs: |
         update:
           - op: add
@@ -81,7 +71,7 @@ driver_inputs:
             value: false
 	  - op: add
             path: /spec/serviceAccountName
-            value: {{ .init.serviceAccountName }}
+            value: ${resources.k8s-service-account.outputs.name}
           - op: add
             path: /spec/securityContext
             value:
