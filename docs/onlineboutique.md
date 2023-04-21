@@ -72,7 +72,7 @@ driver_inputs:
   values:
     templates:
       init: |
-        name: \${context.env.id}-\${context.app.id}-\${context.res.id}
+        name: {{ index (regexSplit "\\." "$${context.res.id}" -1) 1 }}
       manifests: |
         service-account.yaml:
           location: namespace
@@ -80,8 +80,10 @@ driver_inputs:
             apiVersion: v1
             kind: ServiceAccount
             metadata:
+              {{if eq .init.name "cartservice" }}
               annotations:
-                iam.gke.io/gcp-service-account: ${SPANNER_DB_USER_GSA_ID}
+                iam.gke.io/gcp-service-account: spanner-db-user-sa@mathieu-benoit-gcp.iam.gserviceaccount.com
+              {{end}}
               name: {{ .init.name }}
       outputs: |
         name: {{ .init.name }}
