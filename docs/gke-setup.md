@@ -22,19 +22,25 @@ flowchart LR
     end
     subgraph Resources
         gke-dev-connection>gke-dev-connection]
+	logging-connection>logging-connection]
     end
   end
   subgraph Google Cloud
     direction TB
     gke-admin-gsa[\gke-admin-gsa/]
+    logging-reader-gsa[\logging-reader-gsa/]
+    cloud-logging((cloud-logging))
     subgraph gke-cluster-dev
         subgraph ingress-controller
             nginx{{nginx}}
         end
     end
   end
+  logging-connection-.->logging-reader-gsa
+  logging-reader-gsa-.->cloud-logging
   gke-dev-connection-.->gke-admin-gsa
   gke-admin-gsa-.->gke-cluster-dev
+  gke-cluster-dev-.->cloud-logging
 ```
 
 ```bash
@@ -56,6 +62,7 @@ flowchart LR
     end
     subgraph Resources
         gke-dev-connection>gke-dev-connection]
+	logging-connection
     end
   end
   subgraph Google Cloud
@@ -66,9 +73,14 @@ flowchart LR
             nginx{{nginx}}
         end
     end
+    logging-reader-gsa[\logging-reader-gsa/]
+    cloud-logging((cloud-logging))
     gke-cluster-dev-.->gke-node-gsa[\gke-node-gsa/]
     gke-node-gsa-.->artifact-registry((artifact-registry))
+    gke-node-gsa-.->cloud-logging
   end
+  logging-connection-.->logging-reader-gsa
+  logging-reader-gsa-.->cloud-logging
   gke-dev-connection-.->gke-admin-gsa
   gke-admin-gsa-.->gke-cluster-dev
 ```
