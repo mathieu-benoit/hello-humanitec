@@ -62,7 +62,17 @@ flowchart LR
 ## Humanitec App
 
 ```bash
-
+ONLINEBOUTIQUE_APP=onlineboutique
+curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps \
+  -X POST \
+  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d @- <<EOF
+{
+  "id": "${ONLINEBOUTIQUE_APP}", 
+  "name": "Online Boutique"
+}
+EOF
 ```
 
 ### Custom Service Account resource definition
