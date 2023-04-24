@@ -35,6 +35,31 @@ HUMANITEC_ORG=FIXME
 HUMANITEC_TOKEN=FIXME
 ```
 
+## Humanitec Environment types
+
+```bash
+curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/env-types \
+  -X POST \
+  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d @- <<EOF
+{
+  "id": "staging",
+  "description": "Default environment type for staging."
+}
+EOF
+curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/env-types \
+  -X POST \
+  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d @- <<EOF
+{
+  "id": "production",
+  "description": "Default environment type for production."
+}
+EOF
+```
+
 ### GSA to access Cloud Logging
 
 ```bash
