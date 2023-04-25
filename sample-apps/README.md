@@ -22,8 +22,7 @@ score-humanitec delta \
 	--token ${HUMANITEC_TOKEN} \
 	--deploy \
 	--retry \
-	-f sample-service/score.yaml \
-	--extensions sample-service/humanitec.score.yaml
+	-f sample-service/score.yaml
 ```
 
 ## `sample-app`
