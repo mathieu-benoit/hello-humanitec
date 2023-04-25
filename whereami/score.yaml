@@ -1,0 +1,11 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: whereami
+containers:
+  whereami:
+    image: us-docker.pkg.dev/google-samples/containers/gke/whereami:v1.2.19
+    variables:
+      POD_NAMESPACE: "${pod.metadata.namespace}"
+resources:
+  dns:
+    type: dns
