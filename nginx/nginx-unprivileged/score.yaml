@@ -1,0 +1,14 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: nginx
+containers:
+  nginx:
+    image: nginxinc/nginx-unprivileged:latest
+resources:
+  dns:
+    type: dns
+service:
+  ports:
+    tcp:
+      port: 80
+      targetPort: 8080
