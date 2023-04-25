@@ -1,8 +1,8 @@
 apiVersion: score.dev/v1b1
 metadata:
-  name: nginx
+  name: nginx-unprivileged
 containers:
-  nginx:
+  nginx-unprivileged:
     image: nginxinc/nginx-unprivileged:latest
 resources:
   dns:
