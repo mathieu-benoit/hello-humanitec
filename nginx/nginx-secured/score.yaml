@@ -11,7 +11,7 @@ resources:
   dns:
     type: dns
   tmp:
-    type: volume
+    type: emptyDir
 service:
   ports:
     tcp:
