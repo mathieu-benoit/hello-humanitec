@@ -1,0 +1,21 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: sample-app
+containers:
+  sample-app:
+    image: us-east4-docker.pkg.dev/mathieu-benoit-gcp/containers/sample-app:1.3.1
+    variables:
+      PUBLIC_SERVER_URL: "http://${resources.sample-service.name}:${resources.sample-service.port}"
+resources:
+  dns:
+    type: dns
+  sample-service:
+    type: service
+    properties:
+      name:
+      port:
+service:
+  ports:
+    tcp:
+      port: 80
+      targetPort: 8080
