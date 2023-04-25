@@ -25,3 +25,17 @@ score-humanitec delta \
 	-f sample-service/score.yaml \
 	--extensions sample-service/humanitec.score.yaml
 ```
+
+## `sample-app`
+
+```bash
+score-humanitec delta \
+	--app ${SAMPLE_APPS_APP} \
+	--env ${ENVIRONMENT} \
+	--org ${HUMANITEC_ORG} \
+	--token ${HUMANITEC_TOKEN} \
+	--deploy \
+	--retry \
+	-f sample-app/score.yaml \
+	--extensions sample-app/humanitec.score.yaml
+```
