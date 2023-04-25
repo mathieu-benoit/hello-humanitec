@@ -1,0 +1,29 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: sample-score-app
+service:
+  ports:
+    tcp:
+      port: 80
+      targetPort: 3000
+containers:
+  sample-score-app:
+    image: registry.humanitec.io/public/sample-score-app:latest
+    variables:
+      PORT: "3000"
+      DB_DATABASE: ${resources.db.name}
+      DB_USER: ${resources.db.username}
+      DB_PASSWORD: ${resources.db.password}
+      DB_HOST: ${resources.db.host}
+      DB_PORT: ${resources.db.port}
+resources:
+  dns:
+    type: dns
+  db:
+    type: postgres
+    properties:
+      name:
+      username:
+      password:
+      host:
+      port:
