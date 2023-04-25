@@ -25,3 +25,17 @@ score-humanitec delta \
 	-f nginx/score.yaml \
 	--extensions nginx/humanitec.score.yaml
 ```
+
+## `nginx-unprivileged`
+
+```bash
+score-humanitec delta \
+	--app ${NGINX_APP} \
+	--env ${ENVIRONMENT} \
+	--org ${HUMANITEC_ORG} \
+	--token ${HUMANITEC_TOKEN} \
+	--deploy \
+	--retry \
+	-f nginx-unprivileged/score.yaml \
+	--extensions nginx-unprivileged/humanitec.score.yaml
+```
