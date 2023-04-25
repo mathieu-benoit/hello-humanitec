@@ -1,5 +1,5 @@
 ```bash
-NGINX_APP=whereami
+NGINX_APP=nginx
 curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps \
 	-X POST \
 	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
@@ -12,6 +12,8 @@ curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps \
 EOF
 ```
 
+## `nginx`
+
 ```bash
 score-humanitec delta \
 	--app ${NGINX_APP} \
@@ -20,6 +22,6 @@ score-humanitec delta \
 	--token ${HUMANITEC_TOKEN} \
 	--deploy \
 	--retry \
-	-f score.yaml \
-	--extensions humanitec.score.yaml
+	-f nginx/score.yaml \
+	--extensions nginx/humanitec.score.yaml
 ```
