@@ -1,5 +1,5 @@
 ```bash
-SAMPLE_APP_APP=whereami
+SAMPLE_APP_APP=sample-app
 curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps \
 	-X POST \
 	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
