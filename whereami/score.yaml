@@ -9,3 +9,8 @@ containers:
 resources:
   dns:
     type: dns
+service:
+  ports:
+    tcp:
+      port: 80
+      targetPort: 8080
