@@ -80,6 +80,10 @@ gcloud iam service-accounts keys create ${LOGGING_READER_SA_NAME}.json \
     --iam-account ${LOGGING_READER_SA_ID}
 ```
 
+### Custom Namespace resource definition
+
+FIXME - custom name, without the gsa/wi annotation yet
+
 ### Custom Workload resource definition
 
 ```bash
