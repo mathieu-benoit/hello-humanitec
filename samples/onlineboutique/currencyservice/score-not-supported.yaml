@@ -1,0 +1,24 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: currencyservice
+containers:
+  adservice:
+    image: gcr.io/google-samples/microservices-demo/currencyservice:v0.6.0
+    variables:
+      DISABLE_PROFILER: "1"
+      PORT: "7000"
+    livenessProbe:
+      exec:
+        command:
+          - /bin/grpc_health_probe
+          - '-addr=:7000'
+    readinessProbe:
+      exec:
+        command:
+          - /bin/grpc_health_probe
+          - '-addr=:7000'
+service:
+  ports:
+    grpc:
+      port: 7000
+      targetPort: 7000
