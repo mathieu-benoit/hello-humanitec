@@ -1,0 +1,13 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: adservice
+containers:
+  adservice:
+    image: gcr.io/google-samples/microservices-demo/adservice:v0.6.0
+    variables:
+      PORT: "9555"
+service:
+  ports:
+    grpc:
+      port: 9555
+      targetPort: 9555

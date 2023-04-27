@@ -14,13 +14,17 @@ curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps \
 EOF
 ```
 
-## Deploy all the Workloads
+## Deploy the Online Boutique Workloads
+
+```bash
+ENVIRONMENT=development
+```
 
 ### All in once
 
 ```bash
 WORKLOADS="adservice cartservice checkoutservice currencyservice emailservice paymentservice productcatalogservice recommendationservice shippingservice"
-FOR w in $WORKLOADS; DO score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --deploy --retry -f $w/score.yaml --extensions $w/humanitec.score.yaml; DONE 
+for w in ${WORKLOADS}; do score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --deploy --retry -f $w/score.yaml --extensions $w/humanitec.score.yaml; done
 ```
 
 ### Juste one

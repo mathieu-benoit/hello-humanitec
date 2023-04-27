@@ -1,20 +1,28 @@
+## Create the Sample Score App
+
 ```bash
-WHEREAMI_APP=whereami
+SAMPLE_SCORE_APP=sample-score-app
 curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps \
 	-X POST \
 	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
 	-H "Content-Type: application/json" \
 	-d @- <<EOF
 {
-  "id": "${WHEREAMI_APP}", 
-  "name": "${WHEREAMI_APP}"
+  "id": "${SAMPLE_SCORE_APP}", 
+  "name": "${SAMPLE_SCORE_APP}"
 }
 EOF
 ```
 
+## Deploy the Sample Score Workload
+
+```bash
+ENVIRONMENT=development
+```
+
 ```bash
 score-humanitec delta \
-	--app ${WHEREAMI_APP} \
+	--app ${SAMPLE_SCORE_APP} \
 	--env ${ENVIRONMENT} \
 	--org ${HUMANITEC_ORG} \
 	--token ${HUMANITEC_TOKEN} \
