@@ -1,11 +1,16 @@
 apiVersion: score.dev/v1b1
 metadata:
-  name: adservice
+  name: cartservice
 containers:
   adservice:
     image: gcr.io/google-samples/microservices-demo/cartservice:v0.6.0
     variables:
-      REDIS_ADDR: "${modules.redis.service.name}:6379,password=${modules.redis.credentials.password},user=${modules.redis.credentials.username}"
+      REDIS_ADDR: "${resources.redis.name}:6379"
+resources:
+  redis:
+    type: service
+    properties:
+      name:
 service:
   ports:
     grpc:

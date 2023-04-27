@@ -1,23 +1,28 @@
 apiVersion: score.dev/v1b1
 metadata:
-  name: adservice
+  name: cartservice
 containers:
   adservice:
-    image: gcr.io/google-samples/microservices-demo/adservice:v0.6.0
+    image: gcr.io/google-samples/microservices-demo/cartservice:v0.6.0
     variables:
-      PORT: "9555"
+      REDIS_ADDR: "${resources.redis.name}:6379"
     livenessProbe:
       exec:
         command:
           - /bin/grpc_health_probe
-          - '-addr=:9555'
+          - '-addr=:7070'
     readinessProbe:
       exec:
         command:
           - /bin/grpc_health_probe
-          - '-addr=:9555'
+          - '-addr=:7070'
+resources:
+  redis:
+    type: service
+    properties:
+      name:
 service:
   ports:
     grpc:
-      port: 9555
-      targetPort: 9555
+      port: 7070
+      targetPort: 7070
