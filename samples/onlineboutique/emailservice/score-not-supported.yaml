@@ -1,0 +1,24 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: emailservice
+containers:
+  adservice:
+    image: gcr.io/google-samples/microservices-demo/emailservice:v0.6.0
+    variables:
+      DISABLE_PROFILER: "1"
+      PORT: "8080"
+    livenessProbe:
+      exec:
+        command:
+          - /bin/grpc_health_probe
+          - '-addr=:7000'
+    readinessProbe:
+      exec:
+        command:
+          - /bin/grpc_health_probe
+          - '-addr=:7000'
+service:
+  ports:
+    grpc:
+      port: 5000
+      targetPort: 8080
