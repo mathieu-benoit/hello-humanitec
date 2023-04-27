@@ -1,0 +1,11 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: redis
+containers:
+  adservice:
+    image: redis:alpine
+service:
+  ports:
+    tcp:
+      port: 6379
+      targetPort: 6379

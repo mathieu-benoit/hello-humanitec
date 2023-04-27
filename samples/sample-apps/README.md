@@ -30,7 +30,7 @@ for w in ${WORKLOADS}; do score-humanitec delta --app ${SAMPLE_APPS_APP} --env $
 ### Juste one
 
 ```bash
-WORKLOAD=sample-app
+WORKLOAD=sample-app #sample-service
 score-humanitec delta \
 	--app ${SAMPLE_APPS_APP} \
 	--env ${ENVIRONMENT} \

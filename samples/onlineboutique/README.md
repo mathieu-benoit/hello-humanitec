@@ -23,14 +23,14 @@ ENVIRONMENT=development
 ### All in once
 
 ```bash
-WORKLOADS="adservice cartservice checkoutservice currencyservice emailservice paymentservice productcatalogservice recommendationservice shippingservice"
+WORKLOADS="adservice cartservice checkoutservice currencyservice emailservice paymentservice productcatalogservice recommendationservice redis shippingservice"
 for w in ${WORKLOADS}; do score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --deploy --retry -f $w/score.yaml --extensions $w/humanitec.score.yaml; done
 ```
 
 ### Juste one
 
 ```bash
-WORKLOAD=adservice
+WORKLOAD=adservice #cartservice checkoutservice currencyservice emailservice paymentservice productcatalogservice recommendationservice redis shippingservice
 score-humanitec delta \
 	--app ${ONLINEBOUTIQUE_APP} \
 	--env ${ENVIRONMENT} \
