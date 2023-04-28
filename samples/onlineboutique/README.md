@@ -26,12 +26,13 @@ ENVIRONMENT=development
 WORKLOADS="adservice cartservice checkoutservice currencyservice emailservice frontend loadgenerator paymentservice productcatalogservice recommendationservice redis shippingservice"
 for w in ${WORKLOADS}; do score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --deploy --retry -f $w/score.yaml --extensions $w/humanitec.score.yaml; done
 ```
-_Note: should be optimized to just [generate 1 deployment by using this new feature](https://github.com/score-spec/score-humanitec/pull/38#issue-1652223070)._
+_Note 1: should be optimized to just [generate 1 deployment by using this new feature](https://github.com/score-spec/score-humanitec/pull/38#issue-1652223070)._
+_Note 2: `loadgenerator` is deployed in order to generate traffic on these apps and data in the database, if you don't want this, feel free to remove it from the above list of `WORKLOADS`._
 
 ### One by one
 
 ```bash
-WORKLOAD=adservice #cartservice checkoutservice currencyservice emailservice paymentservice productcatalogservice recommendationservice redis shippingservice
+WORKLOAD=adservice #cartservice checkoutservice currencyservice emailservice frontend loadgenerator paymentservice productcatalogservice recommendationservice redis shippingservice
 score-humanitec delta \
 	--app ${ONLINEBOUTIQUE_APP} \
 	--env ${ENVIRONMENT} \
