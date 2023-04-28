@@ -1,7 +1,7 @@
 ```bash
 PROJECT_ID=FIXME
 gcloud config set project ${PROJECT_ID}
-CLUSTER_NAME=gke-dev
+CLUSTER_NAME=gke-advanced
 REGION=northamerica-northeast1
 ZONE=${REGION}-a
 HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32"
@@ -12,48 +12,6 @@ HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.1
 ```bash
 gcloud services enable container.googleapis.com
 ```
-
-### Basic
-
-```mermaid
-flowchart LR
-  subgraph Humanitec
-    subgraph development
-    end
-    subgraph Resources
-        gke-dev-connection>gke-dev-connection]
-	logging-connection>logging-connection]
-    end
-  end
-  subgraph Google Cloud
-    direction TB
-    gke-admin-gsa[\gke-admin-gsa/]
-    logging-reader-gsa[\logging-reader-gsa/]
-    cloud-logging((cloud-logging))
-    subgraph gke-cluster-dev
-        subgraph ingress-controller
-            nginx{{nginx}}
-        end
-    end
-  end
-  logging-connection-.->logging-reader-gsa
-  logging-reader-gsa-.->cloud-logging
-  gke-dev-connection-.->gke-admin-gsa
-  gke-admin-gsa-.->gke-cluster-dev
-  gke-cluster-dev-.->cloud-logging
-```
-
-```bash
-gcloud container clusters create ${CLUSTER_NAME} \
-    --zone ${ZONE} \
-    --scopes cloud-platform \
-    --workload-pool=${PROJECT_ID}.svc.id.goog \
-    --enable-master-authorized-networks \
-    --master-authorized-networks ${HUMANITEC_IP_ADDRESSES} \
-    --no-enable-google-cloud-access
-```
-
-### Advanced
 
 ```mermaid
 flowchart LR
@@ -162,7 +120,7 @@ gcloud iam service-accounts keys create ${GKE_ADMIN_SA_NAME}.json \
 
 ## Create the GKE connection in Humanitec
 
-```
+```bash
 HUMANITEC_ORG=FIXME
 HUMANITEC_TOKEN=FIXME
 curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs \
@@ -192,4 +150,9 @@ curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs \
     }
   }
 }"
+```
+
+Remove the local GSA's key:
+```bash
+rm ${GKE_ADMIN_SA_NAME}.json
 ```
