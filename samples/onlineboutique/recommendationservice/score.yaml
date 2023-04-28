@@ -1,0 +1,20 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: recommendationservice
+containers:
+  adservice:
+    image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.6.0
+    variables:
+      DISABLE_PROFILER: "1"
+      PORT: "8080"
+      PRODUCT_CATALOG_SERVICE_ADDR: "${resources.productcatalogservice.name}:3550"
+service:
+  ports:
+    grpc:
+      port: 8080
+      targetPort: 8080
+resources:
+  productcatalogservice:
+    type: service
+    properties:
+      name:

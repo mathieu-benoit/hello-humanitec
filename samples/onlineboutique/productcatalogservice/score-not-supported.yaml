@@ -11,12 +11,12 @@ containers:
       exec:
         command:
           - /bin/grpc_health_probe
-          - '-addr=:50051'
+          - '-addr=:3550'
     readinessProbe:
       exec:
         command:
           - /bin/grpc_health_probe
-          - '-addr=:50051'
+          - '-addr=:3550'
 service:
   ports:
     grpc:
