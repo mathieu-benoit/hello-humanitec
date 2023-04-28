@@ -2,7 +2,7 @@ apiVersion: score.dev/v1b1
 metadata:
   name: frontend
 containers:
-  cartservice:
+  frontend:
     image: gcr.io/google-samples/microservices-demo/frontend:v0.6.0
     livenessProbe:
       httpGet:
