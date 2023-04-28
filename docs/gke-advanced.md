@@ -156,3 +156,40 @@ Remove the local GSA's key:
 ```bash
 rm ${GKE_ADMIN_SA_NAME}.json
 ```
+
+### Custom Service Account resource definition
+
+```bash
+cat <<EOF > custom-sa.yaml
+id: custom-sa
+name: custom-sa
+type: k8s-service-account
+driver_type: humanitec/template
+driver_inputs:
+  values:
+    templates:
+      init: |
+        name: {{ index (regexSplit "\\." "$${context.res.id}" -1) 1 }}
+      manifests: |
+        service-account.yaml:
+          location: namespace
+          data:
+            apiVersion: v1
+            kind: ServiceAccount
+            metadata:
+              {{if eq .init.name "cartservice" }}
+              annotations:
+                iam.gke.io/gcp-service-account: spanner-db-user-sa@mathieu-benoit-gcp.iam.gserviceaccount.com
+              {{end}}
+              name: {{ .init.name }}
+      outputs: |
+        name: {{ .init.name }}
+criteria:
+  - {}
+EOF
+yq -o json custom-sa.yaml > custom-sa.json
+curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+  	-H "Content-Type: application/json" \
+	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+  	-d @custom-sa.json
+```

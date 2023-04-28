@@ -116,3 +116,32 @@ Remove the local GSA's key:
 ```bash
 rm ${GKE_ADMIN_SA_NAME}.json
 ```
+
+## Memorystore (Redis) database
+
+```bash
+gcloud services enable redis.googleapis.com
+
+REDIS_NAME=redis-cart
+gcloud redis instances create ${REDIS_NAME} \
+    --size 1 \
+    --region ${REGION} \
+    --zone ${ZONE} \
+    --redis-version redis_6_x \
+    --enable-auth
+```
+
+```bash
+gcloud redis instances describe ${REDIS_NAME} \
+   --region ${REGION} \
+   --format 'get(host)'
+
+gcloud redis instances describe ${REDIS_NAME} \
+   --region ${REGION} \
+   --format 'get(port)'
+
+gcloud redis instances get-auth-string ${REDIS_NAME} \
+   --region ${REGION}
+```
+
+FIXME - create a static Redis resource definition
