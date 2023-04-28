@@ -1,0 +1,69 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: frontend
+containers:
+  adservice:
+    image: gcr.io/google-samples/microservices-demo/frontend:v0.6.0
+    livenessProbe:
+      httpGet:
+        path: /_healthz
+        port: 8080
+        httpHeaders:
+        - name: Cookie
+          value: shop_session-id=x-liveness-probe
+    readinessProbe:
+      httpGet:
+        path: /_healthz
+        port: 8080
+        httpHeaders:
+        - name: Cookie
+          value: shop_session-id=x-readiness-probe
+    variables:
+      AD_SERVICE_ADDR: "${resources.adservice.name}:9555"
+      CART_SERVICE_ADDR: "${resources.cartservice.name}:7070"
+      CHECKOUT_SERVICE_ADDR: "${resources.checkoutservice.name}:5050"
+      CURRENCY_SERVICE_ADDR: "${resources.currencyservice.name}:7000"
+      ENABLE_PROFILER: "0"
+      PAYMENT_SERVICE_ADDR: "${resources.paymentservice.name}:50051"
+      PORT: "8080"
+      PRODUCT_CATALOG_SERVICE_ADDR: "${resources.productcatalogservice.name}:3550"
+      RECOMMENDATION_SERVICE_ADDR: "${resources.recommendationservice.name}:8080"
+      SHIPPING_SERVICE_ADDR: "${resources.shippingservice.name}:50051"
+resources:
+  adservice:
+    type: service
+    properties:
+      name:
+  cartservice:
+    type: service
+    properties:
+      name:
+  checkoutservice:
+    type: service
+    properties:
+      name:
+  currencyservice:
+    type: service
+    properties:
+      name:
+  paymentservice:
+    type: service
+    properties:
+      name:
+  productcatalogservice:
+    type: service
+    properties:
+      name:
+  RECOMMENDATION_SERVICE_ADDR:
+    type: service
+    properties:
+      name:
+  shippingservice:
+    type: service
+    properties:
+      name:
+service:
+  ports:
+    grpc:
+      port: 80
+      targetPort: 8080
