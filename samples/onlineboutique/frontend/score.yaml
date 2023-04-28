@@ -46,6 +46,8 @@ resources:
     type: service
     properties:
       name:
+  dns:
+    type: dns
   paymentservice:
     type: service
     properties:
