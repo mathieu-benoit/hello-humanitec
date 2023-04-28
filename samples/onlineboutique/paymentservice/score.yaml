@@ -1,0 +1,14 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: paymentservice
+containers:
+  adservice:
+    image: gcr.io/google-samples/microservices-demo/paymentservice:v0.6.0
+    variables:
+      DISABLE_PROFILER: "1"
+      PORT: "50051"
+service:
+  ports:
+    grpc:
+      port: 50051
+      targetPort: 50051

@@ -1,24 +1,24 @@
 apiVersion: score.dev/v1b1
 metadata:
-  name: emailservice
+  name: paymentservice
 containers:
   adservice:
-    image: gcr.io/google-samples/microservices-demo/emailservice:v0.6.0
+    image: gcr.io/google-samples/microservices-demo/paymentservice:v0.6.0
     variables:
       DISABLE_PROFILER: "1"
-      PORT: "8080"
+      PORT: "50051"
     livenessProbe:
       exec:
         command:
           - /bin/grpc_health_probe
-          - '-addr=:8080'
+          - '-addr=:50051'
     readinessProbe:
       exec:
         command:
           - /bin/grpc_health_probe
-          - '-addr=:8080'
+          - '-addr=:50051'
 service:
   ports:
     grpc:
-      port: 5000
-      targetPort: 8080
+      port: 50051
+      targetPort: 50051
