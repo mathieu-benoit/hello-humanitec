@@ -7,7 +7,7 @@
 flowchart LR
   subgraph Humanitec
     direction LR
-    subgraph onlineboutique-app
+    subgraph onlineboutique [Online Boutique App]
         direction LR
         adservice-workload([adservice])
         cartservice-workload([cartservice])
@@ -23,24 +23,24 @@ flowchart LR
         redis-workload([redis])
     end
   end
-  subgraph Humanitec's Cloud [cloud]
-    direction TB
-        frontend{{frontend}}-->adservice{{adservice}}
-        frontend-->checkoutservice{{checkoutservice}}
-        frontend-->currencyservice{{currencyservice}}
-        checkoutservice-->emailservice{{emailservice}}
-        checkoutservice-->paymentservice{{paymentservice}}
-        checkoutservice-->currencyservice
-        checkoutservice-->shippingservice{{shippingservice}}
-        checkoutservice-->productcatalogservice{{productcatalogservice}}
-        checkoutservice-->cartservice{{cartservice}}
-        frontend-->cartservice
-        loadgenerator-->frontend
-        recommendationservice{{recommendationservice}}-->productcatalogservice
-        cartservice-->redis[(redis)]
-    onlineboutique-app-->cloud
+  subgraph cloud [Humanitec's Cloud]
+      direction LR
+      frontend{{frontend}}-->adservice{{adservice}}
+      frontend-->checkoutservice{{checkoutservice}}
+      frontend-->currencyservice{{currencyservice}}
+      checkoutservice-->emailservice{{emailservice}}
+      checkoutservice-->paymentservice{{paymentservice}}
+      checkoutservice-->currencyservice
+      checkoutservice-->shippingservice{{shippingservice}}
+      checkoutservice-->productcatalogservice{{productcatalogservice}}
+      checkoutservice-->cartservice{{cartservice}}
+      frontend-->cartservice
+      loadgenerator{{loadgenerator}}-->frontend
+      recommendationservice{{recommendationservice}}-->productcatalogservice
+      cartservice-->redis[(redis)]
   end
-  end-user(end user)-->frontend
+  Humanitec-->cloud
+  enduser((End user))-->frontend
 ```
 
 ## Create the Online Boutique App in Humanitec
