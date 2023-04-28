@@ -43,6 +43,11 @@ flowchart LR
   enduser((End user))-->frontend
 ```
 
+```bash
+HUMANITEC_ORG=FIXME
+HUMANITEC_TOKEN=FIXME
+```
+
 ## (Platform admin) Create the Online Boutique App in Humanitec
 
 ```bash

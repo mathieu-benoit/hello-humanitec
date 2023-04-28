@@ -93,3 +93,5 @@ curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
 	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
   	-d @custom-workload.json
 ```
+
+[_Next section: GKE basic setup >>_](/docs/gke-basic.md)
