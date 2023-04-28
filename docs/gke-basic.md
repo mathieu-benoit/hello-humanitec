@@ -1,4 +1,9 @@
+[_<< Previous section: Common setup_](/docs/common.md)
 
+# GKE basic setup
+
+- [(Platform admin) Create the GKE cluster](#platform-admin-create-the-gke-cluster)
+- [(Platform admin)  Deploy the Nginx Ingress controller](#platform-admin-deploy-the-nginx-ingress-controller)
 
 ```mermaid
 flowchart LR
@@ -12,6 +17,7 @@ flowchart LR
       currencyservice-workload([currencyservice])
       emailservice-workload([emailservice])
       frontend-workload([frontend])
+      loadgenerator-workload([loadgenerator])
       paymentservice-workload([paymentservice])
       productcatalogservice-workload([productcatalogservice])
       recommendationservice-workload([recommendationservice])
@@ -41,6 +47,7 @@ flowchart LR
             checkoutservice-->productcatalogservice{{productcatalogservice}}
             checkoutservice-->cartservice{{cartservice}}
             frontend-->cartservice
+            loadgenerator{{loadgenerator}}-->frontend
             recommendationservice{{recommendationservice}}-->productcatalogservice
         end
         nginx-->frontend
@@ -62,7 +69,7 @@ ZONE=${REGION}-a
 HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32"
 ```
 
-## GKE cluster
+## (Platform admin) Create the GKE cluster
 
 ```bash
 gcloud services enable container.googleapis.com
@@ -77,16 +84,18 @@ gcloud container clusters create ${CLUSTER_NAME} \
     --master-authorized-networks ${HUMANITEC_IP_ADDRESSES} \
     --no-enable-google-cloud-access
 ```
+_Note: here we are restricting the access to the public Kubernetes server API only by Humanitec. If you want to access this cluster from your local machine, you need to add your own IP address here too._
 
-## Ingress controller
+## (Platform admin)  Deploy the Nginx Ingress controller
 
-Deploy the Ingress Controller:
+Deploy the Nginx Ingress Controller:
 ```bash
+NGING_INGRESS_CONTROLLER_VERSION=1.7.0
 kubectl apply \
-    -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/cloud/deploy.yaml
+    -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v${NGING_INGRESS_CONTROLLER_VERSION}/deploy/static/provider/cloud/deploy.yaml
 ```
 
-Let’s grab the Public IP address of that Ingress Controller:
+Grab the Public IP address of that Ingress Controller:
 ```bash
 INGRESS_IP=$(kubectl get svc ingress-nginx-controller \
     -n ingress-nginx \
