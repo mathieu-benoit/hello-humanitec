@@ -23,10 +23,18 @@ ENVIRONMENT=development
 ### All in once
 
 ```bash
-WORKLOADS="sample-app sample-service"
-for w in ${WORKLOADS}; do score-humanitec delta --app ${SAMPLE_APPS_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --deploy --retry -f $w/score.yaml --extensions $w/humanitec.score.yaml; done
+COMBINED_DELTA=$(score-humanitec delta --app ${SAMPLE_APPS_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --retry -f sample-app/score.yaml --extensions sample-app/humanitec.score.yaml | jq -r .id)
+score-humanitec delta \
+	--app ${SAMPLE_APPS_APP} \
+	--env ${ENVIRONMENT} \
+	--org ${HUMANITEC_ORG} \
+	--token ${HUMANITEC_TOKEN} \
+	--deploy \
+	--delta ${COMBINED_DELTA} \
+	--retry \
+	-f sample-service/score.yaml \
+	--extensions sample-service/humanitec.score.yaml
 ```
-_Note: should be optimized to just [generate 1 deployment by using this new feature](https://github.com/score-spec/score-humanitec/pull/38#issue-1652223070)._
 
 ### One by one
 

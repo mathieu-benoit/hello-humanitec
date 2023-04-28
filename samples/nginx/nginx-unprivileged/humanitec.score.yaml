@@ -3,7 +3,7 @@ profile: "humanitec/default-module"
 spec:
   ingress:
     rules:
-      "\${resources.dns}":
+      "${resources.dns}":
         http:
           "/":
             type: prefix

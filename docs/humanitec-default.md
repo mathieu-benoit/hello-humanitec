@@ -62,7 +62,22 @@ EOF
 ## (Developer) Deploy the Online Boutique Workloads in `development` Environment
 
 ```bash
-ENVIRONMENT=development
-WORKLOADS="adservice cartservice checkoutservice currencyservice emailservice frontend loadgenerator paymentservice productcatalogservice recommendationservice redis shippingservice"
-for w in ${WORKLOADS}; do score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --deploy --retry -f samples/onlineboutique/$w/score.yaml --extensions samples/onlineboutique/$w/humanitec.score.yaml; done
+FIRST_WORKLOAD="adservice"
+COMBINED_DELTA=$(score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --retry -f ${FIRST_WORKLOAD}/score.yaml --extensions ${FIRST_WORKLOAD}/humanitec.score.yaml | jq -r .id)
+WORKLOADS="cartservice checkoutservice currencyservice emailservice frontend loadgenerator paymentservice productcatalogservice recommendationservice redis"
+for w in ${WORKLOADS}; do COMBINED_DELTA=$(score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --delta ${COMBINED_DELTA} --retry -f $w/score.yaml --extensions $w/humanitec.score.yaml | jq -r .id); done
+LAST_WORKLOAD="shippingservice"
+score-humanitec delta \
+	--app ${ONLINEBOUTIQUE_APP} \
+	--env ${ENVIRONMENT} \
+	--org ${HUMANITEC_ORG} \
+	--token ${HUMANITEC_TOKEN} \
+	--deploy \
+	--delta ${COMBINED_DELTA} \
+	--retry \
+	-f ${LAST_WORKLOAD}/score.yaml \
+	--extensions ${LAST_WORKLOAD}/humanitec.score.yaml
 ```
+_Note: `loadgenerator` is deployed to generate both: traffic on these apps and data in the database. If you don't want this, feel free to remove it from the above list of `WORKLOADS`._
+
+[_Next section: Common setup >>_](/docs/common.md)

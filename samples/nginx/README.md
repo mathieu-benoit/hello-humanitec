@@ -23,10 +23,19 @@ ENVIRONMENT=development
 ### All in once
 
 ```bash
-WORKLOADS="nginx nginx-unprivileged nginx-secured"
-for w in ${WORKLOADS}; do score-humanitec delta --app ${NGINX_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --deploy --retry -f $w/score.yaml --extensions $w/humanitec.score.yaml; done
+COMBINED_DELTA=$(score-humanitec delta --app ${NGINX_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --retry -f nginx/score.yaml --extensions nginx/humanitec.score.yaml | jq -r .id)
+COMBINED_DELTA=$(score-humanitec delta --app ${NGINX_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --delta ${COMBINED_DELTA} --retry -f nginx-unprivileged/score.yaml --extensions nginx-unprivileged/humanitec.score.yaml | jq -r .id)
+score-humanitec delta \
+	--app ${NGINX_APP} \
+	--env ${ENVIRONMENT} \
+	--org ${HUMANITEC_ORG} \
+	--token ${HUMANITEC_TOKEN} \
+	--deploy \
+	--delta ${COMBINED_DELTA} \
+	--retry \
+	-f nginx-secured/score.yaml \
+	--extensions nginx-secured/humanitec.score.yaml
 ```
-_Note: should be optimized to just [generate 1 deployment by using this new feature](https://github.com/score-spec/score-humanitec/pull/38#issue-1652223070)._
 
 ### One by one
 

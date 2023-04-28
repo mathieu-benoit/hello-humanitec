@@ -4,9 +4,14 @@ metadata:
 containers:
   nginx-secured:
     image: nginxinc/nginx-unprivileged:latest
+    volumes:
+    - source: ${resources.tmp}
+      target: /tmp
 resources:
   dns:
     type: dns
+  tmp:
+    type: emptyDir
 service:
   ports:
     tcp:
