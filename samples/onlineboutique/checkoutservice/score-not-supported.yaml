@@ -2,7 +2,7 @@ apiVersion: score.dev/v1b1
 metadata:
   name: checkoutservice
 containers:
-  adservice:
+  cartservice:
     image: gcr.io/google-samples/microservices-demo/checkoutservice:v0.6.0
     variables:
       CART_SERVICE_ADDR: "${resources.cartservice.name}:7070"

@@ -2,7 +2,7 @@ apiVersion: score.dev/v1b1
 metadata:
   name: currencyservice
 containers:
-  adservice:
+  cartservice:
     image: gcr.io/google-samples/microservices-demo/currencyservice:v0.6.0
     variables:
       DISABLE_PROFILER: "1"

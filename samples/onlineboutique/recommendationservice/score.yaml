@@ -2,7 +2,7 @@ apiVersion: score.dev/v1b1
 metadata:
   name: recommendationservice
 containers:
-  adservice:
+  cartservice:
     image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.6.0
     variables:
       DISABLE_PROFILER: "1"
