@@ -1,0 +1,14 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: frontend
+containers:
+  adservice:
+    image: gcr.io/google-samples/microservices-demo/loadgenerator:v0.6.0
+    variables:
+      FRONTEND_ADDR: "${resources.frontend.name}:80"
+      USERS: "10"
+resources:
+  frontend:
+    type: service
+    properties:
+      name:
