@@ -3,23 +3,56 @@
 ```mermaid
 flowchart LR
   subgraph Humanitec
-    subgraph development
+    subgraph gke-basic
+        direction LR
+        subgraph onlineboutique-app
+            direction LR
+            adservice-workload([adservice])
+            cartservice-workload([cartservice])
+            checkoutservice-workload([checkoutservice])
+            currencyservice-workload([currencyservice])
+            emailservice-workload([emailservice])
+            frontend-workload([frontend])
+            paymentservice-workload([paymentservice])
+            productcatalogservice-workload([productcatalogservice])
+            recommendationservice-workload([recommendationservice])
+            shippingservice-workload([shippingservice])
+        end
     end
     subgraph Resources
-        gke-dev-connection>gke-dev-connection]
+        custom-namespace>custom-namespace]
+        custom-workload>custom-workload]
+        gke-basic-connection>gke-basic-connection]
+        memorystore-connection>memorystore-connection]
     end
   end
   subgraph Google Cloud
     direction TB
-    gke-admin-gsa[\gke-admin-gsa/]
-    subgraph gke-cluster-dev
+    subgraph gke-basic
         subgraph ingress-controller
             nginx{{nginx}}
         end
+        subgraph onlineboutique
+            frontend{{frontend}}-->adservice{{adservice}}
+            frontend-->checkoutservice{{checkoutservice}}
+            frontend-->currencyservice{{currencyservice}}
+            checkoutservice-->emailservice{{emailservice}}
+            checkoutservice-->paymentservice{{paymentservice}}
+            checkoutservice-->currencyservice
+            checkoutservice-->shippingservice{{shippingservice}}
+            checkoutservice-->productcatalogservice{{productcatalogservice}}
+            checkoutservice-->cartservice{{cartservice}}
+            frontend-->cartservice
+            recommendationservice{{recommendationservice}}-->productcatalogservice
+        end
+        nginx-->frontend
     end
+    gke-basic-connection-.->gke-basic
+    memorystore-connection-.->memorystore[(memorystore)]
+    onlineboutique-app-->onlineboutique
+    cartservice-->memorystore
   end
-  gke-dev-connection-.->gke-admin-gsa
-  gke-admin-gsa-.->gke-cluster-dev
+  enduser((End user))-->frontend
 ```
 
 ```bash
