@@ -1,7 +1,7 @@
 ## Online Boutique
 
-- [Create the Online Boutique App in Humanitec](#create-the-online-boutique-app-in-humanitec)
-- [Deploy the Online Boutique Workloads in `development` Environment](#deploy-the-online-boutique-workloads-in-development-environment)
+- [(Platform admin) Create the Online Boutique App in Humanitec](#create-the-online-boutique-app-in-humanitec)
+- [(Developer) Deploy the Online Boutique Workloads in `development` Environment](#deploy-the-online-boutique-workloads-in-development-environment)
 
 ```mermaid
 flowchart LR
