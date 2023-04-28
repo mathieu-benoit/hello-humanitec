@@ -1,83 +1,21 @@
 ## Common setup
 
+- [Custom Namespace resource definition](#custom-namespace-resource-definition)
+- [Custom Workload resource definition](#custom-workload-resource-definition)
+
 ```mermaid
 flowchart LR
   subgraph Humanitec
-    subgraph development
-    end
-    subgraph staging
-    end
-    subgraph production
-    end
     subgraph Resources
         custom-namespace>custom-namespace]
         custom-workload>custom-workload]
-	logging-connection>logging-connection]
     end
   end
-  subgraph Google Cloud
-    direction TB
-    logging-reader-gsa[\logging-reader-gsa/]
-    cloud-logging((cloud-logging))
-  end
-  logging-connection-.->logging-reader-gsa
-  logging-reader-gsa-.->cloud-logging
 ```
 
-- [GSA to access Cloud Logging](#gsa-to-access-cloud-logging)
-- [Custom Workload resource definition](#custom-workload-resource-definition)
-
 ```bash
-PROJECT_ID=FIXME
-gcloud config set project ${PROJECT_ID}
-
 HUMANITEC_ORG=FIXME
 HUMANITEC_TOKEN=FIXME
-```
-
-## Humanitec Environment types
-
-```bash
-STAGING_ENV="staging"
-curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/env-types \
-  -X POST \
-  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d @- <<EOF
-{
-  "id": "${STAGING_ENV}",
-  "description": "Default environment type for ${STAGING_ENV}."
-}
-EOF
-PRODUCTION_ENV="production"
-curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/env-types \
-  -X POST \
-  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d @- <<EOF
-{
-  "id": "${PRODUCTION_ENV}",
-  "description": "Default environment type for ${PRODUCTION_ENV}."
-}
-EOF
-```
-
-### GSA to access Cloud Logging
-
-```bash
-LOGGING_READER_SA_NAME=humanitec-logging-dev
-LOGGING_READER_SA_ID=${LOGGING_READER_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
-gcloud iam service-accounts create ${LOGGING_READER_SA_NAME} \
-	--display-name=${LOGGING_READER_SA_NAME}
-gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-	--member "serviceAccount:${LOGGING_READER_SA_ID}" \
-	--role "roles/logging.viewer"
-```
-
-Let’s download locally the GSA key:
-```bash
-gcloud iam service-accounts keys create ${LOGGING_READER_SA_NAME}.json \
-    --iam-account ${LOGGING_READER_SA_ID}
 ```
 
 ### Custom Namespace resource definition
@@ -100,7 +38,7 @@ driver_inputs:
           - op: add
             path: /spec/automountServiceAccountToken
             value: false
-	  - op: add
+	        - op: add
             path: /spec/serviceAccountName
             value: ${resources.k8s-service-account.outputs.name}
           - op: add

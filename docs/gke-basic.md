@@ -1,18 +1,3 @@
-```bash
-PROJECT_ID=FIXME
-gcloud config set project ${PROJECT_ID}
-CLUSTER_NAME=gke-basic
-REGION=northamerica-northeast1
-ZONE=${REGION}-a
-HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32"
-```
-
-## GKE cluster
-
-```bash
-gcloud services enable container.googleapis.com
-```
-
 ```mermaid
 flowchart LR
   subgraph Humanitec
@@ -33,6 +18,23 @@ flowchart LR
   end
   gke-dev-connection-.->gke-admin-gsa
   gke-admin-gsa-.->gke-cluster-dev
+```
+
+- [](#gke-cluster)
+
+```bash
+PROJECT_ID=FIXME
+gcloud config set project ${PROJECT_ID}
+CLUSTER_NAME=gke-basic
+REGION=northamerica-northeast1
+ZONE=${REGION}-a
+HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32"
+```
+
+## GKE cluster
+
+```bash
+gcloud services enable container.googleapis.com
 ```
 
 ```bash
