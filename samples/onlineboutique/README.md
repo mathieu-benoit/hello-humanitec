@@ -27,7 +27,7 @@ WORKLOADS="adservice cartservice checkoutservice currencyservice emailservice pa
 for w in ${WORKLOADS}; do score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --deploy --retry -f $w/score.yaml --extensions $w/humanitec.score.yaml; done
 ```
 
-### Juste one
+### One by one
 
 ```bash
 WORKLOAD=adservice #cartservice checkoutservice currencyservice emailservice paymentservice productcatalogservice recommendationservice redis shippingservice
