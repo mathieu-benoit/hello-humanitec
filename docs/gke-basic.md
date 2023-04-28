@@ -3,21 +3,19 @@
 ```mermaid
 flowchart LR
   subgraph Humanitec
-    subgraph gke-basic
-        direction LR
-        subgraph onlineboutique-app
-            direction LR
-            adservice-workload([adservice])
-            cartservice-workload([cartservice])
-            checkoutservice-workload([checkoutservice])
-            currencyservice-workload([currencyservice])
-            emailservice-workload([emailservice])
-            frontend-workload([frontend])
-            paymentservice-workload([paymentservice])
-            productcatalogservice-workload([productcatalogservice])
-            recommendationservice-workload([recommendationservice])
-            shippingservice-workload([shippingservice])
-        end
+    direction LR
+    subgraph onlineboutique-app [Online Boutique App]
+      direction LR
+      adservice-workload([adservice])
+      cartservice-workload([cartservice])
+      checkoutservice-workload([checkoutservice])
+      currencyservice-workload([currencyservice])
+      emailservice-workload([emailservice])
+      frontend-workload([frontend])
+      paymentservice-workload([paymentservice])
+      productcatalogservice-workload([productcatalogservice])
+      recommendationservice-workload([recommendationservice])
+      shippingservice-workload([shippingservice])
     end
     subgraph Resources
         custom-namespace>custom-namespace]
@@ -52,7 +50,7 @@ flowchart LR
     onlineboutique-app-->onlineboutique
     cartservice-->memorystore
   end
-  enduser((End user))-->frontend
+  enduser((End user))-->nginx
 ```
 
 ```bash
