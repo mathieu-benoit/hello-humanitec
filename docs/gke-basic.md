@@ -1,3 +1,5 @@
+
+
 ```mermaid
 flowchart LR
   subgraph Humanitec
@@ -19,8 +21,6 @@ flowchart LR
   gke-dev-connection-.->gke-admin-gsa
   gke-admin-gsa-.->gke-cluster-dev
 ```
-
-- [](#gke-cluster)
 
 ```bash
 PROJECT_ID=FIXME

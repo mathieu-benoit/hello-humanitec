@@ -1,7 +1,7 @@
 ## Common setup
 
-- [Custom Namespace resource definition](#custom-namespace-resource-definition)
-- [Custom Workload resource definition](#custom-workload-resource-definition)
+- [(Platform admin) Create a custom Namespace resource definition](#platform-admin-create-a-custom-namespace-resource-definition)
+- [(Platform admin) Create a custom Workload resource definition](#platform-admin-create-a-custom-workload-resource-definition)
 
 ```mermaid
 flowchart LR
@@ -18,11 +18,11 @@ HUMANITEC_ORG=FIXME
 HUMANITEC_TOKEN=FIXME
 ```
 
-### Custom Namespace resource definition
+### (Platform admin) Create a custom Namespace resource definition
 
 FIXME - custom name, without the gsa/wi annotation yet
 
-### Custom Workload resource definition
+### (Platform admin) Create a custom Workload resource definition
 
 ```bash
 cat <<EOF > custom-workload.yaml
