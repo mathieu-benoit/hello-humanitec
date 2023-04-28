@@ -54,7 +54,7 @@ resources:
     type: service
     properties:
       name:
-  RECOMMENDATION_SERVICE_ADDR:
+  recommendationservice:
     type: service
     properties:
       name:
