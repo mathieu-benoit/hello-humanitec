@@ -1,0 +1,24 @@
+apiVersion: score.dev/v1b1
+metadata:
+  name: shippingservice
+containers:
+  adservice:
+    image: gcr.io/google-samples/microservices-demo/shippingservice:v0.6.0
+    variables:
+      DISABLE_PROFILER: "1"
+      PORT: "50051"
+    livenessProbe:
+      exec:
+        command:
+          - /bin/grpc_health_probe
+          - '-addr=:50051'
+    readinessProbe:
+      exec:
+        command:
+          - /bin/grpc_health_probe
+          - '-addr=:50051'
+service:
+  ports:
+    grpc:
+      port: 50051
+      targetPort: 50051
