@@ -135,6 +135,8 @@ gcloud iam service-accounts keys create ${GKE_ADMIN_SA_NAME}.json \
 
 ## [PA-HUM] Create the GKE access resource definition
 
+FIXME - move the json piece in yaml to be consistent with the rest
+
 ```bash
 curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs \
   -X POST \

@@ -2,14 +2,16 @@
 
 ## Common setup
 
-- [[PA-HUM] Create a custom `Namespace` resource definition](#platform-admin-create-a-custom-namespace-resource-definition-in-humanitec)
-- [[PA-HUM] Create a custom Workload resource definition](#platform-admin-create-a-custom-workload-resource-definition-in-humanitec)
+- [[PA-HUM] Create a custom `Namespace` resource definition](#pa-hum-create-a-custom-namespace-resource-definition)
+- [[PA-HUM] Create a custom `ServiceAccount` resource definition](#pa-hum-create-a-custom-serviceaccount-resource-definition)
+- [[PA-HUM] Create a custom Workload resource definition](#pa-hum-create-a-custom-workload-resource-definition)
 
 ```mermaid
 flowchart LR
   subgraph Humanitec
     subgraph Resources
         custom-namespace>custom-namespace]
+        custom-service-account>custom-service-account]
         custom-workload>custom-workload]
     end
   end
@@ -26,8 +28,8 @@ Here we want to customize the name of the Kubernetes `Namespace` for all our App
 
 ```bash
 cat <<EOF > custom-namespace.yaml
-id: custom-namespace-test
-name: custom-namespace-test
+id: custom-namespace
+name: custom-namespace
 type: k8s-namespace
 driver_type: humanitec/static
 driver_inputs:
@@ -43,9 +45,46 @@ curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
   	-d @custom-namespace.json
 ```
 
+### [PA-HUM] Create a custom `ServiceAccount` resource definition
+
+Here we want to create a dedicated Kubernetes `ServiceAccount` for all our Apps.
+
+```bash
+cat <<EOF > custom-service-account.yaml
+id: custom-service-account-2
+name: custom-service-account-2
+type: k8s-service-account
+driver_type: humanitec/template
+driver_inputs:
+  values:
+    templates:
+      init: |
+        name: {{ index (regexSplit "\\\\." "\$\${context.res.id}" -1) 1 }}
+      manifests: |-
+        service-account.yaml:
+          location: namespace
+          data:
+            apiVersion: v1
+            kind: ServiceAccount
+            metadata:
+              name: {{ .init.name }}
+      outputs: |
+        name: {{ .init.name }}
+criteria:
+  - app_id: whereami
+EOF
+yq -o json custom-service-account.yaml > custom-service-account.json
+curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+  	-H "Content-Type: application/json" \
+	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+  	-d @custom-service-account.json
+```
+
 ### [PA-HUM] Create a custom Workload resource definition
 
 Here we want to customize the Kubernetes `Deployment` manifests for all our Workloads by adding the `securityContext` sections and other security features ([reference](https://docs.humanitec.com/integrations/resource-types/workload)).
+
+_Importannt note: the `${resources.k8s-service-account.outputs.name}` part is necessary to create the custom `ServiceAccount` defined above._
 
 ```bash
 cat <<EOF > custom-workload.yaml
@@ -61,7 +100,7 @@ driver_inputs:
           - op: add
             path: /spec/automountServiceAccountToken
             value: false
-	        - op: add
+          - op: add
             path: /spec/serviceAccountName
             value: \${resources.k8s-service-account.outputs.name}
           - op: add
@@ -72,7 +111,7 @@ driver_inputs:
               runAsNonRoot: true
               fsGroup: 1000
               runAsGroup: 1000
-              runAsUser: 1000
+             runAsUser: 1000
           {{- range \$containerId, \$value := .resource.spec.containers }}
           - op: add
             path: /spec/containers/{{ \$containerId }}/securityContext

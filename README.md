@@ -1,8 +1,8 @@
 # hello-humanitec
 
 2 personas:
-- **Platform admin** (PA) interacting with either Google Cloud (PA-GCP) or Humanitec (PA-HUM)
-- **Developer** (DE) interacting with Humanitec (DE-HUM)
+- **Platform admin** (PA) interacting with either Google Cloud (**PA-GCP**) or Humanitec (**PA-HUM**)
+- **Developer** (DE) interacting with Humanitec (**DE-HUM**)
 
 ![personas](/images/personas.png)
 
@@ -12,7 +12,8 @@ Agenda:
   - [DE-HUM] Deploy Online Boutique Workloads (in-cluster `redis`) in `development` Environment
 - [Common setup](./docs/common.md)
   - [PA-HUM] Create custom name `Namespace`
-  - [PA-HUM] Create custom unprivilged Workload
+  - [PA-HUM] Create custom `ServiceAccount`
+  - [PA-HUM] Create custom unprivileged Workload
 - [GKE basic setup](./docs/gke-basic.md)
   - [PA-GCP] Create basic GKE setup
   - [PA-GCP] Deploy a simple Nginx Ingress controller
