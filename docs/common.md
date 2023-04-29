@@ -24,6 +24,8 @@ HUMANITEC_TOKEN=FIXME
 
 ### [PA-HUM] Create a custom `Namespace` resource definition
 
+As Platform Admin, in Humanitec.
+
 Here we want to customize the name of the Kubernetes `Namespace` for all our Apps ([reference](https://docs.humanitec.com/guides/orchestrate-infrastructure/define-namespaces)).
 
 ```bash
@@ -46,6 +48,8 @@ curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
 ```
 
 ### [PA-HUM] Create a custom `ServiceAccount` resource definition
+
+As Platform Admin, in Humanitec.
 
 Here we want to create a dedicated Kubernetes `ServiceAccount` for all our Apps.
 
@@ -81,6 +85,8 @@ curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
 ```
 
 ### [PA-HUM] Create a custom Workload resource definition
+
+As Platform Admin, in Humanitec.
 
 Here we want to customize the Kubernetes `Deployment` manifests for all our Workloads by adding the `securityContext` sections and other security features ([reference](https://docs.humanitec.com/integrations/resource-types/workload)).
 

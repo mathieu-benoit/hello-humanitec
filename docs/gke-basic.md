@@ -32,6 +32,7 @@ flowchart LR
     end
     subgraph Resources
         custom-namespace>custom-namespace]
+        custom-service-account>custom-service-account]
         custom-workload>custom-workload]
         gke-basic-connection>gke-basic-connection]
         memorystore-connection>memorystore-connection]
@@ -83,6 +84,8 @@ ENVIRONMENT=${CLUSTER_NAME}
 
 ## [PA-GCP] Create the GKE cluster
 
+As Platform Admin, in Google Cloud.
+
 ```bash
 gcloud services enable container.googleapis.com
 ```
@@ -100,6 +103,8 @@ _Note: here we are restricting the access to the public Kubernetes server API on
 
 ## [PA-GCP] Deploy the Nginx Ingress controller
 
+As Platform Admin, in Google Cloud.
+
 Deploy the Nginx Ingress Controller:
 ```bash
 NGING_INGRESS_CONTROLLER_VERSION=1.7.0
@@ -115,6 +120,8 @@ INGRESS_IP=$(kubectl get svc ingress-nginx-controller \
 ```
 
 ## [PA-GCP] Create the Google Service Account to access the GKE cluster
+
+As Platform Admin, in Google Cloud.
 
 Create the Google Service Account (GSA) with the appropriate role:
 ```bash
@@ -135,7 +142,7 @@ gcloud iam service-accounts keys create ${GKE_ADMIN_SA_NAME}.json \
 
 ## [PA-HUM] Create the GKE access resource definition
 
-FIXME - move the json piece in yaml to be consistent with the rest
+As Platform Admin, in Humanitec.
 
 ```bash
 curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs \
@@ -167,16 +174,20 @@ curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs \
 }"
 ```
 
-Remove the local GSA's key:
+Clean sensitive information locally:
 ```bash
 rm ${GKE_ADMIN_SA_NAME}.json
 ```
 
 ## [PA-HUM] Create the `gke-basic` Environment
 
+As Platform Admin, in Humanitec.
+
 FIXME
 
 ## [DE-HUM] Deploy the Online Boutique Workloads (with in-cluster `redis`) in `gke-basic` Environment
+
+As Developer, in Humanitec.
 
 ```bash
 FIRST_WORKLOAD="adservice"
@@ -208,10 +219,13 @@ curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP
 
 ## [PA-GCP] Create a Memorystore (Redis) database
 
+As Platform Admin, in Google Cloud.
+
+Create the Memorystore (Redis) database with a password in same region and network as the GKE cluster:
 ```bash
 gcloud services enable redis.googleapis.com
 
-REDIS_NAME=redis-cart
+REDIS_NAME=redis-cart-${ENVIRONMENT}
 gcloud redis instances create ${REDIS_NAME} \
     --size 1 \
     --region ${REGION} \
@@ -221,23 +235,51 @@ gcloud redis instances create ${REDIS_NAME} \
 ```
 
 ```bash
-gcloud redis instances describe ${REDIS_NAME} \
-   --region ${REGION} \
-   --format 'get(host)'
-
-gcloud redis instances describe ${REDIS_NAME} \
-   --region ${REGION} \
-   --format 'get(port)'
-
-gcloud redis instances get-auth-string ${REDIS_NAME} \
-   --region ${REGION}
+REDIS_HOST=$(gcloud redis instances describe ${REDIS_NAME} \
+    --region ${REGION} \
+    --format 'get(host)')
+REDIS_PORT=$(gcloud redis instances describe ${REDIS_NAME} \
+    --region ${REGION} \
+    --format 'get(port)')
+REDIS_AUTH=$(gcloud redis instances get-auth-string ${REDIS_NAME} \
+    --region ${REGION} \
+    --format 'get(authString)')
 ```
 
 ## [PA-HUM] Create the Memorystore (Redis) access resource definition
 
-FIXME - create a static Redis resource definition
+As Platform Admin, in Humanitec.
+
+```bash
+cat <<EOF > ${REDIS_NAME}.yaml
+id: ${REDIS_NAME}
+name: ${REDIS_NAME}
+type: redis
+driver_type: humanitec/static
+driver_inputs:
+  values:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+  secrets:
+    password: ${REDIS_AUTH}
+criteria:
+  - env_id: ${ENVIRONMENT}
+EOF
+yq -o json ${REDIS_NAME}.yaml > ${REDIS_NAME}.json
+curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+  	-H "Content-Type: application/json" \
+	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+  	-d @${REDIS_NAME}.json
+```
+
+Clean sensitive information locally:
+```bash
+rm ${REDIS_NAME}.yaml
+```
 
 ## [DE-HUM] Deploy the `cartservice` Workload with Memorystore (Redis) in `gke-basic` Environment
+
+As Developer, in Humanitec.
 
 ```bash
 WORKLOAD=cartservice

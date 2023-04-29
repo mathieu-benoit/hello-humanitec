@@ -50,6 +50,8 @@ HUMANITEC_TOKEN=FIXME
 
 ## [PA-HUM] Create the Online Boutique App
 
+As Platform Admin, in Humanitec.
+
 ```bash
 ONLINEBOUTIQUE_APP=onlineboutique
 curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps \
@@ -65,6 +67,8 @@ EOF
 ```
 
 ## [DE-HUM] Deploy the Online Boutique Workloads (with in-cluster `redis`) in `development` Environment
+
+As Developer, in Humanitec.
 
 ```bash
 FIRST_WORKLOAD="adservice"
