@@ -2,8 +2,8 @@
 
 ## Common setup
 
-- [(Platform admin) Create a custom `Namespace` resource definition](#platform-admin-create-a-custom-namespace-resource-definition)
-- [(Platform admin) Create a custom Workload resource definition](#platform-admin-create-a-custom-workload-resource-definition)
+- [(Platform admin) Create a custom `Namespace` resource definition in Humanitec](#platform-admin-create-a-custom-namespace-resource-definition-in-humanitec)
+- [(Platform admin) Create a custom Workload resource definition in Humanitec](#platform-admin-create-a-custom-workload-resource-definition-in-humanitec)
 
 ```mermaid
 flowchart LR
@@ -20,7 +20,7 @@ HUMANITEC_ORG=FIXME
 HUMANITEC_TOKEN=FIXME
 ```
 
-### (Platform admin) Create a custom `Namespace` resource definition
+### (Platform admin) Create a custom `Namespace` resource definition in Humanitec
 
 Here we want to customize the name of the Kubernetes `Namespace` for all our Apps ([reference](https://docs.humanitec.com/guides/orchestrate-infrastructure/define-namespaces)).
 
@@ -43,7 +43,7 @@ curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
   	-d @custom-namespace.json
 ```
 
-### (Platform admin) Create a custom Workload resource definition
+### (Platform admin) Create a custom Workload resource definition in Humanitec
 
 Here we want to customize the Kubernetes `Deployment` manifests for all our Workloads by adding the `securityContext` sections and other security features ([reference](https://docs.humanitec.com/integrations/resource-types/workload)).
 

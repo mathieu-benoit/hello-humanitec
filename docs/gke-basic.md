@@ -2,11 +2,11 @@
 
 # GKE basic setup
 
-- [(Platform admin) Create the GKE cluster](#platform-admin-create-the-gke-cluster)
-- [(Platform admin)  Deploy the Nginx Ingress controller](#platform-admin-deploy-the-nginx-ingress-controller)
-- [(Platform admin) Create the Google Service Account to access the GKE cluster](#platform-admin-create-the-google-service-account-to-access-the-gke-cluster)
+- [(Platform admin) Create the GKE cluster in Google Cloud](#platform-admin-create-the-gke-cluster-in-google-cloud)
+- [(Platform admin) Deploy the Nginx Ingress controller in the GKE cluster](#platform-admin-deploy-the-nginx-ingress-controller-in-the-gke-cluster)
+- [(Platform admin) Create the Google Service Account to access the GKE cluster from Humanitec to in Google Cloud](#platform-admin-create-the-google-service-account-to-access-the-gke-cluster-from-humanitec-to-in-google-cloud)
 - [(Platform admin) Create the GKE access resource definition in Humanitec](#platform-admin-create-the-gke-access-resource-definition-in-humanitec)
-- [(Platform admin) Create the `gke-basic` Environment](#platform-admin-create-the-gke-basic-environment)
+- [(Platform admin) Create the `gke-basic` Environment in Humanitec](#platform-admin-create-the-gke-basic-environment-in-humanitec)
 - [(Developer) Deploy the Online Boutique Workloads (with in-cluster `redis`) in `gke-basic` Environment](#developer-deploy-the-online-boutique-workloads-with-in-cluster-redis-in-gke-basic-environment)
 - [(Platform admin) Create a Memorystore (Redis) database](#platform-admin-create-a-memorystore-redis-database)
 - [(Platform admin) Create the Memorystore (Redis) access resource definition in Humanitec](#platform-admin-create-the-memorystore-redis-access-resource-definition-in-humanitec)
@@ -81,7 +81,7 @@ HUMANITEC_TOKEN=FIXME
 ENVIRONMENT=${CLUSTER_NAME}
 ```
 
-## (Platform admin) Create the GKE cluster
+## (Platform admin) Create the GKE cluster in Google Cloud
 
 ```bash
 gcloud services enable container.googleapis.com
@@ -98,7 +98,7 @@ gcloud container clusters create ${CLUSTER_NAME} \
 ```
 _Note: here we are restricting the access to the public Kubernetes server API only by Humanitec. If you want to access this cluster from your local machine, you need to add your own IP address here too._
 
-## (Platform admin) Deploy the Nginx Ingress controller
+## (Platform admin) Deploy the Nginx Ingress controller in the GKE cluster
 
 Deploy the Nginx Ingress Controller:
 ```bash
@@ -114,7 +114,7 @@ INGRESS_IP=$(kubectl get svc ingress-nginx-controller \
     -o jsonpath="{.status.loadBalancer.ingress[*].ip}")
 ```
 
-## (Platform admin) Create the Google Service Account to access the GKE cluster
+## (Platform admin) Create the Google Service Account to access the GKE cluster from Humanitec to in Google Cloud
 
 Create the Google Service Account (GSA) with the appropriate role:
 ```bash
@@ -170,11 +170,11 @@ Remove the local GSA's key:
 rm ${GKE_ADMIN_SA_NAME}.json
 ```
 
-## (Platform admin) Create the `gke-basic` Environment
+## (Platform admin) Create the `gke-basic` Environment in Humanitec
 
 FIXME
 
-## (Developer) Deploy the Online Boutique Workloads (with in-cluster `redis`) in `gke-basic` Environment
+## (Developer) Deploy the Online Boutique Workloads (with in-cluster `redis`) in `gke-basic` Environment in Humanitec
 
 ```bash
 FIRST_WORKLOAD="adservice"
@@ -204,7 +204,7 @@ curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP
 	| jq -r .resource.host
 ```
 
-## (Platform admin) Create a Memorystore (Redis) database
+## (Platform admin) Create a Memorystore (Redis) database in Google Cloud
 
 ```bash
 gcloud services enable redis.googleapis.com
@@ -235,7 +235,7 @@ gcloud redis instances get-auth-string ${REDIS_NAME} \
 
 FIXME - create a static Redis resource definition
 
-## (Developer) Deploy the `cartservice` Workload with Memorystore (Redis) in `gke-basic` Environment
+## (Developer) Deploy the `cartservice` Workload with Memorystore (Redis) in `gke-basic` Environment in Humanitec
 
 ```bash
 WORKLOAD=cartservice
@@ -258,3 +258,5 @@ curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP
 	| jq -c '.[] | select(.type | contains("dns"))' \
 	| jq -r .resource.host
 ```
+
+[_Next section: GKE advanced setup >>_](/docs/gke-advanced.md)
