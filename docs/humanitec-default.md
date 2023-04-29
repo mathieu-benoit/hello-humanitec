@@ -1,7 +1,7 @@
 ## Online Boutique
 
 - [(Platform admin) Create the Online Boutique App in Humanitec](#platform-admin-create-the-online-boutique-app-in-humanitec)
-- [(Developer) Deploy the Online Boutique Workloads in `development` Environment](#developer-deploy-the-online-boutique-workloads-in-development-environment)
+- [(Developer) Deploy the Online Boutique Workloads (with in-cluster `redis`) in `development` Environment](#developer-deploy-the-online-boutique-workloads-with-in-cluster-redis-in-development-environment)
 
 ```mermaid
 flowchart LR
@@ -64,7 +64,7 @@ curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps \
 EOF
 ```
 
-## (Developer) Deploy the Online Boutique Workloads in `development` Environment
+## (Developer) Deploy the Online Boutique Workloads (with in-cluster `redis`) in `development` Environment
 
 ```bash
 FIRST_WORKLOAD="adservice"
@@ -85,10 +85,9 @@ score-humanitec delta \
 ```
 _Note: `loadgenerator` is deployed to generate both: traffic on these apps and data in the database. If you don't want this, feel free to remove it from the above list of `WORKLOADS`._
 
-Get the public DNS exposing the `frontend` Workload
-
+Get the public DNS exposing the `frontend` Workload:
 ```bash
-curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${WHEREAMI_APP}/envs/${ENVIRONMENT}/resources \
+curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources \
 	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
 	-H "Content-Type: application/json" \
 	| jq -c '.[] | select(.type | contains("dns"))' \
