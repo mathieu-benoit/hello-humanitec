@@ -85,4 +85,14 @@ score-humanitec delta \
 ```
 _Note: `loadgenerator` is deployed to generate both: traffic on these apps and data in the database. If you don't want this, feel free to remove it from the above list of `WORKLOADS`._
 
+Get the public DNS exposing the `frontend` Workload
+
+```bash
+curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${WHEREAMI_APP}/envs/${ENVIRONMENT}/resources \
+	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+	-H "Content-Type: application/json" \
+	| jq -c '.[] | select(.type | contains("dns"))' \
+	| jq -r .resource.host
+```
+
 [_Next section: Common setup >>_](/docs/common.md)

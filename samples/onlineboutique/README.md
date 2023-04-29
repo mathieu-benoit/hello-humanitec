@@ -55,3 +55,13 @@ score-humanitec delta \
 	-f ${WORKLOAD}/score.yaml \
 	--extensions ${WORKLOAD}/humanitec.score.yaml
 ```
+
+## Get the public DNS exposing the `frontend` Workloads
+
+```bash
+curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources \
+	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+	-H "Content-Type: application/json" \
+	| jq -c '.[] | select(.type | contains("dns"))' \
+	| jq -r .resource.host
+```

@@ -31,3 +31,13 @@ score-humanitec delta \
 	-f score.yaml \
 	--extensions humanitec.score.yaml
 ```
+
+## Get the public DNS exposing the Whereami Workload
+
+```bash
+curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${WHEREAMI_APP}/envs/${ENVIRONMENT}/resources \
+	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+	-H "Content-Type: application/json" \
+	| jq -c '.[] | select(.type | contains("dns"))' \
+	| jq -r .resource.host
+```
