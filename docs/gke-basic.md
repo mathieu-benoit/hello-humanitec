@@ -2,15 +2,15 @@
 
 # GKE basic setup
 
-- [(Platform admin) Create the GKE cluster in Google Cloud](#platform-admin-create-the-gke-cluster-in-google-cloud)
-- [(Platform admin) Deploy the Nginx Ingress controller in the GKE cluster](#platform-admin-deploy-the-nginx-ingress-controller-in-the-gke-cluster)
-- [(Platform admin) Create the Google Service Account to access the GKE cluster from Humanitec to in Google Cloud](#platform-admin-create-the-google-service-account-to-access-the-gke-cluster-from-humanitec-to-in-google-cloud)
-- [(Platform admin) Create the GKE access resource definition in Humanitec](#platform-admin-create-the-gke-access-resource-definition-in-humanitec)
-- [(Platform admin) Create the `gke-basic` Environment in Humanitec](#platform-admin-create-the-gke-basic-environment-in-humanitec)
-- [(Developer) Deploy the Online Boutique Workloads (with in-cluster `redis`) in `gke-basic` Environment](#developer-deploy-the-online-boutique-workloads-with-in-cluster-redis-in-gke-basic-environment)
-- [(Platform admin) Create a Memorystore (Redis) database](#platform-admin-create-a-memorystore-redis-database)
-- [(Platform admin) Create the Memorystore (Redis) access resource definition in Humanitec](#platform-admin-create-the-memorystore-redis-access-resource-definition-in-humanitec)
-- [(Developer) Deploy the `cartservice` Workload with Memorystore (Redis) in `gke-basic` Environment](#developer-deploy-the-cartservice-workload-with-memorystore-redis-in-gke-basic-environment)
+- [[PA-GCP] Create the GKE cluster](#pa-gcp-create-the-gke-cluster)
+- [[PA-GCP] Deploy the Nginx Ingress controller](#pa-gcp-deploy-the-nginx-ingress-controller)
+- [[PA-GCP] Create the Google Service Account to access the GKE cluster](#pa-gcp-create-the-google-service-account-to-access-the-gke-cluster)
+- [[PA-HUM] Create the GKE access resource definition](#pa-hum-create-the-gke-access-resource-definition)
+- [[PA-HUM] Create the `gke-basic` Environment](#pa-hum-create-the-gke-basic-environment)
+- [[DE-HUM] Deploy the Online Boutique Workloads (with in-cluster `redis`) in `gke-basic` Environment](#de-hum-deploy-the-online-boutique-workloads-with-in-cluster-redis-in-gke-basic-environment)
+- [[PA-GCP] Create a Memorystore (Redis) database](#pa-gcp-create-a-memorystore-redis-database)
+- [[PA-HUM] Create the Memorystore (Redis) access resource definition](#pa-hum-create-the-memorystore-redis-access-resource-definition)
+- [[DE-HUM] Deploy the `cartservice` Workload with Memorystore (Redis) in `gke-basic` Environment](#de-hum-deploy-the-cartservice-workload-with-memorystore-redis-in-gke-basic-environment)
 
 ```mermaid
 flowchart LR
@@ -81,7 +81,7 @@ HUMANITEC_TOKEN=FIXME
 ENVIRONMENT=${CLUSTER_NAME}
 ```
 
-## (Platform admin) Create the GKE cluster in Google Cloud
+## [PA-GCP] Create the GKE cluster
 
 ```bash
 gcloud services enable container.googleapis.com
@@ -98,7 +98,7 @@ gcloud container clusters create ${CLUSTER_NAME} \
 ```
 _Note: here we are restricting the access to the public Kubernetes server API only by Humanitec. If you want to access this cluster from your local machine, you need to add your own IP address here too._
 
-## (Platform admin) Deploy the Nginx Ingress controller in the GKE cluster
+## [PA-GCP] Deploy the Nginx Ingress controller
 
 Deploy the Nginx Ingress Controller:
 ```bash
@@ -114,7 +114,7 @@ INGRESS_IP=$(kubectl get svc ingress-nginx-controller \
     -o jsonpath="{.status.loadBalancer.ingress[*].ip}")
 ```
 
-## (Platform admin) Create the Google Service Account to access the GKE cluster from Humanitec to in Google Cloud
+## [PA-GCP] Create the Google Service Account to access the GKE cluster
 
 Create the Google Service Account (GSA) with the appropriate role:
 ```bash
@@ -133,7 +133,7 @@ gcloud iam service-accounts keys create ${GKE_ADMIN_SA_NAME}.json \
     --iam-account ${GKE_ADMIN_SA_ID}
 ```
 
-## (Platform admin) Create the GKE access resource definition in Humanitec
+## [PA-HUM] Create the GKE access resource definition
 
 ```bash
 curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs \
@@ -170,11 +170,11 @@ Remove the local GSA's key:
 rm ${GKE_ADMIN_SA_NAME}.json
 ```
 
-## (Platform admin) Create the `gke-basic` Environment in Humanitec
+## [PA-HUM] Create the `gke-basic` Environment
 
 FIXME
 
-## (Developer) Deploy the Online Boutique Workloads (with in-cluster `redis`) in `gke-basic` Environment in Humanitec
+## [DE-HUM] Deploy the Online Boutique Workloads (with in-cluster `redis`) in `gke-basic` Environment
 
 ```bash
 FIRST_WORKLOAD="adservice"
@@ -204,7 +204,7 @@ curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP
 	| jq -r .resource.host
 ```
 
-## (Platform admin) Create a Memorystore (Redis) database in Google Cloud
+## [PA-GCP] Create a Memorystore (Redis) database
 
 ```bash
 gcloud services enable redis.googleapis.com
@@ -231,11 +231,11 @@ gcloud redis instances get-auth-string ${REDIS_NAME} \
    --region ${REGION}
 ```
 
-## (Platform admin) Create the Memorystore (Redis) access resource definition in Humanitec
+## [PA-HUM] Create the Memorystore (Redis) access resource definition
 
 FIXME - create a static Redis resource definition
 
-## (Developer) Deploy the `cartservice` Workload with Memorystore (Redis) in `gke-basic` Environment in Humanitec
+## [DE-HUM] Deploy the `cartservice` Workload with Memorystore (Redis) in `gke-basic` Environment
 
 ```bash
 WORKLOAD=cartservice

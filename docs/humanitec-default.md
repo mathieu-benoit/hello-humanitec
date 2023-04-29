@@ -1,7 +1,7 @@
 ## Online Boutique
 
-- [[PA-HUM] Create the Online Boutique App](#platform-admin-create-the-online-boutique-app)
-- [[DE-HUM] Deploy the Online Boutique Workloads (with in-cluster `redis`) in `development` Environment](#developer-deploy-the-online-boutique-workloads-with-in-cluster-redis-in-development-environment)
+- [[PA-HUM] Create the Online Boutique App](#pa-hum-create-the-online-boutique-app)
+- [[DE-HUM] Deploy the Online Boutique Workloads (with in-cluster `redis`) in `development` Environment](#de-hum-deploy-the-online-boutique-workloads-with-in-cluster-redis-in-development-environment)
 
 ```mermaid
 flowchart LR
@@ -48,7 +48,7 @@ HUMANITEC_ORG=FIXME
 HUMANITEC_TOKEN=FIXME
 ```
 
-## (Platform admin) Create the Online Boutique App
+## [PA-HUM] Create the Online Boutique App
 
 ```bash
 ONLINEBOUTIQUE_APP=onlineboutique
@@ -64,7 +64,7 @@ curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps \
 EOF
 ```
 
-## (Developer) Deploy the Online Boutique Workloads (with in-cluster `redis`) in `development` Environment
+## [DE-HUM] Deploy the Online Boutique Workloads (with in-cluster `redis`) in `development` Environment
 
 ```bash
 FIRST_WORKLOAD="adservice"

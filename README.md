@@ -4,6 +4,8 @@
 - **Platform admin** (PA) interacting with either Google Cloud (PA-GCP) or Humanitec (PA-HUM)
 - **Developer** (DE) interacting with Humanitec (DE-HUM)
 
+![personas](/images/personas.png)
+
 Agenda:
 - [Humanitec default setup](./docs/humanitec-default.md)
   - [PA-HUM] Create Online Boutique App
