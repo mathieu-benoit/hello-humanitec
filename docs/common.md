@@ -55,8 +55,8 @@ Here we want to create a dedicated Kubernetes `ServiceAccount` for all our Apps.
 
 ```bash
 cat <<EOF > custom-service-account.yaml
-id: custom-service-account-2
-name: custom-service-account-2
+id: custom-service-account
+name: custom-service-account
 type: k8s-service-account
 driver_type: humanitec/template
 driver_inputs:
@@ -75,7 +75,7 @@ driver_inputs:
       outputs: |
         name: {{ .init.name }}
 criteria:
-  - app_id: whereami
+  - {}
 EOF
 yq -o json custom-service-account.yaml > custom-service-account.json
 curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
@@ -117,7 +117,7 @@ driver_inputs:
               runAsNonRoot: true
               fsGroup: 1000
               runAsGroup: 1000
-             runAsUser: 1000
+              runAsUser: 1000
           {{- range \$containerId, \$value := .resource.spec.containers }}
           - op: add
             path: /spec/containers/{{ \$containerId }}/securityContext

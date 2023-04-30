@@ -1,17 +1,8 @@
-```bash
-PROJECT_ID=FIXME
-gcloud config set project ${PROJECT_ID}
-CLUSTER_NAME=gke-advanced
-REGION=northamerica-northeast1
-ZONE=${REGION}-a
-HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32"
-```
+[_<< Previous section: GKE basic setup_](/docs/gke-basic.md)
 
-## GKE cluster
+# GKE advanced setup
 
-```bash
-gcloud services enable container.googleapis.com
-```
+**UNDER CONSTRUCTION, NOT READY YET... STAY TUNED!**
 
 ```mermaid
 flowchart LR
@@ -41,6 +32,21 @@ flowchart LR
   logging-reader-gsa-.->cloud-logging
   gke-dev-connection-.->gke-admin-gsa
   gke-admin-gsa-.->gke-cluster-dev
+```
+
+```bash
+PROJECT_ID=FIXME
+gcloud config set project ${PROJECT_ID}
+CLUSTER_NAME=gke-advanced
+REGION=northamerica-northeast1
+ZONE=${REGION}-a
+HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32"
+```
+
+## GKE cluster
+
+```bash
+gcloud services enable container.googleapis.com
 ```
 
 ```bash

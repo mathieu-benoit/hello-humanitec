@@ -145,33 +145,27 @@ gcloud iam service-accounts keys create ${GKE_ADMIN_SA_NAME}.json \
 As Platform Admin, in Humanitec.
 
 ```bash
-curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs \
-  -X POST \
-  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+cat <<EOF > ${CLUSTER_NAME}.yaml
+id: ${CLUSTER_NAME}
+name: ${CLUSTER_NAME}
+type: k8s-cluster
+driver_type: humanitec/k8s-cluster-gke
+driver_inputs:
+  values:
+    loadbalancer: ${INGRESS_IP}
+    name: gke-dev
+    project_id: ${PROJECT_ID}
+    zone: ${ZONE}
+  secrets:
+    credentials: $(cat ${GKE_ADMIN_SA_NAME}.json)
+criteria:
+  - env_id: ${ENVIRONMENT}
+EOF
+yq -o json ${CLUSTER_NAME}.yaml > ${CLUSTER_NAME}.json
+curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
   -H "Content-Type: application/json" \
-  --data-binary "
-{
-  "id": "${CLUSTER_NAME}",
-  "name": "${CLUSTER_NAME}",
-  "type": "k8s-cluster",
-  "criteria": [
-    {
-      "env_id": "${ENVIRONMENT}"
-    }
-  ],
-  "driver_type": "humanitec/k8s-cluster-gke",
-  "driver_inputs": {
-    "values": {
-      "loadbalancer": ${INGRESS_IP}
-      "name": ${CLUSTER_NAME}
-      "project_id":${PROJECT_ID}
-      "zone": ${ZONE}
-    },
-    "secrets": {
-      "credentials": $(cat ${GKE_ADMIN_SA_NAME}.json)
-    }
-  }
-}"
+	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+  -d @${CLUSTER_NAME}.json
 ```
 
 Clean sensitive information locally:
@@ -183,7 +177,28 @@ rm ${GKE_ADMIN_SA_NAME}.json
 
 As Platform Admin, in Humanitec.
 
-FIXME
+Get the last Deployment's id for the `development` Environment:
+```bash
+LAST_DEPLOYMENT_IN_DEVELOPMENT=$(curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/deploys \
+	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+	-H "Content-Type: application/json" \
+	| jq -r .[0].id)
+```
+
+Create the `gke-basic` Environment based on the last Deployment in the `development` Environment:
+```bash
+cat <<EOF > ${ENVIRONMENT}-env.yaml
+from_deploy_id: ${LAST_DEPLOYMENT_IN_DEVELOPMENT}
+id: ${ENVIRONMENT}
+name: ${ENVIRONMENT}
+type: development
+EOF
+yq -o json ${ENVIRONMENT}-env.yaml > ${ENVIRONMENT}-env.json
+curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs" \
+  -H "Content-Type: application/json" \
+	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+  -d @${ENVIRONMENT}-env.json
+```
 
 ## [DE-HUM] Deploy the Online Boutique Workloads (with in-cluster `redis`) in `gke-basic` Environment
 
@@ -267,9 +282,9 @@ criteria:
 EOF
 yq -o json ${REDIS_NAME}.yaml > ${REDIS_NAME}.json
 curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
-  	-H "Content-Type: application/json" \
+  -H "Content-Type: application/json" \
 	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  	-d @${REDIS_NAME}.json
+  -d @${REDIS_NAME}.json
 ```
 
 Clean sensitive information locally:
