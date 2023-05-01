@@ -2,7 +2,7 @@
 
 ```bash
 SAMPLE_APPS_APP=sample-apps
-curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps \
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps" \
 	-X POST \
 	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
 	-H "Content-Type: application/json" \
@@ -54,7 +54,7 @@ score-humanitec delta \
 ## Get the public DNS exposing the Sample App Workload
 
 ```bash
-curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${SAMPLE_APPS_APP}/envs/${ENVIRONMENT}/resources \
+curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${SAMPLE_APPS_APP}/envs/${ENVIRONMENT}/resources" \
 	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
 	-H "Content-Type: application/json" \
 	| jq -c '.[] | select(.type | contains("dns"))' \

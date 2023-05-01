@@ -162,10 +162,11 @@ criteria:
   - env_id: ${ENVIRONMENT}
 EOF
 yq -o json ${CLUSTER_NAME}.yaml > ${CLUSTER_NAME}.json
-curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
-  -H "Content-Type: application/json" \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  -d @${CLUSTER_NAME}.json
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+    -X POST \
+    -H "Content-Type: application/json" \
+	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -d @${CLUSTER_NAME}.json
 ```
 
 Clean sensitive information locally:
@@ -179,10 +180,10 @@ As Platform Admin, in Humanitec.
 
 Get the last Deployment's id for the `development` Environment:
 ```bash
-LAST_DEPLOYMENT_IN_DEVELOPMENT=$(curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/development/deploys \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-	-H "Content-Type: application/json" \
-	| jq -r .[0].id)
+LAST_DEPLOYMENT_IN_DEVELOPMENT=$(curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/development/deploys" \
+	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+	  -H "Content-Type: application/json" \
+	  | jq -r .[0].id)
 ```
 
 Create the `gke-basic` Environment based on the last Deployment in the `development` Environment:
@@ -194,10 +195,11 @@ name: ${ENVIRONMENT}
 type: development
 EOF
 yq -o json ${ENVIRONMENT}-env.yaml > ${ENVIRONMENT}-env.json
-curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs" \
-  -H "Content-Type: application/json" \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  -d @${ENVIRONMENT}-env.json
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs" \
+    -X POST \
+    -H "Content-Type: application/json" \
+	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -d @${ENVIRONMENT}-env.json
 ```
 
 ## [DE-HUM] Deploy the Online Boutique Workloads (with in-cluster `redis`) in `gke-basic` Environment
@@ -225,11 +227,11 @@ _Note: `loadgenerator` is deployed to generate both: traffic on these apps and d
 
 Get the public DNS exposing the `frontend` Workload:
 ```bash
-curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-	-H "Content-Type: application/json" \
-	| jq -c '.[] | select(.type | contains("dns"))' \
-	| jq -r .resource.host
+curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
+	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+	  -H "Content-Type: application/json" \
+	  | jq -c '.[] | select(.type | contains("dns"))' \
+	  | jq -r .resource.host
 ```
 
 ## [PA-GCP] Create a Memorystore (Redis) database
@@ -281,10 +283,11 @@ criteria:
   - env_id: ${ENVIRONMENT}
 EOF
 yq -o json ${REDIS_NAME}.yaml > ${REDIS_NAME}.json
-curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
-  -H "Content-Type: application/json" \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  -d @${REDIS_NAME}.json
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+    -X POST \
+    -H "Content-Type: application/json" \
+	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -d @${REDIS_NAME}.json
 ```
 
 Clean sensitive information locally:
@@ -299,23 +302,23 @@ As Developer, in Humanitec.
 ```bash
 WORKLOAD=cartservice
 score-humanitec delta \
-	--app ${ONLINEBOUTIQUE_APP} \
-	--env ${ENVIRONMENT} \
-	--org ${HUMANITEC_ORG} \
-	--token ${HUMANITEC_TOKEN} \
-	--deploy \
-	--retry \
-	-f ${WORKLOAD}/score-memorystore.yaml \
-	--extensions ${WORKLOAD}/humanitec.score.yaml
+	  --app ${ONLINEBOUTIQUE_APP} \
+	  --env ${ENVIRONMENT} \
+	  --org ${HUMANITEC_ORG} \
+	  --token ${HUMANITEC_TOKEN} \
+	  --deploy \
+	  --retry \
+	  -f ${WORKLOAD}/score-memorystore.yaml \
+	  --extensions ${WORKLOAD}/humanitec.score.yaml
 ```
 
 Get the public DNS exposing the `frontend` Workload:
 ```bash
-curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-	-H "Content-Type: application/json" \
-	| jq -c '.[] | select(.type | contains("dns"))' \
-	| jq -r .resource.host
+curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
+	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+	  -H "Content-Type: application/json" \
+	  | jq -c '.[] | select(.type | contains("dns"))' \
+	  | jq -r .resource.host
 ```
 
 [_Next section: GKE advanced setup >>_](/docs/gke-advanced.md)

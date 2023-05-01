@@ -41,9 +41,10 @@ criteria:
   - {}
 EOF
 yq -o json custom-namespace.yaml > custom-namespace.json
-curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+    -X POST \
   	-H "Content-Type: application/json" \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
   	-d @custom-namespace.json
 ```
 
@@ -78,9 +79,10 @@ criteria:
   - {}
 EOF
 yq -o json custom-service-account.yaml > custom-service-account.json
-curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+    -X POST \
   	-H "Content-Type: application/json" \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
   	-d @custom-service-account.json
 ```
 
@@ -133,9 +135,10 @@ criteria:
   - {}
 EOF
 yq -o json custom-workload.yaml > custom-workload.json
-curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+    -X POST \
   	-H "Content-Type: application/json" \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
   	-d @custom-workload.json
 ```
 

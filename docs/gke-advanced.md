@@ -129,7 +129,7 @@ gcloud iam service-accounts keys create ${GKE_ADMIN_SA_NAME}.json \
 ```bash
 HUMANITEC_ORG=FIXME
 HUMANITEC_TOKEN=FIXME
-curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs \
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
   -X POST \
   -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
   -H "Content-Type: application/json" \
@@ -212,8 +212,9 @@ criteria:
   - {}
 EOF
 yq -o json custom-sa.yaml > custom-sa.json
-curl -X POST "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+    -X POST \
   	-H "Content-Type: application/json" \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
   	-d @custom-sa.json
 ```
