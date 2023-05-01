@@ -4,6 +4,8 @@
 
 **UNDER CONSTRUCTION, NOT READY YET... STAY TUNED!**
 
+- [[PA-GCP] Create the GKE cluster](#pa-gcp-create-the-gke-cluster)
+
 ```mermaid
 flowchart LR
   subgraph Humanitec
@@ -41,25 +43,35 @@ CLUSTER_NAME=gke-advanced
 REGION=northamerica-northeast1
 ZONE=${REGION}-a
 HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32"
+LOCAL_IP_ADRESS=$(curl ifconfig.co)
+
+HUMANITEC_ORG=FIXME
+HUMANITEC_TOKEN=FIXME
+
+ENVIRONMENT=${CLUSTER_NAME}
 ```
 
-## GKE cluster
+## [PA-GCP] Create the GKE cluster
+
+As Platform Admin, in Google Cloud.
 
 ```bash
 gcloud services enable container.googleapis.com
 ```
 
+Create a least privilege Google Service Account for the nodes of the GKE cluster:
 ```bash
-# Least Privilege Service Account for default node pool
 gcloud services enable cloudresourcemanager.googleapis.com
 GKE_NODE_SA_NAME=${CLUSTER_NAME}
 GKE_NODE_SA_ID=${GKE_NODE_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
 gcloud iam service-accounts create ${GKE_NODE_SA_NAME} \
-  --display-name=${GKE_NODE_SA_NAME}
+    --display-name=${GKE_NODE_SA_NAME}
 roles="roles/logging.logWriter roles/monitoring.metricWriter roles/monitoring.viewer"
 for r in $roles; do gcloud projects add-iam-policy-binding ${PROJECT_ID} --member "serviceAccount:${GKE_NODE_SA_ID}" --role $r; done
-  
-## Artifact Registry
+```
+
+Create an Artifact Registry repository in order to store the container images:
+```bash
 gcloud services enable artifactregistry.googleapis.com
 gcloud services enable containeranalysis.googleapis.com
 gcloud services enable containerscanning.googleapis.com
@@ -71,32 +83,51 @@ gcloud artifacts repositories add-iam-policy-binding ${CONTAINERS_REGISTRY_NAME}
     --location ${REGION} \
     --member "serviceAccount:${GKE_NODE_SA_ID}" \
     --role roles/artifactregistry.reader
+```
 
-# GKE Security posture
-gcloud services enable containersecurity.googleapis.com
-
+Create the GKE cluster with advanced and secure features (like Workload Identity, Network Policies, Confidential nodes, private nodes)
+```bash
 gcloud container clusters create ${CLUSTER_NAME} \
     --zone ${ZONE} \
     --scopes cloud-platform \
     --workload-pool=${PROJECT_ID}.svc.id.goog \
     --enable-master-authorized-networks \
-    --master-authorized-networks ${HUMANITEC_IP_ADDRESSES} \
+    --master-authorized-networks ${HUMANITEC_IP_ADDRESSES},${LOCAL_IP_ADRESS}/32 \
     --no-enable-google-cloud-access \
+    --enable-ip-alias \
+    --enable-private-nodes \
+    --master-ipv4-cidr 172.16.0.32/28 \
     --service-account ${GKE_NODE_SA_ID} \
-    --enable-workload-vulnerability-scanning \
-    --enable-workload-config-audit \
+    --machine-type n2d-standard-4 \
     --enable-confidential-nodes \
     --release-channel rapid \
     --enable-dataplane-v2 \
+    --enable-shielded-nodes \
+    --shielded-integrity-monitoring \
     --shielded-secure-boot
+```
+
+Create a Cloud NAT router in order to access the public internet in egress from the GKE cluster:
+```bash
+gcloud compute routers create ${CLUSTER_NAME} \
+    --network default \
+    --region ${REGION}
+gcloud compute routers nats create ${CLUSTER_NAME} \
+    --router-region ${REGION} \
+    --router ${CLUSTER_NAME} \
+    --nat-all-subnet-ip-ranges \
+    --auto-allocate-nat-external-ips
 ```
 
 ## Ingress controller
 
 Deploy the Ingress Controller:
 ```bash
-kubectl apply \
-    -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/cloud/deploy.yaml
+helm upgrade \
+    --install ingress-nginx ingress-nginx \
+    --repo https://kubernetes.github.io/ingress-nginx \
+    --namespace ingress-nginx \
+    --create-namespace
 ```
 
 Let’s grab the Public IP address of that Ingress Controller:
@@ -110,7 +141,7 @@ INGRESS_IP=$(kubectl get svc ingress-nginx-controller \
 
 ```bash
 GKE_ADMIN_SA_NAME=humanitec-gke-dev
-GKE_ADMIN_SA_ID=${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
+GKE_ADMIN_SA_ID=${GKE_ADMIN_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
 gcloud iam service-accounts create ${GKE_ADMIN_SA_NAME} \
 	--display-name=${GKE_ADMIN_SA_NAME}
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
