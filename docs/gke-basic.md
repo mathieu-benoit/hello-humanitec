@@ -98,7 +98,6 @@ gcloud container clusters create ${CLUSTER_NAME} \
     --master-authorized-networks ${HUMANITEC_IP_ADDRESSES},${LOCAL_IP_ADRESS}/32 \
     --no-enable-google-cloud-access
 ```
-_Note: here we are restricting the access to the public Kubernetes server API only by Humanitec. If you want to access this cluster from your local machine, you need to add your own IP address here too._
 
 ## [PA-GCP] Deploy the Nginx Ingress controller
 
@@ -126,7 +125,7 @@ As Platform Admin, in Google Cloud.
 
 Create the Google Service Account (GSA) with the appropriate role:
 ```bash
-GKE_ADMIN_SA_NAME=humanitec-access-to-${CLUSTER_NAME}
+GKE_ADMIN_SA_NAME=humanitec-to-${CLUSTER_NAME}
 GKE_ADMIN_SA_ID=${GKE_ADMIN_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
 gcloud iam service-accounts create ${GKE_ADMIN_SA_NAME} \
     --display-name=${GKE_ADMIN_SA_NAME}
@@ -154,7 +153,7 @@ driver_type: humanitec/k8s-cluster-gke
 driver_inputs:
   values:
     loadbalancer: ${INGRESS_IP}
-    name: gke-dev
+    name: ${CLUSTER_NAME}
     project_id: ${PROJECT_ID}
     zone: ${ZONE}
   secrets:
