@@ -128,10 +128,10 @@ Create the Google Service Account (GSA) with the appropriate role:
 GKE_ADMIN_SA_NAME=humanitec-access-to-${CLUSTER_NAME}
 GKE_ADMIN_SA_ID=${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
 gcloud iam service-accounts create ${GKE_ADMIN_SA_NAME} \
-	--display-name=${GKE_ADMIN_SA_NAME}
+    --display-name=${GKE_ADMIN_SA_NAME}
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-	--member "serviceAccount:${GKE_ADMIN_SA_ID}" \
-	--role "roles/container.admin"
+    --member "serviceAccount:${GKE_ADMIN_SA_ID}" \
+    --role "roles/container.admin"
 ```
 
 Download locally the GSA key:
@@ -165,7 +165,7 @@ yq -o json ${CLUSTER_NAME}.yaml > ${CLUSTER_NAME}.json
 curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
     -X POST \
     -H "Content-Type: application/json" \
-	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
     -d @${CLUSTER_NAME}.json
 ```
 
@@ -181,9 +181,9 @@ As Platform Admin, in Humanitec.
 Get the last Deployment's id for the `development` Environment:
 ```bash
 LAST_DEPLOYMENT_IN_DEVELOPMENT=$(curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/development/deploys" \
-	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-	  -H "Content-Type: application/json" \
-	  | jq -r .[0].id)
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Content-Type: application/json" \
+    | jq -r .[0].id)
 ```
 
 Create the `gke-basic` Environment based on the last Deployment in the `development` Environment:
@@ -198,7 +198,7 @@ yq -o json ${ENVIRONMENT}-env.yaml > ${ENVIRONMENT}-env.json
 curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs" \
     -X POST \
     -H "Content-Type: application/json" \
-	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
     -d @${ENVIRONMENT}-env.json
 ```
 
@@ -213,25 +213,25 @@ WORKLOADS="cartservice checkoutservice currencyservice emailservice frontend loa
 for w in ${WORKLOADS}; do COMBINED_DELTA=$(score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --delta ${COMBINED_DELTA} --retry -f $w/score.yaml --extensions $w/humanitec.score.yaml | jq -r .id); done
 LAST_WORKLOAD="shippingservice"
 score-humanitec delta \
-	--app ${ONLINEBOUTIQUE_APP} \
-	--env ${ENVIRONMENT} \
-	--org ${HUMANITEC_ORG} \
-	--token ${HUMANITEC_TOKEN} \
-	--deploy \
-	--delta ${COMBINED_DELTA} \
-	--retry \
-	-f ${LAST_WORKLOAD}/score.yaml \
-	--extensions ${LAST_WORKLOAD}/humanitec.score.yaml
+    --app ${ONLINEBOUTIQUE_APP} \
+    --env ${ENVIRONMENT} \
+    --org ${HUMANITEC_ORG} \
+    --token ${HUMANITEC_TOKEN} \
+    --deploy \
+    --delta ${COMBINED_DELTA} \
+    --retry \
+    -f ${LAST_WORKLOAD}/score.yaml \
+    --extensions ${LAST_WORKLOAD}/humanitec.score.yaml
 ```
 _Note: `loadgenerator` is deployed to generate both: traffic on these apps and data in the database. If you don't want this, feel free to remove it from the above list of `WORKLOADS`._
 
 Get the public DNS exposing the `frontend` Workload:
 ```bash
 curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
-	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-	  -H "Content-Type: application/json" \
-	  | jq -c '.[] | select(.type | contains("dns"))' \
-	  | jq -r .resource.host
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Content-Type: application/json" \
+    | jq -c '.[] | select(.type | contains("dns"))' \
+    | jq -r .resource.host
 ```
 
 ## [PA-GCP] Create a Memorystore (Redis) database
@@ -286,7 +286,7 @@ yq -o json ${REDIS_NAME}.yaml > ${REDIS_NAME}.json
 curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
     -X POST \
     -H "Content-Type: application/json" \
-	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
     -d @${REDIS_NAME}.json
 ```
 
@@ -302,23 +302,23 @@ As Developer, in Humanitec.
 ```bash
 WORKLOAD=cartservice
 score-humanitec delta \
-	  --app ${ONLINEBOUTIQUE_APP} \
-	  --env ${ENVIRONMENT} \
-	  --org ${HUMANITEC_ORG} \
-	  --token ${HUMANITEC_TOKEN} \
-	  --deploy \
-	  --retry \
-	  -f ${WORKLOAD}/score-memorystore.yaml \
-	  --extensions ${WORKLOAD}/humanitec.score.yaml
+    --app ${ONLINEBOUTIQUE_APP} \
+    --env ${ENVIRONMENT} \
+    --org ${HUMANITEC_ORG} \
+    --token ${HUMANITEC_TOKEN} \
+    --deploy \
+    --retry \
+    -f ${WORKLOAD}/score-memorystore.yaml \
+    --extensions ${WORKLOAD}/humanitec.score.yaml
 ```
 
 Get the public DNS exposing the `frontend` Workload:
 ```bash
 curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
-	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-	  -H "Content-Type: application/json" \
-	  | jq -c '.[] | select(.type | contains("dns"))' \
-	  | jq -r .resource.host
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Content-Type: application/json" \
+    | jq -c '.[] | select(.type | contains("dns"))' \
+    | jq -r .resource.host
 ```
 
 [_Next section: GKE advanced setup >>_](/docs/gke-advanced.md)

@@ -43,9 +43,9 @@ EOF
 yq -o json custom-namespace.yaml > custom-namespace.json
 curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
     -X POST \
-  	-H "Content-Type: application/json" \
-	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  	-d @custom-namespace.json
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -d @custom-namespace.json
 ```
 
 ### [PA-HUM] Create a custom `ServiceAccount` resource definition
@@ -81,9 +81,9 @@ EOF
 yq -o json custom-service-account.yaml > custom-service-account.json
 curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
     -X POST \
-  	-H "Content-Type: application/json" \
-	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  	-d @custom-service-account.json
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -d @custom-service-account.json
 ```
 
 ### [PA-HUM] Create a custom Workload resource definition
@@ -137,9 +137,9 @@ EOF
 yq -o json custom-workload.yaml > custom-workload.json
 curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
     -X POST \
-  	-H "Content-Type: application/json" \
-	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  	-d @custom-workload.json
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -d @custom-workload.json
 ```
 
 [_Next section: GKE basic setup >>_](/docs/gke-basic.md)
