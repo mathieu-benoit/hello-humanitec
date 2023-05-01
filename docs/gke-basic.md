@@ -206,7 +206,7 @@ curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/
 
 Get the current Delta in draft mode in the newly created Environment:
 ```bash
-DRAFT_DELTA_IN_GKE_BASIC=$(curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/deltas?env=${ENVIRONMENT}" \
+DRAFT_DELTA_IN_NEW_ENVIRONMENT=$(curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/deltas?env=${ENVIRONMENT}" \
     -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
     -H "Content-Type: application/json" \
     | jq -r .[0].id)
@@ -221,7 +221,7 @@ curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/e
 	-d @- <<EOF
 {
   "comment": "Deploy App based on cloned Environment.",
-  "delta_id": "${DRAFT_DELTA_IN_GKE_BASIC}"
+  "delta_id": "${DRAFT_DELTA_IN_NEW_ENVIRONMENT}"
 }
 EOF
 ```
