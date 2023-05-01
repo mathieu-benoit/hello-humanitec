@@ -182,7 +182,8 @@ As Platform Admin, in Humanitec.
 Get the latest Deployment's id of the existing Environment:
 ```bash
 CLONED_ENVIRONMENT=development
-LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT=$(curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${CLONED_ENVIRONMENT}/deploys" \
+LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT=$(curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${CLONED_ENVIRONMENT}/deploys" \
+    -s \
     -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
     -H "Content-Type: application/json" \
     | jq -r .[0].id)
@@ -206,7 +207,8 @@ curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/
 
 Get the current Delta in draft mode in the newly created Environment:
 ```bash
-DRAFT_DELTA_IN_NEW_ENVIRONMENT=$(curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/deltas?env=${ENVIRONMENT}" \
+DRAFT_DELTA_IN_NEW_ENVIRONMENT=$(curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/deltas?env=${ENVIRONMENT}" \
+    -s \
     -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
     -H "Content-Type: application/json" \
     | jq -r .[0].id)
@@ -215,10 +217,10 @@ DRAFT_DELTA_IN_NEW_ENVIRONMENT=$(curl -s "https://api.humanitec.io/orgs/${HUMANI
 Deploy current Delta in draft mode:
 ```bash
 curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/deploys \
-	-X POST \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-	-H "Content-Type: application/json" \
-	-d @- <<EOF
+    -X POST \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Content-Type: application/json" \
+    -d @- <<EOF
 {
   "comment": "Deploy App based on cloned Environment.",
   "delta_id": "${DRAFT_DELTA_IN_NEW_ENVIRONMENT}"
@@ -228,7 +230,8 @@ EOF
 
 Get the public DNS exposing the `frontend` Workload:
 ```bash
-curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
+    -s \
     -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
     -H "Content-Type: application/json" \
     | jq -c '.[] | select(.type | contains("dns"))' \
@@ -315,7 +318,8 @@ score-humanitec delta \
 
 Get the public DNS exposing the `frontend` Workload:
 ```bash
-curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
+    -s \
     -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
     -H "Content-Type: application/json" \
     | jq -c '.[] | select(.type | contains("dns"))' \

@@ -35,7 +35,8 @@ score-humanitec delta \
 ## Get the public DNS exposing the Sample Score Workload
 
 ```bash
-curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${SAMPLE_SCORE_APP}/envs/${ENVIRONMENT}/resources" \
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${SAMPLE_SCORE_APP}/envs/${ENVIRONMENT}/resources" \
+	-s \
 	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
 	-H "Content-Type: application/json" \
 	| jq -c '.[] | select(.type | contains("dns"))' \
