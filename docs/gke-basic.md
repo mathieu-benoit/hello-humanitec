@@ -74,6 +74,7 @@ CLUSTER_NAME=gke-basic
 REGION=northamerica-northeast1
 ZONE=${REGION}-a
 HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32"
+LOCAL_IP_ADRESS=$(curl ifconfig.co)
 
 HUMANITEC_ORG=FIXME
 HUMANITEC_TOKEN=FIXME
@@ -92,10 +93,9 @@ gcloud services enable container.googleapis.com
 ```bash
 gcloud container clusters create ${CLUSTER_NAME} \
     --zone ${ZONE} \
-    --scopes cloud-platform \
     --workload-pool=${PROJECT_ID}.svc.id.goog \
     --enable-master-authorized-networks \
-    --master-authorized-networks ${HUMANITEC_IP_ADDRESSES} \
+    --master-authorized-networks ${HUMANITEC_IP_ADDRESSES},${LOCAL_IP_ADRESS}/32 \
     --no-enable-google-cloud-access
 ```
 _Note: here we are restricting the access to the public Kubernetes server API only by Humanitec. If you want to access this cluster from your local machine, you need to add your own IP address here too._
@@ -125,7 +125,7 @@ As Platform Admin, in Google Cloud.
 Create the Google Service Account (GSA) with the appropriate role:
 ```bash
 GKE_ADMIN_SA_NAME=humanitec-access-to-${CLUSTER_NAME}
-GKE_ADMIN_SA_ID=${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
+GKE_ADMIN_SA_ID=${GKE_ADMIN_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
 gcloud iam service-accounts create ${GKE_ADMIN_SA_NAME} \
     --display-name=${GKE_ADMIN_SA_NAME}
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
