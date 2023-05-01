@@ -27,7 +27,7 @@ Agenda:
   - [PA-HUM] Create `gke-advanced` Environment
   - [PA-GCP] Create a Spanner database
   - [PA-GCP] Create Kubernetes and Google Service Accounts to access Spanner via Workload Identity
-  - [DE-HUM] Deploy `cartservice` Workload connecting to Memorystore (Redis) database in `gke-advanced` Environment
+  - [DE-HUM] Deploy `cartservice` Workload connecting to Spanner database in `gke-advanced` Environment
 
 
 Backlog and future considerations:
