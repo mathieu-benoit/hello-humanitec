@@ -7,7 +7,6 @@
 - [[PA-GCP] Create the Google Service Account to access the GKE cluster](#pa-gcp-create-the-google-service-account-to-access-the-gke-cluster)
 - [[PA-HUM] Create the GKE access resource definition](#pa-hum-create-the-gke-access-resource-definition)
 - [[PA-HUM] Create the `gke-basic` Environment](#pa-hum-create-the-gke-basic-environment)
-- [[DE-HUM] Deploy the Online Boutique Workloads (with in-cluster `redis`) in `gke-basic` Environment](#de-hum-deploy-the-online-boutique-workloads-with-in-cluster-redis-in-gke-basic-environment)
 - [[PA-GCP] Create a Memorystore (Redis) database](#pa-gcp-create-a-memorystore-redis-database)
 - [[PA-HUM] Create the Memorystore (Redis) access resource definition](#pa-hum-create-the-memorystore-redis-access-resource-definition)
 - [[DE-HUM] Deploy the `cartservice` Workload with Memorystore (Redis) in `gke-basic` Environment](#de-hum-deploy-the-cartservice-workload-with-memorystore-redis-in-gke-basic-environment)
@@ -172,58 +171,60 @@ curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
 Clean sensitive information locally:
 ```bash
 rm ${GKE_ADMIN_SA_NAME}.json
+rm ${CLUSTER_NAME}.yaml
+rm ${CLUSTER_NAME}.json
 ```
 
 ## [PA-HUM] Create the `gke-basic` Environment
 
 As Platform Admin, in Humanitec.
 
-Get the last Deployment's id for the `development` Environment:
+Get the latest Deployment's id of the existing Environment:
 ```bash
-LAST_DEPLOYMENT_IN_DEVELOPMENT=$(curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/development/deploys" \
+CLONED_ENVIRONMENT=development
+LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT=$(curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${CLONED_ENVIRONMENT}/deploys" \
     -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
     -H "Content-Type: application/json" \
     | jq -r .[0].id)
 ```
 
-Create the `gke-basic` Environment based on the last Deployment in the `development` Environment:
+Create the new Environment by cloning the existing Environment from its latest Deployment:
 ```bash
-cat <<EOF > ${ENVIRONMENT}-env.yaml
-from_deploy_id: ${LAST_DEPLOYMENT_IN_DEVELOPMENT}
+cat <<EOF > ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.yaml
+from_deploy_id: ${LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT}
 id: ${ENVIRONMENT}
 name: ${ENVIRONMENT}
 type: development
 EOF
-yq -o json ${ENVIRONMENT}-env.yaml > ${ENVIRONMENT}-env.json
+yq -o json ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.yaml > ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.json
 curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs" \
     -X POST \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -d @${ENVIRONMENT}-env.json
+    -d @${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.json
 ```
 
-## [DE-HUM] Deploy the Online Boutique Workloads (with in-cluster `redis`) in `gke-basic` Environment
-
-As Developer, in Humanitec.
-
+Get the current Delta in draft mode in the newly created Environment:
 ```bash
-FIRST_WORKLOAD="adservice"
-COMBINED_DELTA=$(score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --retry -f ${FIRST_WORKLOAD}/score.yaml --extensions ${FIRST_WORKLOAD}/humanitec.score.yaml | jq -r .id)
-WORKLOADS="cartservice checkoutservice currencyservice emailservice frontend loadgenerator paymentservice productcatalogservice recommendationservice redis"
-for w in ${WORKLOADS}; do COMBINED_DELTA=$(score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --delta ${COMBINED_DELTA} --retry -f $w/score.yaml --extensions $w/humanitec.score.yaml | jq -r .id); done
-LAST_WORKLOAD="shippingservice"
-score-humanitec delta \
-    --app ${ONLINEBOUTIQUE_APP} \
-    --env ${ENVIRONMENT} \
-    --org ${HUMANITEC_ORG} \
-    --token ${HUMANITEC_TOKEN} \
-    --deploy \
-    --delta ${COMBINED_DELTA} \
-    --retry \
-    -f ${LAST_WORKLOAD}/score.yaml \
-    --extensions ${LAST_WORKLOAD}/humanitec.score.yaml
+DRAFT_DELTA_IN_GKE_BASIC=$(curl -s "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/deltas?env=${ENVIRONMENT}" \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Content-Type: application/json" \
+    | jq -r .[0].id)
 ```
-_Note: `loadgenerator` is deployed to generate both: traffic on these apps and data in the database. If you don't want this, feel free to remove it from the above list of `WORKLOADS`._
+
+Deploy current Delta in draft mode:
+```bash
+curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/deploys \
+	-X POST \
+	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+	-H "Content-Type: application/json" \
+	-d @- <<EOF
+{
+  "comment": "Deploy App based on cloned Environment.",
+  "delta_id": "${DRAFT_DELTA_IN_GKE_BASIC}"
+}
+EOF
+```
 
 Get the public DNS exposing the `frontend` Workload:
 ```bash
