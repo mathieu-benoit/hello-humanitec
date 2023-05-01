@@ -179,7 +179,7 @@ As Platform Admin, in Humanitec.
 
 Get the last Deployment's id for the `development` Environment:
 ```bash
-LAST_DEPLOYMENT_IN_DEVELOPMENT=$(curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/deploys \
+LAST_DEPLOYMENT_IN_DEVELOPMENT=$(curl -s https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/development/deploys \
 	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
 	-H "Content-Type: application/json" \
 	| jq -r .[0].id)
