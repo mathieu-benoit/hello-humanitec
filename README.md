@@ -20,7 +20,7 @@ Agenda:
   - [PA-HUM] Create `gke-basic` Environment
   - [PA-GCP] Create a Memorystore (Redis) database
   - [DE-HUM] Deploy `cartservice` Workload connecting to Memorystore (Redis) database in `gke-basic` Environment
-- [GKE advanced setup](./docs/gke-advanced.md)
+- [GKE advanced setup - _under construction_](./docs/gke-advanced.md)
   - [PA-GCP] Create advanced and secured GKE setup
   - [PA-GCP] Deploy an Nginx Ingress controller
   - [PA-GCP] Protect the Nginx Ingress controller behind a Global Cloud Load Balancer (GCLB) and Cloud Armor (WAF)
