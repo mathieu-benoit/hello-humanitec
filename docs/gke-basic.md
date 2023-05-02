@@ -215,7 +215,9 @@ DRAFT_DELTA_IN_NEW_ENVIRONMENT=$(curl "https://api.humanitec.io/orgs/${HUMANITEC
     -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
     -H "Content-Type: application/json" \
     | jq -r .[0].id)
+echo ${DRAFT_DELTA_IN_NEW_ENVIRONMENT}
 ```
+_Note: re-run the above commands until you get a value for `DRAFT_DELTA_IN_NEW_ENVIRONMENT`._
 
 Deploy current Delta in draft mode:
 ```bash
@@ -240,6 +242,7 @@ curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/
     | jq -c '.[] | select(.type | contains("dns"))' \
     | jq -r .resource.host
 ```
+_Note: re-run the above command until you get a value._
 
 ## [PA-GCP] Create a Memorystore (Redis) database
 

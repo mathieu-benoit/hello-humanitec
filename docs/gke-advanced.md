@@ -2,8 +2,6 @@
 
 # GKE advanced setup
 
-**UNDER CONSTRUCTION, NOT READY YET... STAY TUNED!**
-
 - [[PA-GCP] Create the GKE cluster](#pa-gcp-create-the-gke-cluster)
 - [[PA-GCP] Deploy the Nginx Ingress controller](#pa-gcp-deploy-the-nginx-ingress-controller)
 - [[PA-GCP] Create the Google Service Account to access the GKE cluster](#pa-gcp-create-the-google-service-account-to-access-the-gke-cluster)
@@ -150,11 +148,11 @@ INGRESS_IP=$(kubectl get svc ingress-nginx-controller \
 Allow Kubernetes master nodes to talk to the node pool on port `8443` for Nginx Ingress controller:
 ```bash
 gcloud compute firewall-rules create k8s-masters-to-nodes-on-8443 \
-   --network default \
-   --direction INGRESS \
-   --source-ranges ${CLUSTER_MASTER_IP_CIDR} \
-   --target-tags ${CLUSTER_FIREWALL_RULE_TAG} \
-   --allow tcp:8443
+    --network default \
+    --direction INGRESS \
+    --source-ranges ${CLUSTER_MASTER_IP_CIDR} \
+    --target-tags ${CLUSTER_FIREWALL_RULE_TAG} \
+    --allow tcp:8443
 ```
 
 ## [PA-GCP] Create the Google Service Account to access the GKE cluster
@@ -310,7 +308,9 @@ DRAFT_DELTA_IN_NEW_ENVIRONMENT=$(curl "https://api.humanitec.io/orgs/${HUMANITEC
     -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
     -H "Content-Type: application/json" \
     | jq -r .[0].id)
+echo ${DRAFT_DELTA_IN_NEW_ENVIRONMENT}
 ```
+_Note: re-run the above commands until you get a value for `DRAFT_DELTA_IN_NEW_ENVIRONMENT`._
 
 Deploy current Delta in draft mode:
 ```bash
@@ -335,6 +335,9 @@ curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/
     | jq -c '.[] | select(.type | contains("dns"))' \
     | jq -r .resource.host
 ```
+_Note: re-run the above command until you get a value._
+
+**BELOW IS UNDER CONSTRUCTION, NOT READY YET... STAY TUNED!**
 
 ### Custom Service Account resource definition
 
