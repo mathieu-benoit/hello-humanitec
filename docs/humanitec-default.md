@@ -98,5 +98,6 @@ curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/
 	  | jq -c '.[] | select(.type | contains("dns"))' \
 	  | jq -r .resource.host
 ```
+_Note: re-run the above command until you get a value._
 
 [_Next section: Common setup >>_](/docs/common.md)

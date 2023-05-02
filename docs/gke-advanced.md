@@ -7,6 +7,7 @@
 - [[PA-GCP] Create the Google Service Account to access the GKE cluster](#pa-gcp-create-the-google-service-account-to-access-the-gke-cluster)
 - [[PA-HUM] Create the GKE access resource definition](#pa-hum-create-the-gke-access-resource-definition)
 - [[PA-GCP] Create the Google Service Account to access Cloud Logging](#pa-gcp-create-the-google-service-account-to-access-cloud-logging)
+- [[PA-HUM] Create the `gke-advanced` Environment](#pa-hum-create-the-gke-advanced-environment)
 
 ```mermaid
 flowchart LR
@@ -44,6 +45,7 @@ gcloud config set project ${PROJECT_ID}
 CLUSTER_NAME=gke-advanced
 REGION=northamerica-northeast1
 ZONE=${REGION}-a
+NETWORK=default
 HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32"
 LOCAL_IP_ADRESS=$(curl -s ifconfig.co)
 
@@ -102,7 +104,7 @@ gcloud container clusters create ${CLUSTER_NAME} \
     --enable-private-nodes \
     --master-ipv4-cidr ${CLUSTER_MASTER_IP_CIDR} \
     --tags ${CLUSTER_FIREWALL_RULE_TAG} \
-    --network default \
+    --network ${NETWORK} \
     --service-account ${GKE_NODE_SA_ID} \
     --machine-type n2d-standard-4 \
     --enable-confidential-nodes \
@@ -116,7 +118,7 @@ gcloud container clusters create ${CLUSTER_NAME} \
 Create a Cloud NAT router in order to access the public internet in egress from the GKE cluster:
 ```bash
 gcloud compute routers create ${CLUSTER_NAME} \
-    --network default \
+    --network ${NETWORK} \
     --region ${REGION}
 gcloud compute routers nats create ${CLUSTER_NAME} \
     --router-region ${REGION} \
@@ -131,29 +133,148 @@ As Platform Admin, in Google Cloud.
 
 Deploy the Nginx Ingress Controller:
 ```bash
+NGINX_NEG_PORT=80
+NGINX_NEG_NAME=${CLUSTER_NAME}-ingress-nginx-${NGINX_NEG_PORT}-neg
+cat <<EOF > ${CLUSTER_NAME}-nginx-ingress-controller-values.yaml
+controller:
+  service:
+    type: ClusterIP
+    annotations:
+      cloud.google.com/neg: '{"exposed_ports": {"${NGINX_NEG_PORT}":{"name": "${NGINX_NEG_NAME}"}}}'
+EOF
 helm upgrade \
     --install ingress-nginx ingress-nginx \
     --repo https://kubernetes.github.io/ingress-nginx \
     --namespace ingress-nginx \
-    --create-namespace
-```
-
-Grab the Public IP address of that Ingress Controller:
-```bash
-INGRESS_IP=$(kubectl get svc ingress-nginx-controller \
-    -n ingress-nginx \
-    -o jsonpath="{.status.loadBalancer.ingress[*].ip}")
+    --create-namespace \
+    -f ${CLUSTER_NAME}-nginx-ingress-controller-values.yaml
 ```
 
 Allow Kubernetes master nodes to talk to the node pool on port `8443` for Nginx Ingress controller:
 ```bash
 gcloud compute firewall-rules create k8s-masters-to-nodes-on-8443 \
-    --network default \
+    --network ${NETWORK} \
     --direction INGRESS \
     --source-ranges ${CLUSTER_MASTER_IP_CIDR} \
     --target-tags ${CLUSTER_FIREWALL_RULE_TAG} \
     --allow tcp:8443
 ```
+
+## [PA-GCP] Protect the Nginx Ingress controller behind a Global Cloud Load Balancer (GCLB) and Cloud Armor (WAF)
+
+Allow traffic from the Global Loab Balancer (GCLB) to the node pool on port `80` for Nginx Ingress controller:
+```bash
+gcloud compute firewall-rules create ${CLUSTER_NAME}-allow-tcp-loadbalancer \
+    --network ${NETWORK} \
+    --allow tcp:${NGINX_NEG_PORT} \
+	  --source-ranges 130.211.0.0/22,35.191.0.0/16 \
+	  --target-tags ${CLUSTER_FIREWALL_RULE_TAG}
+```
+
+```bash
+gcloud compute health-checks create http ${CLUSTER_NAME}-ingress-nginx-health-check \
+    --port ${NGINX_NEG_PORT} \
+    --check-interval 60 \
+    --unhealthy-threshold 3 \
+    --healthy-threshold 1 \
+    --timeout 5 \
+    --request-path /healthz
+
+gcloud compute backend-services create ${CLUSTER_NAME}-ingress-nginx-backend-service \
+    --load-balancing-scheme EXTERNAL \
+    --protocol HTTP \
+    --port-name http \
+    --health-checks ${CLUSTER_NAME}-ingress-nginx-health-check \
+    --enable-logging \
+    --global
+
+gcloud compute backend-services add-backend ${CLUSTER_NAME}-ingress-nginx-backend-service \
+    --network-endpoint-group ${NGINX_NEG_NAME} \
+    --network-endpoint-group-zone ${ZONE} \
+    --balancing-mode RATE \
+    --capacity-scaler 1.0 \
+    --max-rate-per-endpoint 100 \
+    --global
+
+gcloud compute url-maps create ${CLUSTER_NAME}-ingress-nginx-loadbalancer \
+    --default-service ${CLUSTER_NAME}-ingress-nginx-backend-service
+
+gcloud compute target-http-proxies create ${CLUSTER_NAME}-ingress-nginx-http-proxy \
+    --url-map ${CLUSTER_NAME}-ingress-nginx-loadbalancer
+```
+
+```bash
+gcloud compute addresses create ${CLUSTER_NAME}-public-static-ip \
+    --global
+INGRESS_IP=$(gcloud compute addresses describe ${CLUSTER_NAME}-public-static-ip --global --format "value(address)")
+echo ${INGRESS_IP}
+```
+
+```bash
+DNS=FIXME
+openssl genrsa -out ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.key 2048
+openssl req -x509 \
+    -new \
+    -nodes \
+    -days 365 \
+    -key ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.key \
+    -out ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.crt \
+    -subj "/CN=${DNS}"
+```
+
+```bash
+gcloud compute ssl-certificates create ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ssl-certificate \
+    --certificate ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.crt \
+    --private-key ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.key \
+    --global
+gcloud compute target-https-proxies create ${CLUSTER_NAME}-ingress-nginx-http-proxy \
+    --url-map ${CLUSTER_NAME}-ingress-nginx-loadbalancer \
+    --ssl-certificates ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ssl-certificate
+```
+
+```bash
+gcloud compute forwarding-rules create ${CLUSTER_NAME}-https-forwarding-rule \
+    --global \
+    --ports 443 \
+    --target-https-proxy ${CLUSTER_NAME}-ingress-nginx-http-proxy \
+    --address ${CLUSTER_NAME}-public-static-ip
+```
+
+```bash
+cat <<EOF > ${CLUSTER_NAME}-http-to-https-redirect.yaml
+kind: compute#urlMap
+name: ${CLUSTER_NAME}-http-to-https-redirect
+defaultUrlRedirect:
+  redirectResponseCode: MOVED_PERMANENTLY_DEFAULT
+  httpsRedirect: True
+EOF
+gcloud compute url-maps import ${CLUSTER_NAME}-http-to-https-redirect \
+    --source ${CLUSTER_NAME}-http-to-https-redirect.yaml \
+    --global
+gcloud compute target-http-proxies create ${CLUSTER_NAME}-http-to-https-redirect-proxy \
+    --url-map ${CLUSTER_NAME}-http-to-https-redirect \
+    --global
+gcloud compute forwarding-rules create ${CLUSTER_NAME}-http-to-https-redirect-rule \
+    --load-balancing-scheme EXTERNAL \
+    --address ${CLUSTER_NAME}-public-static-ip \
+    --network-tier PREMIUM \
+    --global \
+    --target-http-proxy ${CLUSTER_NAME}-http-to-https-redirect-proxy \
+    --ports 80
+```
+
+```bash
+gcloud compute security-policies create ${CLUSTER_NAME}-security-policy
+gcloud compute security-policies update ${CLUSTER_NAME}-security-policy \
+    --enable-layer7-ddos-defense
+gcloud compute backend-services update ${CLUSTER_NAME}-ingress-nginx-backend-service \
+    --global \
+    --security-policy ${CLUSTER_NAME}-security-policy
+```
+
+## DNS and TLS in Humanitec
+
+FIXME
 
 ## [PA-GCP] Create the Google Service Account to access the GKE cluster
 

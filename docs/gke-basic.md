@@ -73,6 +73,7 @@ gcloud config set project ${PROJECT_ID}
 CLUSTER_NAME=gke-basic
 REGION=northamerica-northeast1
 ZONE=${REGION}-a
+NETWORK=default
 HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32"
 LOCAL_IP_ADRESS=$(curl -s ifconfig.co)
 
@@ -93,6 +94,7 @@ gcloud services enable container.googleapis.com
 ```bash
 gcloud container clusters create ${CLUSTER_NAME} \
     --zone ${ZONE} \
+    --network ${NETWORK} \
     --workload-pool=${PROJECT_ID}.svc.id.goog \
     --enable-master-authorized-networks \
     --master-authorized-networks ${HUMANITEC_IP_ADDRESSES},${LOCAL_IP_ADRESS}/32 \
@@ -257,6 +259,7 @@ gcloud redis instances create ${REDIS_NAME} \
     --size 1 \
     --region ${REGION} \
     --zone ${ZONE} \
+    --network ${NETWORK} \
     --redis-version redis_6_x \
     --enable-auth
 ```
