@@ -74,7 +74,7 @@ CLUSTER_NAME=gke-basic
 REGION=northamerica-northeast1
 ZONE=${REGION}-a
 HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32"
-LOCAL_IP_ADRESS=$(curl ifconfig.co)
+LOCAL_IP_ADRESS=$(curl -s ifconfig.co)
 
 HUMANITEC_ORG=FIXME
 HUMANITEC_TOKEN=FIXME
@@ -133,6 +133,7 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member "serviceAccount:${GKE_ADMIN_SA_ID}" \
     --role "roles/container.admin"
 ```
+_Note: for future considerations, add a condition to access onlye this specific GKE clusters, not all._
 
 Download locally the GSA key:
 ```bash

@@ -47,7 +47,7 @@ CLUSTER_NAME=gke-advanced
 REGION=northamerica-northeast1
 ZONE=${REGION}-a
 HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32"
-LOCAL_IP_ADRESS=$(curl ifconfig.co)
+LOCAL_IP_ADRESS=$(curl -s ifconfig.co)
 
 HUMANITEC_ORG=FIXME
 HUMANITEC_TOKEN=FIXME
@@ -91,6 +91,8 @@ gcloud artifacts repositories add-iam-policy-binding ${CONTAINERS_REGISTRY_NAME}
 
 Create the GKE cluster with advanced and secure features (like Workload Identity, Network Policies, Confidential nodes, private nodes)
 ```bash
+CLUSTER_FIREWALL_RULE_TAG=${CLUSTER_NAME}-nodes
+CLUSTER_MASTER_IP_CIDR=172.16.0.32/28
 gcloud container clusters create ${CLUSTER_NAME} \
     --zone ${ZONE} \
     --scopes cloud-platform \
@@ -100,7 +102,9 @@ gcloud container clusters create ${CLUSTER_NAME} \
     --no-enable-google-cloud-access \
     --enable-ip-alias \
     --enable-private-nodes \
-    --master-ipv4-cidr 172.16.0.32/28 \
+    --master-ipv4-cidr ${CLUSTER_MASTER_IP_CIDR} \
+    --tags ${CLUSTER_FIREWALL_RULE_TAG} \
+    --network default \
     --service-account ${GKE_NODE_SA_ID} \
     --machine-type n2d-standard-4 \
     --enable-confidential-nodes \
@@ -143,6 +147,16 @@ INGRESS_IP=$(kubectl get svc ingress-nginx-controller \
     -o jsonpath="{.status.loadBalancer.ingress[*].ip}")
 ```
 
+Allow Kubernetes master nodes to talk to the node pool on port `8443` for Nginx Ingress controller:
+```bash
+gcloud compute firewall-rules create k8s-masters-to-nodes-on-8443 \
+   --network default \
+   --direction INGRESS \
+   --source-ranges ${CLUSTER_MASTER_IP_CIDR} \
+   --target-tags ${CLUSTER_FIREWALL_RULE_TAG} \
+   --allow tcp:8443
+```
+
 ## [PA-GCP] Create the Google Service Account to access the GKE cluster
 
 As Platform Admin, in Google Cloud.
@@ -157,6 +171,7 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member "serviceAccount:${GKE_ADMIN_SA_ID}" \
     --role "roles/container.admin"
 ```
+_Note: for future considerations, add a condition to access onlye this specific GKE clusters, not all._
 
 Download locally the GSA key:
 ```bash
