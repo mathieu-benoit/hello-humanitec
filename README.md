@@ -24,6 +24,7 @@ Agenda:
   - [PA-GCP] Create advanced and secured GKE setup
   - [PA-GCP] Deploy an Nginx Ingress controller
   - [PA-GCP] Protect the Nginx Ingress controller behind a Global Cloud Load Balancer (GCLB) and Cloud Armor (WAF)
+  - [PA-GCP] Use Cloud Logging for Workload's logs
   - [PA-HUM] Create `gke-advanced` Environment
   - [PA-GCP] Create a Spanner database
   - [PA-GCP] Create Kubernetes and Google Service Accounts to access Spanner via Workload Identity

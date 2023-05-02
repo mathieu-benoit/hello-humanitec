@@ -144,6 +144,7 @@ gcloud iam service-accounts keys create ${GKE_ADMIN_SA_NAME}.json \
 
 As Platform Admin, in Humanitec.
 
+Create the GKE access resource definition:
 ```bash
 cat <<EOF > ${CLUSTER_NAME}.yaml
 id: ${CLUSTER_NAME}
@@ -316,6 +317,8 @@ score-humanitec delta \
     -f ${WORKLOAD}/score-memorystore.yaml \
     --extensions ${WORKLOAD}/humanitec.score.yaml
 ```
+
+FIXME - Remove unused `redis` Workload.
 
 Get the public DNS exposing the `frontend` Workload:
 ```bash

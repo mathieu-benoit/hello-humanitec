@@ -5,6 +5,10 @@
 **UNDER CONSTRUCTION, NOT READY YET... STAY TUNED!**
 
 - [[PA-GCP] Create the GKE cluster](#pa-gcp-create-the-gke-cluster)
+- [[PA-GCP] Deploy the Nginx Ingress controller](#pa-gcp-deploy-the-nginx-ingress-controller)
+- [[PA-GCP] Create the Google Service Account to access the GKE cluster](#pa-gcp-create-the-google-service-account-to-access-the-gke-cluster)
+- [[PA-HUM] Create the GKE access resource definition](#pa-hum-create-the-gke-access-resource-definition)
+- [[PA-GCP] Create the Google Service Account to access Cloud Logging](#pa-gcp-create-the-google-service-account-to-access-cloud-logging)
 
 ```mermaid
 flowchart LR
@@ -119,9 +123,11 @@ gcloud compute routers nats create ${CLUSTER_NAME} \
     --auto-allocate-nat-external-ips
 ```
 
-## Ingress controller
+## [PA-GCP] Deploy the Nginx Ingress controller
 
-Deploy the Ingress Controller:
+As Platform Admin, in Google Cloud.
+
+Deploy the Nginx Ingress Controller:
 ```bash
 helm upgrade \
     --install ingress-nginx ingress-nginx \
@@ -130,86 +136,189 @@ helm upgrade \
     --create-namespace
 ```
 
-Let’s grab the Public IP address of that Ingress Controller:
+Grab the Public IP address of that Ingress Controller:
 ```bash
 INGRESS_IP=$(kubectl get svc ingress-nginx-controller \
     -n ingress-nginx \
     -o jsonpath="{.status.loadBalancer.ingress[*].ip}")
 ```
 
-## GSA to access GKE
+## [PA-GCP] Create the Google Service Account to access the GKE cluster
 
+As Platform Admin, in Google Cloud.
+
+Create the Google Service Account (GSA) with the appropriate role:
 ```bash
-GKE_ADMIN_SA_NAME=humanitec-gke-dev
+GKE_ADMIN_SA_NAME=humanitec-to-${CLUSTER_NAME}
 GKE_ADMIN_SA_ID=${GKE_ADMIN_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
 gcloud iam service-accounts create ${GKE_ADMIN_SA_NAME} \
-	--display-name=${GKE_ADMIN_SA_NAME}
+    --display-name=${GKE_ADMIN_SA_NAME}
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-	--member "serviceAccount:${GKE_ADMIN_SA_ID}" \
-	--role "roles/container.admin"
+    --member "serviceAccount:${GKE_ADMIN_SA_ID}" \
+    --role "roles/container.admin"
 ```
 
-Let’s download locally the GSA key:
+Download locally the GSA key:
 ```bash
 gcloud iam service-accounts keys create ${GKE_ADMIN_SA_NAME}.json \
     --iam-account ${GKE_ADMIN_SA_ID}
 ```
 
-## Create the GKE connection in Humanitec
+## [PA-HUM] Create the GKE access resource definition
 
+As Platform Admin, in Humanitec.
+
+Create the GKE access resource definition:
 ```bash
-HUMANITEC_ORG=FIXME
-HUMANITEC_TOKEN=FIXME
+cat <<EOF > ${CLUSTER_NAME}.yaml
+id: ${CLUSTER_NAME}
+name: ${CLUSTER_NAME}
+type: k8s-cluster
+driver_type: humanitec/k8s-cluster-gke
+driver_inputs:
+  values:
+    loadbalancer: ${INGRESS_IP}
+    name: ${CLUSTER_NAME}
+    project_id: ${PROJECT_ID}
+    zone: ${ZONE}
+  secrets:
+    credentials: $(cat ${GKE_ADMIN_SA_NAME}.json)
+criteria:
+  - env_id: ${ENVIRONMENT}
+EOF
+yq -o json ${CLUSTER_NAME}.yaml > ${CLUSTER_NAME}.json
 curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
-  -X POST \
-  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  -H "Content-Type: application/json" \
-  --data-binary "
-{
-  "id": "my-cluster",
-  "name": "My Cluster",
-  "type": "k8s-cluster",
-  "criteria": [
-    {
-      "env_type": "development"
-    }
-  ],
-  "driver_type": "humanitec/k8s-cluster-gke",
-  "driver_inputs": {
-    "values": {
-      "loadbalancer": ${INGRESS_IP}
-      "name": ${CLUSTER_NAME}
-      "project_id":${PROJECT_ID}
-      "zone": ${ZONE}
-    },
-    "secrets": {
-      "credentials": $(cat ${GKE_ADMIN_SA_NAME}.json)
-    }
-  }
-}"
+    -X POST \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -d @${CLUSTER_NAME}.json
 ```
 
-Remove the local GSA's key:
+Clean sensitive information locally:
 ```bash
 rm ${GKE_ADMIN_SA_NAME}.json
+rm ${CLUSTER_NAME}.yaml
+rm ${CLUSTER_NAME}.json
 ```
 
-### GSA to access Cloud Logging
+## [PA-GCP] Create the Google Service Account to access Cloud Logging
 
+As Platform Admin, in Google Cloud.
+
+Create the Google Service Account (GSA) with the appropriate role:
 ```bash
-LOGGING_READER_SA_NAME=humanitec-logging-dev
+LOGGING_READER_SA_NAME=humanitec-to-${CLUSTER_NAME}-logs
 LOGGING_READER_SA_ID=${LOGGING_READER_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
 gcloud iam service-accounts create ${LOGGING_READER_SA_NAME} \
-	--display-name=${LOGGING_READER_SA_NAME}
+    --display-name=${LOGGING_READER_SA_NAME}
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-	--member "serviceAccount:${LOGGING_READER_SA_ID}" \
-	--role "roles/logging.viewer"
+    --member "serviceAccount:${LOGGING_READER_SA_ID}" \
+    --role "roles/logging.viewer"
 ```
 
-Let’s download locally the GSA key:
+Download locally the GSA key:
 ```bash
 gcloud iam service-accounts keys create ${LOGGING_READER_SA_NAME}.json \
     --iam-account ${LOGGING_READER_SA_ID}
+```
+
+## [PA-HUM] Create the Cloud Logging access resource definition
+
+As Platform Admin, in Humanitec.
+
+Create the Cloud Logging access resource definition:
+```bash
+cat <<EOF > ${CLUSTER_NAME}-logging.yaml
+id: ${CLUSTER_NAME}-logging
+name: ${CLUSTER_NAME}-logging
+type: logging
+driver_type: humanitec/logging-gcp
+driver_inputs:
+  values:
+    cluster_name: ${CLUSTER_NAME}
+    cluster_zone: ${ZONE}
+    project_id: ${PROJECT_ID}
+  secrets:
+    credentials: $(cat ${LOGGING_READER_SA_NAME}.json)
+criteria:
+  - env_id: ${ENVIRONMENT}
+EOF
+yq -o json ${CLUSTER_NAME}-logging.yaml > ${CLUSTER_NAME}-logging.json
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -d @${CLUSTER_NAME}-logging.json
+```
+
+Clean sensitive information locally:
+```bash
+rm ${LOGGING_READER_SA_NAME}.json
+rm ${CLUSTER_NAME}-logging.yaml
+rm ${CLUSTER_NAME}-logging.json
+```
+
+## [PA-HUM] Create the `gke-advanced` Environment
+
+As Platform Admin, in Humanitec.
+
+Get the latest Deployment's id of the existing Environment:
+```bash
+CLONED_ENVIRONMENT=development
+LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT=$(curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${CLONED_ENVIRONMENT}/deploys" \
+    -s \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Content-Type: application/json" \
+    | jq -r .[0].id)
+```
+
+Create the new Environment by cloning the existing Environment from its latest Deployment:
+```bash
+cat <<EOF > ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.yaml
+from_deploy_id: ${LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT}
+id: ${ENVIRONMENT}
+name: ${ENVIRONMENT}
+type: development
+EOF
+yq -o json ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.yaml > ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.json
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs" \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -d @${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.json
+```
+
+Get the current Delta in draft mode in the newly created Environment:
+```bash
+DRAFT_DELTA_IN_NEW_ENVIRONMENT=$(curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/deltas?env=${ENVIRONMENT}" \
+    -s \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Content-Type: application/json" \
+    | jq -r .[0].id)
+```
+
+Deploy current Delta in draft mode:
+```bash
+curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/deploys \
+    -X POST \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Content-Type: application/json" \
+    -d @- <<EOF
+{
+  "comment": "Deploy App based on cloned Environment.",
+  "delta_id": "${DRAFT_DELTA_IN_NEW_ENVIRONMENT}"
+}
+EOF
+```
+
+Get the public DNS exposing the `frontend` Workload:
+```bash
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
+    -s \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Content-Type: application/json" \
+    | jq -c '.[] | select(.type | contains("dns"))' \
+    | jq -r .resource.host
 ```
 
 ### Custom Service Account resource definition
