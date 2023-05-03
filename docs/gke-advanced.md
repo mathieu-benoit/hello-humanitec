@@ -4,10 +4,13 @@
 
 - [[PA-GCP] Create the GKE cluster](#pa-gcp-create-the-gke-cluster)
 - [[PA-GCP] Deploy the Nginx Ingress controller](#pa-gcp-deploy-the-nginx-ingress-controller)
+- [[PA-GCP] Protect the Nginx Ingress controller behind a Global Cloud Load Balancer (GCLB) and Cloud Armor (WAF)](#pa-gcp-protect-the-nginx-ingress-controller-behind-a-global-cloud-load-balancer-gclb-and-cloud-armor-waf)
+- [[PA-HUM] Create the associated DNS and TLS resource definitions](#pa-hum-create-the-associated-dns-and-tls-resource-definitions)
 - [[PA-GCP] Create the Google Service Account to access the GKE cluster](#pa-gcp-create-the-google-service-account-to-access-the-gke-cluster)
 - [[PA-HUM] Create the GKE access resource definition](#pa-hum-create-the-gke-access-resource-definition)
 - [[PA-GCP] Create the Google Service Account to access Cloud Logging](#pa-gcp-create-the-google-service-account-to-access-cloud-logging)
 - [[PA-HUM] Create the `gke-advanced` Environment](#pa-hum-create-the-gke-advanced-environment)
+- _More to come, stay tuned!_
 
 ```mermaid
 flowchart LR
@@ -181,7 +184,7 @@ gcloud compute health-checks create http ${CLUSTER_NAME}-ingress-nginx-health-ch
     --request-path /healthz
 
 gcloud compute backend-services create ${CLUSTER_NAME}-ingress-nginx-backend-service \
-    --load-balancing-scheme EXTERNAL \
+    --load-balancing-scheme EXTERNAL_MANAGED \
     --protocol HTTP \
     --port-name http \
     --health-checks ${CLUSTER_NAME}-ingress-nginx-health-check \
@@ -234,6 +237,8 @@ gcloud compute target-https-proxies create ${CLUSTER_NAME}-ingress-nginx-http-pr
 
 ```bash
 gcloud compute forwarding-rules create ${CLUSTER_NAME}-https-forwarding-rule \
+    --load-balancing-scheme EXTERNAL_MANAGED \
+    --network-tier PREMIUM \
     --global \
     --ports 443 \
     --target-https-proxy ${CLUSTER_NAME}-ingress-nginx-http-proxy \
@@ -255,14 +260,15 @@ gcloud compute target-http-proxies create ${CLUSTER_NAME}-http-to-https-redirect
     --url-map ${CLUSTER_NAME}-http-to-https-redirect \
     --global
 gcloud compute forwarding-rules create ${CLUSTER_NAME}-http-to-https-redirect-rule \
-    --load-balancing-scheme EXTERNAL \
-    --address ${CLUSTER_NAME}-public-static-ip \
+    --load-balancing-scheme EXTERNAL_MANAGED \
     --network-tier PREMIUM \
+    --address ${CLUSTER_NAME}-public-static-ip \
     --global \
     --target-http-proxy ${CLUSTER_NAME}-http-to-https-redirect-proxy \
     --ports 80
 ```
 
+Create Cloud Armor (DDoS protection only) and attach it to the public endpoint:
 ```bash
 gcloud compute security-policies create ${CLUSTER_NAME}-security-policy
 gcloud compute security-policies update ${CLUSTER_NAME}-security-policy \
@@ -272,7 +278,9 @@ gcloud compute backend-services update ${CLUSTER_NAME}-ingress-nginx-backend-ser
     --security-policy ${CLUSTER_NAME}-security-policy
 ```
 
-## DNS and TLS in Humanitec
+## [PA-HUM] Create the associated DNS and TLS resource definitions
+
+As Platform Admin, in Humanitec.
 
 FIXME:
 - custom DNS for onlineboutique in gke-advanced env
