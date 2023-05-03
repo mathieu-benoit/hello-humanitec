@@ -15,31 +15,67 @@
 ```mermaid
 flowchart LR
   subgraph Humanitec
-    subgraph development
+    direction LR
+    subgraph onlineboutique-app [Online Boutique App]
+      direction LR
+      adservice-workload([adservice])
+      cartservice-workload([cartservice])
+      checkoutservice-workload([checkoutservice])
+      currencyservice-workload([currencyservice])
+      emailservice-workload([emailservice])
+      frontend-workload([frontend])
+      loadgenerator-workload([loadgenerator])
+      paymentservice-workload([paymentservice])
+      productcatalogservice-workload([productcatalogservice])
+      recommendationservice-workload([recommendationservice])
+      shippingservice-workload([shippingservice])
     end
     subgraph Resources
-        gke-dev-connection>gke-dev-connection]
-	logging-connection
+        custom-namespace>custom-namespace]
+        custom-service-account>custom-service-account]
+        custom-workload>custom-workload]
+        gke-advanced-connection>gke-advanced-connection]
+        memorystore-connection>memorystore-connection]
+        logging-connection
     end
   end
   subgraph Google Cloud
     direction TB
-    gke-admin-gsa[\gke-admin-gsa/]
-    subgraph gke-cluster-dev
+    subgraph gke-advanced
         subgraph ingress-controller
             nginx{{nginx}}
         end
+        subgraph onlineboutique
+            frontend{{frontend}}-->adservice{{adservice}}
+            frontend-->checkoutservice{{checkoutservice}}
+            frontend-->currencyservice{{currencyservice}}
+            checkoutservice-->emailservice{{emailservice}}
+            checkoutservice-->paymentservice{{paymentservice}}
+            checkoutservice-->currencyservice
+            checkoutservice-->shippingservice{{shippingservice}}
+            checkoutservice-->productcatalogservice{{productcatalogservice}}
+            checkoutservice-->cartservice{{cartservice}}
+            frontend-->cartservice
+            loadgenerator{{loadgenerator}}-->frontend
+            recommendationservice{{recommendationservice}}-->productcatalogservice
+        end
+        nginx-->frontend
     end
+    gke-advanced-connection-.->gke-advanced
+    memorystore-connection-.->memorystore[(memorystore)]
+    onlineboutique-app-->onlineboutique
+    cartservice-->memorystore
     logging-reader-gsa[\logging-reader-gsa/]
     cloud-logging((cloud-logging))
-    gke-cluster-dev-.->gke-node-gsa[\gke-node-gsa/]
+    gke-advanced-.->gke-node-gsa[\gke-node-gsa/]
     gke-node-gsa-.->artifact-registry((artifact-registry))
     gke-node-gsa-.->cloud-logging
   end
+  enduser((End user))-->nginx
   logging-connection-.->logging-reader-gsa
   logging-reader-gsa-.->cloud-logging
-  gke-dev-connection-.->gke-admin-gsa
-  gke-admin-gsa-.->gke-cluster-dev
+  gke-advanced-connection-.->gke-admin-gsa
+  gke-admin-gsa-.->gke-advanced-dev
 ```
 
 ```bash
