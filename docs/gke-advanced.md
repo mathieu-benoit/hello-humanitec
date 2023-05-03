@@ -34,6 +34,8 @@ flowchart LR
         custom-namespace>custom-namespace]
         custom-service-account>custom-service-account]
         custom-workload>custom-workload]
+        custom-ingress>custom-ingress]
+        custom-dns>custom-dns]
         gke-advanced-connection>gke-advanced-connection]
         memorystore-connection>memorystore-connection]
         logging-connection
@@ -75,7 +77,7 @@ flowchart LR
   logging-connection-.->logging-reader-gsa
   logging-reader-gsa-.->cloud-logging
   gke-advanced-connection-.->gke-admin-gsa
-  gke-admin-gsa-.->gke-advanced-dev
+  gke-admin-gsa-.->gke-advanced
 ```
 
 ```bash
