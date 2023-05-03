@@ -59,7 +59,9 @@ flowchart LR
         end
         nginx-->frontend
     end
-    gke-basic-connection-.->gke-basic
+    gke-admin-gsa[\gke-admin-gsa/]
+    gke-basic-connection-.->gke-admi-gsa
+    gke-admin-gsa-->gke-basic
     memorystore-connection-.->memorystore[(memorystore)]
     onlineboutique-app-->onlineboutique
     cartservice-->memorystore
