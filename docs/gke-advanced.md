@@ -274,7 +274,9 @@ gcloud compute backend-services update ${CLUSTER_NAME}-ingress-nginx-backend-ser
 
 ## DNS and TLS in Humanitec
 
-FIXME
+FIXME:
+- custom DNS for onlineboutique in gke-advanced env
+- custom Ingress with no TLS in gke-advanced env
 
 ## [PA-GCP] Create the Google Service Account to access the GKE cluster
 
@@ -290,7 +292,7 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member "serviceAccount:${GKE_ADMIN_SA_ID}" \
     --role "roles/container.admin"
 ```
-_Note: for future considerations, add a condition to access onlye this specific GKE clusters, not all._
+_Note: for future considerations, add a condition to access only this specific GKE cluster, not all._
 
 Download locally the GSA key:
 ```bash
