@@ -214,7 +214,7 @@ echo ${INGRESS_IP}
 ```
 
 ```bash
-DNS=FIXME
+ONLINEBOUTIQUE_DNS=FIXME
 openssl genrsa -out ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.key 2048
 openssl req -x509 \
     -new \
@@ -222,7 +222,7 @@ openssl req -x509 \
     -days 365 \
     -key ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.key \
     -out ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.crt \
-    -subj "/CN=${DNS}"
+    -subj "/CN=${ONLINEBOUTIQUE_DNS}"
 ```
 
 ```bash
@@ -282,9 +282,50 @@ gcloud compute backend-services update ${CLUSTER_NAME}-ingress-nginx-backend-ser
 
 As Platform Admin, in Humanitec.
 
-FIXME:
-- custom DNS for onlineboutique in gke-advanced env
-- custom Ingress with no TLS in gke-advanced env
+Create the custom Ingress resource definition:
+```bash
+cat <<EOF > custom-ingress.yaml
+id: custom-ingress
+name: custom-ingress
+type: ingress
+driver_type: humanitec/ingress
+driver_inputs:
+  values:
+    api_version: v1
+    class: nginx
+    no_tls: true
+criteria:
+  - env_id: ${ENVIRONMENT}
+EOF
+yq -o json custom-ingress.yaml > custom-ingress.json
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -d @custom-ingress.json
+```
+
+Create the custom DNS resource definition:
+```bash
+cat <<EOF > ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns.yaml
+id: ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns
+name: ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns
+type: dns
+driver_type: humanitec/static
+driver_inputs:
+  values:
+    host: ${ONLINEBOUTIQUE_DNS}
+criteria:
+  - env_id: ${ENVIRONMENT}
+    app_id: ${ONLINEBOUTIQUE_APP}
+EOF
+yq -o json ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns.yaml > ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns.json
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -d @${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns.json
+```
 
 ## [PA-GCP] Create the Google Service Account to access the GKE cluster
 
