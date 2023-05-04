@@ -2,16 +2,7 @@
 
 ```bash
 SAMPLE_APPS_APP=sample-apps
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps" \
-	-X POST \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-	-H "Content-Type: application/json" \
-	-d @- <<EOF
-{
-  "id": "${SAMPLE_APPS_APP}", 
-  "name": "${SAMPLE_APPS_APP}"
-}
-EOF
+humctl create app /orgs/${HUMANITEC_ORG}/apps/${SAMPLE_APPS_APP}
 ```
 
 ## Deploy the Sample Apps Workloads

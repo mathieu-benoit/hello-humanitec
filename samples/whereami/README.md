@@ -2,16 +2,7 @@
 
 ```bash
 WHEREAMI_APP=whereami
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps" \
-	-X POST \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-	-H "Content-Type: application/json" \
-	-d @- <<EOF
-{
-  "id": "${WHEREAMI_APP}", 
-  "name": "${WHEREAMI_APP}"
-}
-EOF
+humctl create app /orgs/${HUMANITEC_ORG}/apps/${WHEREAMI_APP}
 ```
 
 ## Deploy the Whereami Workload

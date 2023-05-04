@@ -45,7 +45,7 @@ flowchart LR
 
 ```bash
 HUMANITEC_ORG=FIXME
-HUMANITEC_TOKEN=FIXME
+export HUMANITEC_TOKEN=FIXME
 ```
 
 ## [PA-HUM] Create the Online Boutique App
@@ -54,17 +54,26 @@ As Platform Admin, in Humanitec.
 
 ```bash
 ONLINEBOUTIQUE_APP=onlineboutique
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps" \
-    -X POST \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -H "Content-Type: application/json" \
-    -d @- <<EOF
-{
-  "id": "${ONLINEBOUTIQUE_APP}", 
-  "name": "Online Boutique"
-}
-EOF
+humctl create app /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}
 ```
+
+<details>
+  <summary>With curl.</summary>
+  
+  ```bash
+  ONLINEBOUTIQUE_APP=onlineboutique
+  curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps" \
+      -X POST \
+      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+      -H "Content-Type: application/json" \
+      -d @- <<EOF
+  {
+    "id": "${ONLINEBOUTIQUE_APP}", 
+    "name": "Online Boutique"
+  }
+  EOF
+  ```
+</details>
 
 ## [DE-HUM] Deploy the Online Boutique Workloads (with in-cluster `redis`) in `development` Environment
 

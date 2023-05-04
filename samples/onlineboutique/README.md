@@ -2,16 +2,7 @@
 
 ```bash
 ONLINEBOUTIQUE_APP=onlineboutique
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps" \
-	-X POST \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-	-H "Content-Type: application/json" \
-	-d @- <<EOF
-{
-  "id": "${ONLINEBOUTIQUE_APP}", 
-  "name": "${ONLINEBOUTIQUE_APP}"
-}
-EOF
+humctl create app /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}
 ```
 
 ## Deploy the Online Boutique Workloads
