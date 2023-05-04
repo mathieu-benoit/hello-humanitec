@@ -28,7 +28,7 @@ flowchart LR
         custom-ingress>custom-ingress]
         custom-dns>custom-dns]
         gke-advanced-connection>gke-advanced-connection]
-        memorystore-connection>memorystore-connection]
+        spanner-connection>spanner-connection]
         logging-connection
     end
   end
