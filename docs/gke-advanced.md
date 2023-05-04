@@ -51,6 +51,7 @@ flowchart LR
     gke-node-gsa-.->artifact-registry((artifact-registry))
     gke-node-gsa-.->cloud-logging
     cloud-armor((cloud-armor))-->cloud-ingress((cloud-ingress))
+    spanner[(spanner)]
     spanner-gsa[\spanner-gsa/]
   end
   enduser((End user))-->cloud-armor
@@ -60,7 +61,7 @@ flowchart LR
   gke-advanced-connection-.->gke-admin-gsa
   gke-admin-gsa-.->gke-advanced
   spanner-connection-.->spanner-gsa
-  spanner-gsa-.->spanner[(spanner)]
+  spanner-gsa-.->spanner
   cartservice-->spanner-gsa
 ```
 
