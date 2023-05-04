@@ -44,15 +44,14 @@ flowchart LR
         nginx-->frontend
     end
     gke-admin-gsa[\gke-admin-gsa/]
-    memorystore-connection-.->memorystore[(memorystore)]
     onlineboutique-app-->onlineboutique
-    cartservice-->memorystore
     logging-reader-gsa[\logging-reader-gsa/]
     cloud-logging((cloud-logging))
     gke-advanced-.->gke-node-gsa[\gke-node-gsa/]
     gke-node-gsa-.->artifact-registry((artifact-registry))
     gke-node-gsa-.->cloud-logging
     cloud-armor((cloud-armor))-->cloud-ingress((cloud-ingress))
+    spanner-gsa[\spanner-gsa/]
   end
   enduser((End user))-->cloud-armor
   cloud-ingress-->nginx
@@ -60,6 +59,9 @@ flowchart LR
   logging-reader-gsa-.->cloud-logging
   gke-advanced-connection-.->gke-admin-gsa
   gke-admin-gsa-.->gke-advanced
+  spanner-connection-.->spanner-gsa
+  spanner-gsa-.->spanner[(spanner)]
+  cartservice-->spanner-gsa
 ```
 
 ```bash
