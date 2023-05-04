@@ -18,17 +18,8 @@ flowchart LR
     direction LR
     subgraph onlineboutique-app [Online Boutique App]
       direction LR
-      adservice-workload([adservice])
       cartservice-workload([cartservice])
-      checkoutservice-workload([checkoutservice])
-      currencyservice-workload([currencyservice])
-      emailservice-workload([emailservice])
       frontend-workload([frontend])
-      loadgenerator-workload([loadgenerator])
-      paymentservice-workload([paymentservice])
-      productcatalogservice-workload([productcatalogservice])
-      recommendationservice-workload([recommendationservice])
-      shippingservice-workload([shippingservice])
     end
     subgraph Resources
         custom-namespace>custom-namespace]
@@ -48,18 +39,7 @@ flowchart LR
             nginx{{nginx}}
         end
         subgraph onlineboutique
-            frontend{{frontend}}-->adservice{{adservice}}
-            frontend-->checkoutservice{{checkoutservice}}
-            frontend-->currencyservice{{currencyservice}}
-            checkoutservice-->emailservice{{emailservice}}
-            checkoutservice-->paymentservice{{paymentservice}}
-            checkoutservice-->currencyservice
-            checkoutservice-->shippingservice{{shippingservice}}
-            checkoutservice-->productcatalogservice{{productcatalogservice}}
-            checkoutservice-->cartservice{{cartservice}}
             frontend-->cartservice
-            loadgenerator{{loadgenerator}}-->frontend
-            recommendationservice{{recommendationservice}}-->productcatalogservice
         end
         nginx-->frontend
     end
