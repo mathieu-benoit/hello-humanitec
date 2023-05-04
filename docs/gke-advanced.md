@@ -52,7 +52,7 @@ flowchart LR
     gke-advanced-.->gke-node-gsa[\gke-node-gsa/]
     gke-node-gsa-.->artifact-registry((artifact-registry))
     gke-node-gsa-.->cloud-logging
-    cloud-armor[(cloud-armor)]-->cloud-ingress[(cloud-ingress)]
+    cloud-armor((cloud-armor))-->cloud-ingress((cloud-ingress))
   end
   enduser((End user))-->cloud-armor
   cloud-ingress-->nginx
