@@ -2,7 +2,8 @@
 
 ```bash
 WHEREAMI_APP=whereami
-humctl create app /orgs/${HUMANITEC_ORG}/apps/${WHEREAMI_APP}
+humctl create app /orgs/${HUMANITEC_ORG}/apps/${WHEREAMI_APP} \
+	--name ${WHEREAMI_APP}
 ```
 
 ## Deploy the Whereami Workload

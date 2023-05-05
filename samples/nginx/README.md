@@ -2,7 +2,8 @@
 
 ```bash
 NGINX_APP=nginx
-humctl create app /orgs/${HUMANITEC_ORG}/apps/${NGINX_APP}
+humctl create app /orgs/${HUMANITEC_ORG}/apps/${NGINX_APP} \
+	--name ${NGINX_APP}
 ```
 
 ## Deploy the Sample Apps Workloads

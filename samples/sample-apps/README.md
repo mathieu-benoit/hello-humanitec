@@ -2,7 +2,8 @@
 
 ```bash
 SAMPLE_APPS_APP=sample-apps
-humctl create app /orgs/${HUMANITEC_ORG}/apps/${SAMPLE_APPS_APP}
+humctl create app /orgs/${HUMANITEC_ORG}/apps/${SAMPLE_APPS_APP} \
+	--name ${SAMPLE_APPS_APP}
 ```
 
 ## Deploy the Sample Apps Workloads
