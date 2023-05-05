@@ -19,7 +19,7 @@ flowchart LR
 
 ```bash
 HUMANITEC_ORG=FIXME
-HUMANITEC_TOKEN=FIXME
+export HUMANITEC_TOKEN=FIXME
 ```
 
 ### [PA-HUM] Create a custom `Namespace` resource definition
@@ -47,6 +47,32 @@ curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
     -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
     -d @custom-namespace.json
 ```
+
+<details>
+  <summary>With humctl (not working yet).</summary>
+
+  ```bash
+  cat <<EOF > custom-namespace.yaml
+  apiVersion: core.api.humanitec.io/v1
+  kind: Definition
+  metadata:
+    id: custom-namespace
+  object:
+    name: custom-namespace
+    type: k8s-namespace
+    driverType: humanitec/static
+    driverInputs:
+      values:
+        namespace: \${context.env.id}-\${context.app.id}
+    criteria:
+      - {}
+  EOF
+  humctl create \
+      --context /orgs/${HUMANITEC_ORG} \
+      -f custom-namespace.yaml
+  ```
+</details>
+
 
 ### [PA-HUM] Create a custom `ServiceAccount` resource definition
 

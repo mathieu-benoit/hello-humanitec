@@ -55,7 +55,8 @@ As Platform Admin, in Humanitec.
 ```bash
 ONLINEBOUTIQUE_APP=onlineboutique
 humctl create app /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP} \
-	--name ${ONLINEBOUTIQUE_APP}
+	--conext /orgs/${HUMANITEC_ORG} \
+  --name ${ONLINEBOUTIQUE_APP}
 ```
 
 <details>
@@ -75,6 +76,7 @@ humctl create app /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP} \
   EOF
   ```
 </details>
+
 
 ## [DE-HUM] Deploy the Online Boutique Workloads (with in-cluster `redis`) in `development` Environment
 
