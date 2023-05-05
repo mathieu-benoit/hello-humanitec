@@ -6,6 +6,7 @@ containers:
     image: us-docker.pkg.dev/google-samples/containers/gke/whereami:v1.2.19
     variables:
       POD_NAMESPACE: "${pod.metadata.namespace}"
+      ECHO_HEADERS: "True"
 resources:
   dns:
     type: dns
