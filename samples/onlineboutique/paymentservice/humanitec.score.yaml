@@ -1,2 +1,15 @@
 apiVersion: humanitec.org/v1b1
-profile: "humanitec/default-module"
+profile: humanitec/default-module
+spec:
+  containers:
+    paymentservice:
+      liveness_probe:
+        command:
+          - /bin/grpc_health_probe
+          - '-addr=:50051'
+        type: command
+      readiness_probe:
+        command:
+          - /bin/grpc_health_probe
+          - '-addr=:50051'
+        type: command
