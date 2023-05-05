@@ -1,6 +1,12 @@
 apiVersion: humanitec.org/v1b1
 profile: humanitec/default-module
 spec:
+  containers:
+    nginx-secured:
+      volume_mounts:
+        /tmp:
+          id: volumes.tmp
+          read_only: false
   ingress:
     rules:
       "${resources.dns}":
@@ -8,3 +14,6 @@ spec:
           "/":
             type: prefix
             port: 80
+  volumes:
+    tmp:
+      type: emptyDir

@@ -40,8 +40,8 @@ score-humanitec delta \
 	--token ${HUMANITEC_TOKEN} \
 	--deploy \
 	--retry \
-	-f nginx/score.yaml \
-	--extensions nginx/humanitec.score.yaml
+	-f ${WORKLOAD}/score.yaml \
+	--extensions ${WORKLOAD}/humanitec.score.yaml
 ```
 
 ## Get the public DNS exposing the Nginx Workloads
