@@ -473,12 +473,24 @@ As Platform Admin, in Humanitec.
 Get the latest Deployment's id of the existing Environment:
 ```bash
 CLONED_ENVIRONMENT=development
-LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT=$(curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${CLONED_ENVIRONMENT}/deploys" \
-    -s \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -H "Content-Type: application/json" \
-    | jq -r .[0].id)
+LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT=$(humctl get deploy \
+    --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${CLONED_ENVIRONMENT} \
+    -o json \
+    | jq -r .[0].metadata.id)
 ```
+
+<details>
+  <summary>With curl.</summary>
+
+  ```bash
+  CLONED_ENVIRONMENT=development
+  LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT=$(curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${CLONED_ENVIRONMENT}/deploys" \
+      -s \
+      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+      -H "Content-Type: application/json" \
+      | jq -r .[0].id)
+  ```
+</details>
 
 Create the new Environment by cloning the existing Environment from its latest Deployment:
 ```bash
