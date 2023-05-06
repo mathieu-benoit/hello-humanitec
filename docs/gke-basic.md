@@ -230,13 +230,23 @@ EOF
 
 Get the public DNS exposing the `frontend` Workload:
 ```bash
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
-    -s \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -H "Content-Type: application/json" \
-    | jq -c '.[] | select(.type | contains("dns"))' \
-    | jq -r .resource.host
+humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources \
+    -o json \
+    | jq -c '.[] | select(.object.type | contains("dns"))' \
+    | jq -r .object.resource.host
 ```
+<details>
+  <summary>With curl.</summary>
+  
+  ```bash
+    curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
+        -s \
+        -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+        -H "Content-Type: application/json" \
+        | jq -c '.[] | select(.type | contains("dns"))' \
+        | jq -r .resource.host
+    ```
+</details>
 _Note: re-run the above command until you get a value._
 
 ## [PA-GCP] Create a Memorystore (Redis) database
@@ -322,12 +332,22 @@ FIXME - Remove unused `redis` Workload.
 
 Get the public DNS exposing the `frontend` Workload:
 ```bash
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
-    -s \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -H "Content-Type: application/json" \
-    | jq -c '.[] | select(.type | contains("dns"))' \
-    | jq -r .resource.host
+humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources \
+    -o json \
+    | jq -c '.[] | select(.object.type | contains("dns"))' \
+    | jq -r .object.resource.host
 ```
+<details>
+  <summary>With curl.</summary>
+  
+  ```bash
+    curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
+        -s \
+        -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+        -H "Content-Type: application/json" \
+        | jq -c '.[] | select(.type | contains("dns"))' \
+        | jq -r .resource.host
+    ```
+</details>
 
 [_Next section: GKE advanced setup >>_](/docs/gke-advanced.md)

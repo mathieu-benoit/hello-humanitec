@@ -103,13 +103,42 @@ _Note: `loadgenerator` is deployed to generate both: traffic on these apps and d
 
 Get the public DNS exposing the `frontend` Workload:
 ```bash
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
-	  -s \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-	  -H "Content-Type: application/json" \
-	  | jq -c '.[] | select(.type | contains("dns"))' \
-	  | jq -r .resource.host
+humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources \
+    -o json \
+    | jq -c '.[] | select(.object.type | contains("dns"))' \
+    | jq -r .object.resource.host
 ```
+<details>
+  <summary>With curl.</summary>
+  
+  ```bash
+  curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
+      -s \
+      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+      -H "Content-Type: application/json" \
+      | jq -c '.[] | select(.type | contains("dns"))' \
+      | jq -r .resource.host
+  ```
+</details>
 _Note: re-run the above command until you get a value._
+
+```json
+{
+  "org_id": "my-trial",
+  "id": "redis-test",
+  "name": "redis-test",
+  "type": "redis",
+  "driver_type": "humanitec/template",
+  "driver_inputs": {
+    "values": {
+      "templates": {
+        "manifests": "test.yaml:\n  location: namespace\n  data:\n    apiVersion: v1\n    kind: ServiceAccount\n    metadata:\n      name: test"
+      }
+    }
+  },
+  "created_by": "32da29b6-eb47-4256-a39b-788746e14142",
+  "created_at": "2023-05-06T11:24:19.132413Z"
+}
+```
 
 [_Next section: Common setup >>_](/docs/common.md)

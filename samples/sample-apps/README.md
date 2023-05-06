@@ -46,10 +46,8 @@ score-humanitec delta \
 ## Get the public DNS exposing the Sample App Workload
 
 ```bash
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${SAMPLE_APPS_APP}/envs/${ENVIRONMENT}/resources" \
-	-s \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-	-H "Content-Type: application/json" \
-	| jq -c '.[] | select(.type | contains("dns"))' \
-	| jq -r .resource.host
+humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${SAMPLE_APPS_APP}/envs/${ENVIRONMENT}/resources \
+	-o json \
+	| jq -c '.[] | select(.object.type | contains("dns"))' \
+    | jq -r .object.resource.host
 ```
