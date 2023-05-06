@@ -362,9 +362,9 @@ gcloud iam service-accounts create ${GKE_ADMIN_SA_NAME} \
     --display-name=${GKE_ADMIN_SA_NAME}
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member "serviceAccount:${GKE_ADMIN_SA_ID}" \
-    --role "roles/container.admin"
+    --role "roles/container.admin" \
+    --condition='resource.name == "${CLUSTER_NAME}"'
 ```
-_Note: for future considerations, add a condition to access only this specific GKE cluster, not all._
 
 Download locally the GSA key:
 ```bash
