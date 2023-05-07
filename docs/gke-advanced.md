@@ -532,6 +532,7 @@ echo ${DRAFT_DELTA_IN_NEW_ENVIRONMENT}
   echo ${DRAFT_DELTA_IN_NEW_ENVIRONMENT}
   ```
 </details>
+
 _Note: re-run the above commands until you get a value for `DRAFT_DELTA_IN_NEW_ENVIRONMENT`._
 
 Deploy current Delta in draft mode:
