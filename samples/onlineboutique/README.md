@@ -17,7 +17,7 @@ ENVIRONMENT=development
 ```bash
 FIRST_WORKLOAD="adservice"
 COMBINED_DELTA=$(score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --retry -f ${FIRST_WORKLOAD}/score.yaml --extensions ${FIRST_WORKLOAD}/humanitec.score.yaml | jq -r .id)
-WORKLOADS="cartservice checkoutservice currencyservice emailservice frontend loadgenerator paymentservice productcatalogservice recommendationservice redis"
+WORKLOADS="cartservice checkoutservice currencyservice emailservice frontend loadgenerator paymentservice productcatalogservice recommendationservice"
 for w in ${WORKLOADS}; do COMBINED_DELTA=$(score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --delta ${COMBINED_DELTA} --retry -f $w/score.yaml --extensions $w/humanitec.score.yaml | jq -r .id); done
 LAST_WORKLOAD="shippingservice"
 score-humanitec delta \
@@ -36,7 +36,7 @@ _Note: `loadgenerator` is deployed to generate both: traffic on these apps and d
 ### One by one
 
 ```bash
-WORKLOAD=adservice #cartservice checkoutservice currencyservice emailservice frontend loadgenerator paymentservice productcatalogservice recommendationservice redis shippingservice
+WORKLOAD=adservice #cartservice checkoutservice currencyservice emailservice frontend loadgenerator paymentservice productcatalogservice recommendationservice shippingservice
 score-humanitec delta \
 	--app ${ONLINEBOUTIQUE_APP} \
 	--env ${ENVIRONMENT} \
@@ -48,13 +48,69 @@ score-humanitec delta \
 	--extensions ${WORKLOAD}/humanitec.score.yaml
 ```
 
+## Deploy the Online Boutique `redis-cart` database
+
+_This section is dedicated to the Platform admin, not the Developer._
+
+### Deploy the `redis-cart` database
+
+3 options:
+
+- `redis-cart` as Workload:
+
+```bash
+IN_CLUSTER_REDIS=redis-cart
+score-humanitec delta \
+	--app ${ONLINEBOUTIQUE_APP} \
+	--env ${ENVIRONMENT} \
+	--org ${HUMANITEC_ORG} \
+	--token ${HUMANITEC_TOKEN} \
+	--deploy \
+	--retry \
+	-f ${IN_CLUSTER_REDIS}/score.yaml \
+	--extensions ${IN_CLUSTER_REDIS}/humanitec.score.yaml
+```
+
+- `redis-cart` as Kubernetes `Deployment`:
+
+```bash
+kubectl apply \
+	-f redis-cart/redis-cart.yaml \
+	-n ${ENVIRONMENT}-${ONLINEBOUTIQUE_APP}
+```
+
+- `redis-cart` as Resource type:
+
+FIXME - _Coming soon... stay tuned!_
+
+## Create the `redis-cart` connection string resource definition
+
+```bash
+cat <<EOF > redis-cart.yaml
+id: redis-cart
+name: redis-cart
+type: redis
+driver_type: humanitec/static
+driver_inputs:
+  values:
+    host: redis-cart
+    port: 6379
+criteria:
+  - env_id: ${ENVIRONMENT}
+EOF
+yq -o json redis-cart.yaml > redis-cart.json
+curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -d @redis-cart.json
+```
+
 ## Get the public DNS exposing the `frontend` Workloads
 
 ```bash
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
-	-s \
-	-H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-	-H "Content-Type: application/json" \
-	| jq -c '.[] | select(.type | contains("dns"))' \
-	| jq -r .resource.host
+humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources \
+	-o json \
+	| jq -c '.[] | select(.object.type | contains("dns"))' \
+    | jq -r .object.resource.host
 ```

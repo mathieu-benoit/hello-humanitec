@@ -2,7 +2,7 @@ apiVersion: humanitec.org/v1b1
 profile: humanitec/default-module
 spec:
   containers:
-    redis:
+    redis-cart:
       volume_mounts:
         /data:
           id: volumes.redis-data

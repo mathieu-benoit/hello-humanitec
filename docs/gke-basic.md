@@ -9,7 +9,8 @@
 - [[PA-HUM] Create the `gke-basic` Environment](#pa-hum-create-the-gke-basic-environment)
 - [[PA-GCP] Create a Memorystore (Redis) database](#pa-gcp-create-a-memorystore-redis-database)
 - [[PA-HUM] Create the Memorystore (Redis) access resource definition](#pa-hum-create-the-memorystore-redis-access-resource-definition)
-- [[DE-HUM] Deploy the `cartservice` Workload with Memorystore (Redis) in `gke-basic` Environment](#de-hum-deploy-the-cartservice-workload-with-memorystore-redis-in-gke-basic-environment)
+- [[DE-HUM] Deploy the Online Boutique Workloads in `gke-basic` Environment](#de-hum-deploy-the-online-boutique-workloads-in-gke-basic-environment)
+- [Test the Online Boutique website](#test-the-online-boutique-website)
 
 ```mermaid
 flowchart LR
@@ -204,68 +205,6 @@ humctl create environment ${ENVIRONMENT} \
   ```
 </details>
 
-Get the current Delta in draft mode in the newly created Environment:
-```bash
-DRAFT_DELTA_IN_NEW_ENVIRONMENT=$(humctl get delta \
-    --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP} \
-    -o json \
-    | jq -c --arg ENVIRONMENT "${ENVIRONMENT}" '.[] | select(.object.metadata.env_id | contains
-($ENVIRONMENT))' \
-    | jq -r .metadata.id)
-echo ${DRAFT_DELTA_IN_NEW_ENVIRONMENT}
-```
-
-<details>
-  <summary>With curl.</summary>
-
-  ```bash
-  DRAFT_DELTA_IN_NEW_ENVIRONMENT=$(curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/deltas?env=${ENVIRONMENT}" \
-      -s \
-      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-      -H "Content-Type: application/json" \
-      | jq -r .[0].id)
-  echo ${DRAFT_DELTA_IN_NEW_ENVIRONMENT}
-  ```
-</details>
-
-_Note: re-run the above commands until you get a value for `DRAFT_DELTA_IN_NEW_ENVIRONMENT`._
-
-Deploy current Delta in draft mode:
-```bash
-curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/deploys \
-    -X POST \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -H "Content-Type: application/json" \
-    -d @- <<EOF
-{
-  "comment": "Deploy App based on cloned Environment.",
-  "delta_id": "${DRAFT_DELTA_IN_NEW_ENVIRONMENT}"
-}
-EOF
-```
-
-Get the public DNS exposing the `frontend` Workload:
-```bash
-humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources \
-    -o json \
-    | jq -c '.[] | select(.object.type | contains("dns"))' \
-    | jq -r .object.resource.host
-```
-<details>
-  <summary>With curl.</summary>
-  
-  ```bash
-    curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
-        -s \
-        -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-        -H "Content-Type: application/json" \
-        | jq -c '.[] | select(.type | contains("dns"))' \
-        | jq -r .resource.host
-  ```
-</details>
-
-_Note: re-run the above command until you get a value._
-
 ## [PA-GCP] Create a Memorystore (Redis) database
 
 As Platform Admin, in Google Cloud.
@@ -328,42 +267,48 @@ Clean sensitive information locally:
 rm ${REDIS_NAME}.yaml
 ```
 
-## [DE-HUM] Deploy the `cartservice` Workload with Memorystore (Redis) in `gke-basic` Environment
+## [DE-HUM] Deploy the Online Boutique Workloads in `gke-basic` Environment
 
 As Developer, in Humanitec.
 
 ```bash
-WORKLOAD=cartservice
+FIRST_WORKLOAD="adservice"
+COMBINED_DELTA=$(score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --retry -f ${FIRST_WORKLOAD}/score.yaml --extensions ${FIRST_WORKLOAD}/humanitec.score.yaml | jq -r .id)
+WORKLOADS="cartservice checkoutservice currencyservice emailservice frontend loadgenerator paymentservice productcatalogservice recommendationservice"
+for w in ${WORKLOADS}; do COMBINED_DELTA=$(score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --delta ${COMBINED_DELTA} --retry -f $w/score.yaml --extensions $w/humanitec.score.yaml | jq -r .id); done
+LAST_WORKLOAD="shippingservice"
 score-humanitec delta \
-    --app ${ONLINEBOUTIQUE_APP} \
-    --env ${ENVIRONMENT} \
-    --org ${HUMANITEC_ORG} \
-    --token ${HUMANITEC_TOKEN} \
-    --deploy \
-    --retry \
-    -f ${WORKLOAD}/score-memorystore.yaml \
-    --extensions ${WORKLOAD}/humanitec.score.yaml
+	--app ${ONLINEBOUTIQUE_APP} \
+	--env ${ENVIRONMENT} \
+	--org ${HUMANITEC_ORG} \
+	--token ${HUMANITEC_TOKEN} \
+	--deploy \
+	--delta ${COMBINED_DELTA} \
+	--retry \
+	-f ${LAST_WORKLOAD}/score.yaml \
+	--extensions ${LAST_WORKLOAD}/humanitec.score.yaml
 ```
+_Note: `loadgenerator` is deployed to generate both: traffic on these apps and data in the database. If you don't want this, feel free to remove it from the above list of `WORKLOADS`._
 
-FIXME - Remove unused `redis` Workload.
+## Test the Online Boutique website
 
 Get the public DNS exposing the `frontend` Workload:
 ```bash
-humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources \
+echo -e "https://$(humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources \
     -o json \
     | jq -c '.[] | select(.object.type | contains("dns"))' \
-    | jq -r .object.resource.host
+    | jq -r .object.resource.host)"
 ```
 <details>
   <summary>With curl.</summary>
   
   ```bash
-    curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
-        -s \
-        -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-        -H "Content-Type: application/json" \
-        | jq -c '.[] | select(.type | contains("dns"))' \
-        | jq -r .resource.host
+  echo -e "https://$(curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
+      -s \
+      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+      -H "Content-Type: application/json" \
+      | jq -c '.[] | select(.type | contains("dns"))' \
+      | jq -r .resource.host)"
   ```
 </details>
 

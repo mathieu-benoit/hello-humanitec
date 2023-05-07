@@ -5,12 +5,15 @@ containers:
   cartservice:
     image: gcr.io/google-samples/microservices-demo/cartservice:v0.6.0
     variables:
-      REDIS_ADDR: "${resources.redis.name}:6379"
+      REDIS_ADDR: "${resources.redis-cart.host}:${resources.redis-cart.port},user=${resources.redis-cart.user},password=${resources.redis-cart.password}"
 resources:
-  redis:
-    type: service
+  redis-cart:
+    type: redis
     properties:
-      name:
+      host:
+      port:
+      user:
+      password:
 service:
   ports:
     grpc:

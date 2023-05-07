@@ -9,7 +9,8 @@
 Agenda:
 - [Humanitec default setup](./docs/humanitec-default.md)
   - [PA-HUM] Create Online Boutique App
-  - [DE-HUM] Deploy Online Boutique Workloads (in-cluster `redis`) in `development` Environment
+  - [PA-HUM] Create an in-cluster Redis database
+  - [DE-HUM] Deploy Online Boutique Workloads in `development` Environment
 - [Common setup](./docs/common.md)
   - [PA-HUM] Create custom name `Namespace`
   - [PA-HUM] Create custom `ServiceAccount`
@@ -19,7 +20,7 @@ Agenda:
   - [PA-GCP] Deploy a simple Nginx Ingress controller
   - [PA-HUM] Create `gke-basic` Environment
   - [PA-GCP] Create a Memorystore (Redis) database
-  - [DE-HUM] Deploy `cartservice` Workload connecting to Memorystore (Redis) database in `gke-basic` Environment
+  - [DE-HUM] Deploy the Online Boutique Workloads in `gke-basic` Environment
 - [GKE advanced setup - _under construction_](./docs/gke-advanced.md)
   - [PA-GCP] Create advanced and secured GKE setup
   - [PA-GCP] Deploy an Nginx Ingress controller
@@ -28,7 +29,7 @@ Agenda:
   - [PA-HUM] Create `gke-advanced` Environment
   - [PA-GCP] Create a Spanner database
   - [PA-GCP] Create Kubernetes and Google Service Accounts to access Spanner via Workload Identity
-  - [DE-HUM] Deploy `cartservice` Workload connecting to Spanner database in `gke-advanced` Environment
+  - [DE-HUM] Deploy the Online Boutique Workloads in `gke-advanced` Environment
 
 
 Backlog and future considerations:

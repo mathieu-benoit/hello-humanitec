@@ -5,12 +5,12 @@ containers:
   cartservice:
     image: gcr.io/google-samples/microservices-demo/cartservice:v0.6.0
     variables:
-      SPANNER_CONNECTION_STRING: "${resources.redis.name}:6379"
+      SPANNER_CONNECTION_STRING: "${resources.redis-cart.host}"
 resources:
-  redis:
-    type: service
+  redis-cart:
+    type: redis
     properties:
-      name:
+      host:
 service:
   ports:
     grpc:

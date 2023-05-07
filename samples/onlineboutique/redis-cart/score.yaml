@@ -1,8 +1,8 @@
 apiVersion: score.dev/v1b1
 metadata:
-  name: redis
+  name: redis-cart
 containers:
-  redis:
+  redis-cart:
     image: redis:alpine
 service:
   ports:
