@@ -470,6 +470,7 @@ rm ${CLUSTER_NAME}-logging.json
 
 As Platform Admin, in Humanitec.
 
+Create the new Environment by cloning the existing Environment from its latest Deployment:
 ```bash
 CLONED_ENVIRONMENT=development
 humctl create environment ${ENVIRONMENT} \
@@ -510,13 +511,27 @@ humctl create environment ${ENVIRONMENT} \
 
 Get the current Delta in draft mode in the newly created Environment:
 ```bash
-DRAFT_DELTA_IN_NEW_ENVIRONMENT=$(curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/deltas?env=${ENVIRONMENT}" \
-    -s \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -H "Content-Type: application/json" \
-    | jq -r .[0].id)
+DRAFT_DELTA_IN_NEW_ENVIRONMENT=$(humctl get delta \
+    --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP} \
+    -o json \
+    | jq -c --arg ENVIRONMENT "${ENVIRONMENT}" '.[] | select(.object.metadata.env_id | contains
+($ENVIRONMENT))' \
+    | jq -r .metadata.id)
 echo ${DRAFT_DELTA_IN_NEW_ENVIRONMENT}
 ```
+
+<details>
+  <summary>With curl.</summary>
+
+  ```bash
+  DRAFT_DELTA_IN_NEW_ENVIRONMENT=$(curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/deltas?env=${ENVIRONMENT}" \
+      -s \
+      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+      -H "Content-Type: application/json" \
+      | jq -r .[0].id)
+  echo ${DRAFT_DELTA_IN_NEW_ENVIRONMENT}
+  ```
+</details>
 _Note: re-run the above commands until you get a value for `DRAFT_DELTA_IN_NEW_ENVIRONMENT`._
 
 Deploy current Delta in draft mode:
