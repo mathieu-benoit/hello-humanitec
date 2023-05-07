@@ -566,8 +566,9 @@ humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/en
         -H "Content-Type: application/json" \
         | jq -c '.[] | select(.type | contains("dns"))' \
         | jq -r .resource.host
-    ```
+  ```
 </details>
+
 _Note: re-run the above command until you get a value._
 
 **BELOW IS UNDER CONSTRUCTION, NOT READY YET... STAY TUNED!**
