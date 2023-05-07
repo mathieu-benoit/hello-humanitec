@@ -470,18 +470,18 @@ rm ${CLUSTER_NAME}-logging.json
 
 As Platform Admin, in Humanitec.
 
-Get the latest Deployment's id of the existing Environment:
 ```bash
 CLONED_ENVIRONMENT=development
-LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT=$(humctl get deploy \
-    --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${CLONED_ENVIRONMENT} \
-    -o json \
-    | jq -r .[0].metadata.id)
+humctl create environment ${ENVIRONMENT} \
+    --name ${ENVIRONMENT} \
+    -t development \
+    --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP} \
+    --from ${CLONED_ENVIRONMENT}
 ```
-
 <details>
   <summary>With curl.</summary>
 
+  Get the latest Deployment's id of the existing Environment:
   ```bash
   CLONED_ENVIRONMENT=development
   LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT=$(curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${CLONED_ENVIRONMENT}/deploys" \
@@ -490,23 +490,23 @@ LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT=$(humctl get deploy \
       -H "Content-Type: application/json" \
       | jq -r .[0].id)
   ```
-</details>
 
-Create the new Environment by cloning the existing Environment from its latest Deployment:
-```bash
-cat <<EOF > ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.yaml
-from_deploy_id: ${LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT}
-id: ${ENVIRONMENT}
-name: ${ENVIRONMENT}
-type: development
-EOF
-yq -o json ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.yaml > ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.json
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs" \
-    -X POST \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -d @${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.json
-```
+  Create the new Environment by cloning the existing Environment from its latest Deployment:
+  ```bash
+  cat <<EOF > ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.yaml
+  from_deploy_id: ${LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT}
+  id: ${ENVIRONMENT}
+  name: ${ENVIRONMENT}
+  type: development
+  EOF
+  yq -o json ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.yaml > ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.json
+  curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs" \
+      -X POST \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+      -d @${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.json
+  ```
+</details>
 
 Get the current Delta in draft mode in the newly created Environment:
 ```bash
