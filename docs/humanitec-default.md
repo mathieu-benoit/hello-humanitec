@@ -47,6 +47,7 @@ flowchart LR
   end
   Humanitec-->cloud
   enduser((End user))-->frontend
+  redis-cart-connection-->redis-cart
 ```
 
 ```bash

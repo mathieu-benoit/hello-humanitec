@@ -26,7 +26,7 @@ flowchart LR
         custom-service-account>custom-service-account]
         custom-workload>custom-workload]
         gke-basic-connection>gke-basic-connection]
-        memorystore-connection>memorystore-connection]
+        redis-cart-connection>redis-cart-connection]
     end
   end
   subgraph Google Cloud
@@ -43,7 +43,7 @@ flowchart LR
     gke-admin-gsa[\gke-admin-gsa/]
     gke-basic-connection-.->gke-admin-gsa
     gke-admin-gsa-->gke-basic
-    memorystore-connection-.->memorystore[(memorystore)]
+    redis-cart-connection-.->memorystore[(memorystore)]
     onlineboutique-app-->onlineboutique
     cartservice-->memorystore
   end

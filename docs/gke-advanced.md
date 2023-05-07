@@ -28,7 +28,7 @@ flowchart LR
         custom-ingress>custom-ingress]
         custom-dns>custom-dns]
         gke-advanced-connection>gke-advanced-connection]
-        spanner-connection>spanner-connection]
+        redis-cart-connection>redis-cart-connection]
         logging-connection
     end
   end
@@ -60,7 +60,7 @@ flowchart LR
   logging-reader-gsa-.->cloud-logging
   gke-advanced-connection-.->gke-admin-gsa
   gke-admin-gsa-.->gke-advanced
-  spanner-connection-.->spanner-gsa
+  redis-cart-connection-.->spanner-gsa
   spanner-gsa-.->spanner
   cartservice-->spanner-gsa
 ```
