@@ -167,6 +167,8 @@ controller:
     type: ClusterIP
     annotations:
       cloud.google.com/neg: '{"exposed_ports": {"${NGINX_NEG_PORT}":{"name": "${NGINX_NEG_NAME}"}}}'
+  config:
+    use-forwarded-headers: "true"
 EOF
 helm upgrade \
     --install ingress-nginx ingress-nginx \
