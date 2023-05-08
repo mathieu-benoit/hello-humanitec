@@ -255,7 +255,7 @@ EOF
 gcloud endpoints services deploy ${ONLINEBOUTIQUE_APP}-${CLUSTER_NAME}-dns-spec.yaml
 ```
 
-Create a the SSL certificate:
+Create a self managed SSL certificate:
 ```bash
 openssl genrsa -out ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.key 2048
 openssl req -x509 \

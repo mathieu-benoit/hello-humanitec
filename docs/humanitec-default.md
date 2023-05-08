@@ -61,7 +61,7 @@ As Platform Admin, in Humanitec.
 ```bash
 ONLINEBOUTIQUE_APP=onlineboutique
 humctl create app /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP} \
-	--conext /orgs/${HUMANITEC_ORG} \
+	--context /orgs/${HUMANITEC_ORG} \
   --name ${ONLINEBOUTIQUE_APP}
 ```
 
@@ -100,7 +100,7 @@ score-humanitec delta \
     -f ${REDIS_NAME}/score.yaml \
     --extensions ${REDIS_NAME}/humanitec.score.yaml
 ```
-_Note: this part in the near future will be replaced by a Redis resource definition deploying 
+_Note: this part in the near future will be replaced by a Redis resource definition deploying an in-cluster Redis database._
 
 ## [PA-HUM] Create the in-cluster Redis access resource definition
 

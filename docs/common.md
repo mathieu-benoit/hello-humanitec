@@ -118,7 +118,7 @@ As Platform Admin, in Humanitec.
 
 Here we want to customize the Kubernetes `Deployment` manifests for all our Workloads by adding the `securityContext` sections and other security features ([reference](https://docs.humanitec.com/integrations/resource-types/workload)).
 
-_Importannt note: the `${resources.k8s-service-account.outputs.name}` part is necessary to create the custom `ServiceAccount` defined above._
+_Important note: the `${resources.k8s-service-account.outputs.name}` part is necessary to create the custom `ServiceAccount` defined above._
 
 ```bash
 cat <<EOF > custom-workload.yaml
