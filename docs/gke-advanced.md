@@ -239,22 +239,31 @@ echo ${INGRESS_IP}
 ```
 
 ```bash
-ONLINEBOUTIQUE_DNS=FIXME
-openssl genrsa -out ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.key 2048
-openssl req -x509 \
-    -new \
-    -nodes \
-    -days 365 \
-    -key ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.key \
-    -out ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.crt \
-    -subj "/CN=${ONLINEBOUTIQUE_DNS}"
+ONLINEBOUTIQUE_DNS=ob-${CLUSTER_NAME}.endpoints.${PROJECT_ID}.cloud.goog
+cat <<EOF > ${ONLINEBOUTIQUE_APP}-${CLUSTER_NAME}-dns-spec.yaml
+swagger: "2.0"
+info:
+  description: "Cloud Endpoints DNS"
+  title: "Cloud Endpoints DNS"
+  version: "1.0.0"
+paths: {}
+host: "${ONLINEBOUTIQUE_DNS}"
+x-google-endpoints:
+- name: "${ONLINEBOUTIQUE_DNS}"
+  target: "${INGRESS_IP}"
+EOF
+gcloud endpoints services deploy ${ONLINEBOUTIQUE_APP}-${CLUSTER_NAME}-dns-spec.yaml
 ```
 
+Create a managed SSL (this action will take ~15 min):
 ```bash
 gcloud compute ssl-certificates create ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ssl-certificate \
-    --certificate ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.crt \
-    --private-key ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.key \
+    --domains ${ONLINEBOUTIQUE_DNS} \
     --global
+```
+_Note: Here, if needed you can use your own SSL certificate by using instead: `gcloud compute ssl-certificates create --certificate --private-key`._
+
+```bash
 gcloud compute target-https-proxies create ${CLUSTER_NAME}-ingress-nginx-http-proxy \
     --url-map ${CLUSTER_NAME}-ingress-nginx-loadbalancer \
     --ssl-certificates ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ssl-certificate
