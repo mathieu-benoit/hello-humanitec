@@ -255,13 +255,25 @@ EOF
 gcloud endpoints services deploy ${ONLINEBOUTIQUE_APP}-${CLUSTER_NAME}-dns-spec.yaml
 ```
 
-Create a managed SSL (this action will take ~15 min):
+Create a the SSL certificate:
+```bash
+openssl genrsa -out ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.key 2048
+openssl req -x509 \
+    -new \
+    -nodes \
+    -days 365 \
+    -key ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.key \
+    -out ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.crt \
+    -subj "/CN=${ONLINEBOUTIQUE_DNS}"
+```
+
+Upload the SSL certificate in Google Cloud:
 ```bash
 gcloud compute ssl-certificates create ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ssl-certificate \
-    --domains ${ONLINEBOUTIQUE_DNS} \
+    --certificate ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.crt \
+    --private-key ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-ca.key \
     --global
 ```
-_Note: Here, if needed you can use your own SSL certificate by using instead: `gcloud compute ssl-certificates create --certificate --private-key`._
 
 ```bash
 gcloud compute target-https-proxies create ${CLUSTER_NAME}-ingress-nginx-http-proxy \
