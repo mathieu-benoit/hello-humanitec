@@ -1,4 +1,4 @@
-[_<< Previous section: Common setup_](/docs/common.md)
+[_<< Previous section: Common setup_](/docs/common.md) | [_Next section: GKE advanced setup >>_](/docs/gke-advanced.md)
 
 # GKE basic setup
 
@@ -314,4 +314,4 @@ echo -e "https://$(humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${ONL
 
 _Note: re-run the above command until you get a value._
 
-[_Next section: GKE advanced setup >>_](/docs/gke-advanced.md)
+[_<< Previous section: Common setup_](/docs/common.md) | [_Next section: GKE advanced setup >>_](/docs/gke-advanced.md)

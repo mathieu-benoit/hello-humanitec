@@ -1,3 +1,5 @@
+[_Next section: Common setup >>_](/docs/common.md)
+
 ## Online Boutique
 
 - [[PA-HUM] Create the Online Boutique App](#pa-hum-create-the-online-boutique-app)

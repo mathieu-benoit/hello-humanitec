@@ -571,3 +571,5 @@ curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
 	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
   	-d @custom-sa.json
 ```
+
+[_<< Previous section: GKE basic setup_](/docs/gke-basic.md)

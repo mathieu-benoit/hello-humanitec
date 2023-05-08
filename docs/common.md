@@ -1,4 +1,4 @@
-[_<< Previous section: Humanitec default setup_](/docs/humanitec-default.md)
+[_<< Previous section: Humanitec default setup_](/docs/humanitec-default.md) | [_Next section: GKE basic setup >>_](/docs/gke-basic.md)
 
 ## Common setup
 
@@ -168,4 +168,4 @@ curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
     -d @custom-workload.json
 ```
 
-[_Next section: GKE basic setup >>_](/docs/gke-basic.md)
+[_<< Previous section: Humanitec default setup_](/docs/humanitec-default.md) | [_Next section: GKE basic setup >>_](/docs/gke-basic.md)
