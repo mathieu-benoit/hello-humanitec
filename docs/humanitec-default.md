@@ -12,7 +12,7 @@
 flowchart LR
   subgraph Humanitec
     direction LR
-    subgraph onlineboutique [Online Boutique App]
+    subgraph onlineboutique-app [Online Boutique App]
         direction LR
         cartservice-workload([cartservice])
         frontend-workload([frontend])
@@ -24,10 +24,13 @@ flowchart LR
   end
   subgraph cloud [Humanitec's Cloud]
       direction LR
-      frontend{{frontend}}-->cartservice{{cartservice}}
-      cartservice-->redis-cart[(redis-cart)]
+      subgraph onlineboutique
+          frontend{{frontend}}-->cartservice{{cartservice}}
+          cartservice-->redis-cart-db[(redis-cart)]
+      end
   end
-  Humanitec-->cloud
+  onlineboutique-app-.->onlineboutique
+  redis-cart-connection-.->redis-cart-db
   enduser((End user))-->frontend
 ```
 
