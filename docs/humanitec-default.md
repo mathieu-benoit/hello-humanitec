@@ -12,17 +12,8 @@ flowchart LR
     direction LR
     subgraph onlineboutique [Online Boutique App]
         direction LR
-        adservice-workload([adservice])
         cartservice-workload([cartservice])
-        checkoutservice-workload([checkoutservice])
-        currencyservice-workload([currencyservice])
-        emailservice-workload([emailservice])
         frontend-workload([frontend])
-        loadgenerator-workload([loadgenerator])
-        paymentservice-workload([paymentservice])
-        productcatalogservice-workload([productcatalogservice])
-        recommendationservice-workload([recommendationservice])
-        shippingservice-workload([shippingservice])
         redis-cart-workload([redis-cart])
     end
     subgraph Resources
@@ -31,18 +22,7 @@ flowchart LR
   end
   subgraph cloud [Humanitec's Cloud]
       direction LR
-      frontend{{frontend}}-->adservice{{adservice}}
-      frontend-->checkoutservice{{checkoutservice}}
-      frontend-->currencyservice{{currencyservice}}
-      checkoutservice-->emailservice{{emailservice}}
-      checkoutservice-->paymentservice{{paymentservice}}
-      checkoutservice-->currencyservice
-      checkoutservice-->shippingservice{{shippingservice}}
-      checkoutservice-->productcatalogservice{{productcatalogservice}}
-      checkoutservice-->cartservice{{cartservice}}
-      frontend-->cartservice
-      loadgenerator{{loadgenerator}}-->frontend
-      recommendationservice{{recommendationservice}}-->productcatalogservice
+      frontend{{frontend}}-->cartservice{{cartservice}}
       cartservice-->redis-cart[(redis-cart)]
   end
   Humanitec-->cloud
