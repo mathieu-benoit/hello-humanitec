@@ -16,7 +16,6 @@ flowchart LR
         direction LR
         cartservice-workload([cartservice])
         frontend-workload([frontend])
-        redis-cart-workload([redis-cart])
     end
     subgraph Resources
         redis-cart-connection>redis-cart-connection]
