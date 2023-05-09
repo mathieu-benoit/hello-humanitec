@@ -132,28 +132,57 @@ As Platform Admin, in Humanitec.
 Create the GKE access resource definition:
 ```bash
 cat <<EOF > ${CLUSTER_NAME}.yaml
-id: ${CLUSTER_NAME}
-name: ${CLUSTER_NAME}
-type: k8s-cluster
-driver_type: humanitec/k8s-cluster-gke
-driver_inputs:
-  values:
-    loadbalancer: ${INGRESS_IP}
-    name: ${CLUSTER_NAME}
-    project_id: ${PROJECT_ID}
-    zone: ${ZONE}
-  secrets:
-    credentials: $(cat ${GKE_ADMIN_SA_NAME}.json)
-criteria:
-  - env_id: ${ENVIRONMENT}
+apiVersion: core.api.humanitec.io/v1
+kind: Definition
+metadata:
+  id: ${CLUSTER_NAME}
+object:
+  name: ${CLUSTER_NAME}
+  type: k8s-cluster
+  driver_type: humanitec/k8s-cluster-gke
+  driver_inputs:
+    values:
+      loadbalancer: ${INGRESS_IP}
+      name: ${CLUSTER_NAME}
+      project_id: ${PROJECT_ID}
+      zone: ${ZONE}
+    secrets:
+      credentials: $(cat ${GKE_ADMIN_SA_NAME}.json)
+  criteria:
+    - env_id: ${ENVIRONMENT}
 EOF
-yq -o json ${CLUSTER_NAME}.yaml > ${CLUSTER_NAME}.json
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
-    -X POST \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -d @${CLUSTER_NAME}.json
+humctl create \
+    --context /orgs/${HUMANITEC_ORG} \
+    -f ${CLUSTER_NAME}.yaml
 ```
+<details>
+  <summary>With curl.</summary>
+
+  ```bash
+  cat <<EOF > ${CLUSTER_NAME}.yaml
+  id: ${CLUSTER_NAME}
+  name: ${CLUSTER_NAME}
+  type: k8s-cluster
+  driver_type: humanitec/k8s-cluster-gke
+  driver_inputs:
+    values:
+      loadbalancer: ${INGRESS_IP}
+      name: ${CLUSTER_NAME}
+      project_id: ${PROJECT_ID}
+      zone: ${ZONE}
+    secrets:
+      credentials: $(cat ${GKE_ADMIN_SA_NAME}.json)
+  criteria:
+    - env_id: ${ENVIRONMENT}
+  EOF
+  yq -o json ${CLUSTER_NAME}.yaml > ${CLUSTER_NAME}.json
+  curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+      -X POST \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+      -d @${CLUSTER_NAME}.json
+  ```
+</details>
 
 Clean sensitive information locally:
 ```bash
@@ -249,26 +278,53 @@ As Platform Admin, in Humanitec.
 
 ```bash
 cat <<EOF > ${REDIS_NAME}.yaml
-id: ${REDIS_NAME}
-name: ${REDIS_NAME}
-type: redis
-driver_type: humanitec/static
-driver_inputs:
-  values:
-    host: ${REDIS_HOST}
-    port: ${REDIS_PORT}
-  secrets:
-    password: ${REDIS_AUTH}
-criteria:
-  - env_id: ${ENVIRONMENT}
+apiVersion: core.api.humanitec.io/v1
+kind: Definition
+metadata:
+  id: ${REDIS_NAME}
+object:
+  name: ${REDIS_NAME}
+  type: redis
+  driver_type: humanitec/k8s-cluster-gke
+  driver_inputs:
+    values:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+    secrets:
+      password: ${REDIS_AUTH}
+  criteria:
+    - env_id: ${ENVIRONMENT}
 EOF
-yq -o json ${REDIS_NAME}.yaml > ${REDIS_NAME}.json
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
-    -X POST \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -d @${REDIS_NAME}.json
+humctl create \
+    --context /orgs/${HUMANITEC_ORG} \
+    -f ${REDIS_NAME}.yaml
 ```
+<details>
+  <summary>With curl.</summary>
+
+  ```bash
+  cat <<EOF > ${REDIS_NAME}.yaml
+  id: ${REDIS_NAME}
+  name: ${REDIS_NAME}
+  type: redis
+  driver_type: humanitec/static
+  driver_inputs:
+    values:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+    secrets:
+      password: ${REDIS_AUTH}
+  criteria:
+    - env_id: ${ENVIRONMENT}
+  EOF
+  yq -o json ${REDIS_NAME}.yaml > ${REDIS_NAME}.json
+  curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+      -X POST \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+      -d @${REDIS_NAME}.json
+```
+</details>
 
 Clean sensitive information locally:
 ```bash
