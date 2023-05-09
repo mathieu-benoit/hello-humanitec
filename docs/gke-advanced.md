@@ -331,47 +331,98 @@ As Platform Admin, in Humanitec.
 Create the custom Ingress resource definition:
 ```bash
 cat <<EOF > custom-ingress.yaml
-id: custom-ingress
-name: custom-ingress
-type: ingress
-driver_type: humanitec/ingress
-driver_inputs:
-  values:
-    api_version: v1
-    class: nginx
-    no_tls: true
-criteria:
-  - env_id: ${ENVIRONMENT}
+apiVersion: core.api.humanitec.io/v1
+kind: Definition
+metadata:
+  id: custom-ingress
+object:
+  name: custom-ingress
+  type: ingress
+  driver_type: humanitec/ingress
+  driver_inputs:
+    values:
+      api_version: v1
+      class: nginx
+      no_tls: true
+  criteria:
+    - env_id: ${ENVIRONMENT}
 EOF
-yq -o json custom-ingress.yaml > custom-ingress.json
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
-    -X POST \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -d @custom-ingress.json
+humctl create \
+    --context /orgs/${HUMANITEC_ORG} \
+    -f custom-ingress.yaml
 ```
+<details>
+  <summary>With curl.</summary>
+
+  ```bash
+  cat <<EOF > custom-ingress.yaml
+  id: custom-ingress
+  name: custom-ingress
+  type: ingress
+  driver_type: humanitec/ingress
+  driver_inputs:
+    values:
+      api_version: v1
+      class: nginx
+      no_tls: true
+  criteria:
+    - env_id: ${ENVIRONMENT}
+  EOF
+  yq -o json custom-ingress.yaml > custom-ingress.json
+  curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+      -X POST \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+      -d @custom-ingress.json
+  ```
+</details>
 
 Create the custom DNS resource definition:
 ```bash
 cat <<EOF > ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns.yaml
-id: ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns
-name: ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns
-type: dns
-driver_type: humanitec/static
-driver_inputs:
-  values:
-    host: ${ONLINEBOUTIQUE_DNS}
-criteria:
-  - env_id: ${ENVIRONMENT}
-    app_id: ${ONLINEBOUTIQUE_APP}
+apiVersion: core.api.humanitec.io/v1
+kind: Definition
+metadata:
+  id: ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns
+object:
+  name: ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns
+  type: dns
+  driver_type: humanitec/static
+  driver_inputs:
+    values:
+      host: ${ONLINEBOUTIQUE_DNS}
+  criteria:
+    - env_id: ${ENVIRONMENT}
+      app_id: ${ONLINEBOUTIQUE_APP}
 EOF
-yq -o json ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns.yaml > ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns.json
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
-    -X POST \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -d @${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns.json
+humctl create \
+    --context /orgs/${HUMANITEC_ORG} \
+    -f ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns.yaml
 ```
+<details>
+  <summary>With curl.</summary>
+
+  ```bash
+  cat <<EOF > ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns.yaml
+  id: ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns
+  name: ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns
+  type: dns
+  driver_type: humanitec/static
+  driver_inputs:
+    values:
+      host: ${ONLINEBOUTIQUE_DNS}
+  criteria:
+    - env_id: ${ENVIRONMENT}
+      app_id: ${ONLINEBOUTIQUE_APP}
+  EOF
+  yq -o json ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns.yaml > ${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns.json
+  curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+      -X POST \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+      -d @${CLUSTER_NAME}-${ONLINEBOUTIQUE_APP}-dns.json
+```
+</details>
 
 ## [PA-GCP] Create the Google Service Account to access the GKE cluster
 
@@ -402,28 +453,57 @@ As Platform Admin, in Humanitec.
 Create the GKE access resource definition:
 ```bash
 cat <<EOF > ${CLUSTER_NAME}.yaml
-id: ${CLUSTER_NAME}
-name: ${CLUSTER_NAME}
-type: k8s-cluster
-driver_type: humanitec/k8s-cluster-gke
-driver_inputs:
-  values:
-    loadbalancer: ${INGRESS_IP}
-    name: ${CLUSTER_NAME}
-    project_id: ${PROJECT_ID}
-    zone: ${ZONE}
-  secrets:
-    credentials: $(cat ${GKE_ADMIN_SA_NAME}.json)
-criteria:
-  - env_id: ${ENVIRONMENT}
+apiVersion: core.api.humanitec.io/v1
+kind: Definition
+metadata:
+  id: ${CLUSTER_NAME}
+object:
+  name: ${CLUSTER_NAME}
+  type: k8s-cluster
+  driver_type: humanitec/k8s-cluster-gke
+  driver_inputs:
+    values:
+      loadbalancer: ${INGRESS_IP}
+      name: ${CLUSTER_NAME}
+      project_id: ${PROJECT_ID}
+      zone: ${ZONE}
+    secrets:
+      credentials: $(cat ${GKE_ADMIN_SA_NAME}.json)
+  criteria:
+    - env_id: ${ENVIRONMENT}
 EOF
-yq -o json ${CLUSTER_NAME}.yaml > ${CLUSTER_NAME}.json
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
-    -X POST \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -d @${CLUSTER_NAME}.json
+humctl create \
+    --context /orgs/${HUMANITEC_ORG} \
+    -f ${CLUSTER_NAME}.yaml
 ```
+<details>
+  <summary>With curl.</summary>
+
+  ```bash
+  cat <<EOF > ${CLUSTER_NAME}.yaml
+  id: ${CLUSTER_NAME}
+  name: ${CLUSTER_NAME}
+  type: k8s-cluster
+  driver_type: humanitec/k8s-cluster-gke
+  driver_inputs:
+    values:
+      loadbalancer: ${INGRESS_IP}
+      name: ${CLUSTER_NAME}
+      project_id: ${PROJECT_ID}
+      zone: ${ZONE}
+    secrets:
+      credentials: $(cat ${GKE_ADMIN_SA_NAME}.json)
+  criteria:
+    - env_id: ${ENVIRONMENT}
+  EOF
+  yq -o json ${CLUSTER_NAME}.yaml > ${CLUSTER_NAME}.json
+  curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+      -X POST \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+      -d @${CLUSTER_NAME}.json
+  ```
+</details>
 
 Clean sensitive information locally:
 ```bash
@@ -460,27 +540,55 @@ As Platform Admin, in Humanitec.
 Create the Cloud Logging access resource definition:
 ```bash
 cat <<EOF > ${CLUSTER_NAME}-logging.yaml
-id: ${CLUSTER_NAME}-logging
-name: ${CLUSTER_NAME}-logging
-type: logging
-driver_type: humanitec/logging-gcp
-driver_inputs:
-  values:
-    cluster_name: ${CLUSTER_NAME}
-    cluster_zone: ${ZONE}
-    project_id: ${PROJECT_ID}
-  secrets:
-    credentials: $(cat ${LOGGING_READER_SA_NAME}.json)
-criteria:
-  - env_id: ${ENVIRONMENT}
+apiVersion: core.api.humanitec.io/v1
+kind: Definition
+metadata:
+  id: ${CLUSTER_NAME}-logging
+object:
+  name: ${CLUSTER_NAME}-logging
+  type: logging
+  driver_type: humanitec/logging-gcp
+  driver_inputs:
+    values:
+      cluster_name: ${CLUSTER_NAME}
+      cluster_zone: ${ZONE}
+      project_id: ${PROJECT_ID}
+    secrets:
+      credentials: $(cat ${LOGGING_READER_SA_NAME}.json)
+  criteria:
+    - env_id: ${ENVIRONMENT}
 EOF
-yq -o json ${CLUSTER_NAME}-logging.yaml > ${CLUSTER_NAME}-logging.json
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
-    -X POST \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -d @${CLUSTER_NAME}-logging.json
+humctl create \
+    --context /orgs/${HUMANITEC_ORG} \
+    -f ${CLUSTER_NAME}-logging.yaml
 ```
+<details>
+  <summary>With curl.</summary>
+
+  ```bash
+  cat <<EOF > ${CLUSTER_NAME}-logging.yaml
+  id: ${CLUSTER_NAME}-logging
+  name: ${CLUSTER_NAME}-logging
+  type: logging
+  driver_type: humanitec/logging-gcp
+  driver_inputs:
+    values:
+      cluster_name: ${CLUSTER_NAME}
+      cluster_zone: ${ZONE}
+      project_id: ${PROJECT_ID}
+    secrets:
+      credentials: $(cat ${LOGGING_READER_SA_NAME}.json)
+  criteria:
+    - env_id: ${ENVIRONMENT}
+  EOF
+  yq -o json ${CLUSTER_NAME}-logging.yaml > ${CLUSTER_NAME}-logging.json
+  curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+      -X POST \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+      -d @${CLUSTER_NAME}-logging.json
+  ```
+</details>
 
 Clean sensitive information locally:
 ```bash
