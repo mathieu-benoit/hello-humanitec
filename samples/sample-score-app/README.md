@@ -2,8 +2,9 @@
 
 ```bash
 SAMPLE_SCORE_APP=sample-score-app
-humctl create app /orgs/${HUMANITEC_ORG}/apps/${SAMPLE_SCORE_APP} \
-	--name ${SAMPLE_SCORE_APP}
+humctl create app ${SAMPLE_SCORE_APP} \
+    --context /orgs/${HUMANITEC_ORG} \
+    --name ${SAMPLE_SCORE_APP}
 ```
 
 ## Deploy the Sample Score Workload

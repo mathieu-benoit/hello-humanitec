@@ -44,9 +44,9 @@ As Platform Admin, in Humanitec.
 
 ```bash
 ONLINEBOUTIQUE_APP=onlineboutique
-humctl create app /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP} \
-	--context /orgs/${HUMANITEC_ORG} \
-  --name ${ONLINEBOUTIQUE_APP}
+humctl create app ${ONLINEBOUTIQUE_APP} \
+    --context /orgs/${HUMANITEC_ORG} \
+    --name ${ONLINEBOUTIQUE_APP}
 ```
 
 <details>
