@@ -9,7 +9,7 @@
 - [[PA-HUM] Create the `gke-basic` Environment](#pa-hum-create-the-gke-basic-environment)
 - [[PA-GCP] Create a Memorystore (Redis) database](#pa-gcp-create-a-memorystore-redis-database)
 - [[PA-HUM] Create the Memorystore (Redis) access resource definition](#pa-hum-create-the-memorystore-redis-access-resource-definition)
-- [[DE-HUM] Deploy the Online Boutique Workloads in `gke-basic` Environment](#de-hum-deploy-the-online-boutique-workloads-in-gke-basic-environment)
+- [[PA-HUM] Deploy the new `gke-basic` Environment](#pa-hum-deploy-the-new-gke-basic-environment)
 - [Test the Online Boutique website](#test-the-online-boutique-website)
 
 ```mermaid
@@ -205,6 +205,14 @@ humctl create environment ${ENVIRONMENT} \
   ```
 </details>
 
+Deploy the new Environment:
+```bash
+humctl deploy env ${CLONED_ENVIRONMENT} ${ENVIRONMENT} \
+    --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}
+```
+
+At this stage, you can already [test the Online Boutique website](#test-the-online-boutique-website) in its existing state.
+
 ## [PA-GCP] Create a Memorystore (Redis) database
 
 As Platform Admin, in Google Cloud.
@@ -267,28 +275,15 @@ Clean sensitive information locally:
 rm ${REDIS_NAME}.yaml
 ```
 
-## [DE-HUM] Deploy the Online Boutique Workloads in `gke-basic` Environment
+## [PA-HUM] Deploy the new `gke-basic` Environment
 
-As Developer, in Humanitec.
+As Platform admin, in Humanitec.
 
+Deploy the new Environment with all the new resource definitions:
 ```bash
-FIRST_WORKLOAD="adservice"
-COMBINED_DELTA=$(score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --retry -f ${FIRST_WORKLOAD}/score.yaml --extensions ${FIRST_WORKLOAD}/humanitec.score.yaml | jq -r .id)
-WORKLOADS="cartservice checkoutservice currencyservice emailservice frontend loadgenerator paymentservice productcatalogservice recommendationservice"
-for w in ${WORKLOADS}; do COMBINED_DELTA=$(score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --delta ${COMBINED_DELTA} --retry -f $w/score.yaml --extensions $w/humanitec.score.yaml | jq -r .id); done
-LAST_WORKLOAD="shippingservice"
-score-humanitec delta \
-	--app ${ONLINEBOUTIQUE_APP} \
-	--env ${ENVIRONMENT} \
-	--org ${HUMANITEC_ORG} \
-	--token ${HUMANITEC_TOKEN} \
-	--deploy \
-	--delta ${COMBINED_DELTA} \
-	--retry \
-	-f ${LAST_WORKLOAD}/score.yaml \
-	--extensions ${LAST_WORKLOAD}/humanitec.score.yaml
+humctl deploy env ${ENVIRONMENT} ${ENVIRONMENT} \
+    --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}
 ```
-_Note: `loadgenerator` is deployed to generate both: traffic on these apps and data in the database. If you don't want this, feel free to remove it from the above list of `WORKLOADS`._
 
 ## Test the Online Boutique website
 

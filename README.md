@@ -20,7 +20,7 @@ Agenda:
   - [PA-GCP] Deploy a simple Nginx Ingress controller
   - [PA-HUM] Create `gke-basic` Environment
   - [PA-GCP] Create a Memorystore (Redis) database
-  - [DE-HUM] Deploy the Online Boutique Workloads in `gke-basic` Environment
+  - [PA-HUM] Deploy the new `gke-basic` Environment
 - [GKE advanced setup - _under construction_](./docs/gke-advanced.md)
   - [PA-GCP] Create advanced and secured GKE setup
   - [PA-GCP] Deploy an Nginx Ingress controller
@@ -29,7 +29,7 @@ Agenda:
   - [PA-HUM] Create `gke-advanced` Environment
   - [PA-GCP] Create a Spanner database
   - [PA-GCP] Create Kubernetes and Google Service Accounts to access Spanner via Workload Identity
-  - [DE-HUM] Deploy the Online Boutique Workloads in `gke-advanced` Environment
+  - [PA-HUM] Deploy the new `gke-advanced` Environment
 
 
 Backlog and future considerations:
