@@ -61,6 +61,7 @@ HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.1
 LOCAL_IP_ADRESS=$(curl -s ifconfig.co)
 
 HUMANITEC_ORG=FIXME
+export HUMANITEC_CONTEXT=/orgs/${HUMANITEC_ORG}
 export HUMANITEC_TOKEN=FIXME
 
 ENVIRONMENT=${CLUSTER_NAME}
@@ -152,7 +153,6 @@ object:
     - env_id: ${ENVIRONMENT}
 EOF
 humctl create \
-    --context /orgs/${HUMANITEC_ORG} \
     -f ${CLUSTER_NAME}.yaml
 ```
 <details>
@@ -296,7 +296,6 @@ object:
     - env_id: ${ENVIRONMENT}
 EOF
 humctl create \
-    --context /orgs/${HUMANITEC_ORG} \
     -f ${REDIS_NAME}.yaml
 ```
 <details>

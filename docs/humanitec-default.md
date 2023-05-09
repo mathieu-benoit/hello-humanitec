@@ -35,6 +35,7 @@ flowchart LR
 
 ```bash
 HUMANITEC_ORG=FIXME
+export HUMANITEC_CONTEXT=/orgs/${HUMANITEC_ORG}
 export HUMANITEC_TOKEN=FIXME
 ```
 
@@ -45,7 +46,6 @@ As Platform Admin, in Humanitec.
 ```bash
 ONLINEBOUTIQUE_APP=onlineboutique
 humctl create app ${ONLINEBOUTIQUE_APP} \
-    --context /orgs/${HUMANITEC_ORG} \
     --name ${ONLINEBOUTIQUE_APP}
 ```
 

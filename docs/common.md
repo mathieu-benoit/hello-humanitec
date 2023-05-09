@@ -19,6 +19,7 @@ flowchart LR
 
 ```bash
 HUMANITEC_ORG=FIXME
+export HUMANITEC_CONTEXT=/orgs/${HUMANITEC_ORG}
 export HUMANITEC_TOKEN=FIXME
 ```
 
@@ -45,7 +46,6 @@ object:
     - {}
 EOF
 humctl create \
-    --context /orgs/${HUMANITEC_ORG} \
     -f custom-namespace.yaml
 ```
 
@@ -108,7 +108,6 @@ object:
     - {}
 EOF
 humctl create \
-    --context /orgs/${HUMANITEC_ORG} \
     -f custom-service-account.yaml
 ```
 
@@ -201,7 +200,6 @@ object:
     - {}
 EOF
 humctl create \
-    --context /orgs/${HUMANITEC_ORG} \
     -f custom-workload.yaml
 ```
 
