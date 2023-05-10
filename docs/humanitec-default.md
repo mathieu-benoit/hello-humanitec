@@ -13,7 +13,7 @@ flowchart LR
   subgraph Humanitec
     direction LR
     subgraph onlineboutique-app [Online Boutique App]
-        subgraph development
+        subgraph Development
           direction LR
           cartservice-workload([cartservice])
           frontend-workload([frontend])
