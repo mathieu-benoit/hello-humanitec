@@ -24,9 +24,6 @@ flowchart LR
       end
     end
     subgraph Resources
-        custom-namespace>custom-namespace]
-        custom-service-account>custom-service-account]
-        custom-workload>custom-workload]
         custom-ingress>custom-ingress]
         custom-dns>custom-dns]
         gke-advanced-connection>gke-advanced-connection]

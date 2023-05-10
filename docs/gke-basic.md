@@ -24,9 +24,6 @@ flowchart LR
       end
     end
     subgraph Resources
-        custom-namespace>custom-namespace]
-        custom-service-account>custom-service-account]
-        custom-workload>custom-workload]
         gke-basic-connection>gke-basic-connection]
         redis-cart-connection>redis-cart-connection]
     end
