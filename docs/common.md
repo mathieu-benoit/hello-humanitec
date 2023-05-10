@@ -11,9 +11,14 @@
 flowchart LR
   subgraph Humanitec
     subgraph Resources
-        custom-namespace>custom-namespace]
-        custom-service-account>custom-service-account]
-        custom-workload>custom-workload]
+      custom-namespace>custom-namespace]
+      custom-service-account>custom-service-account]
+      custom-workload>custom-workload]
+    end
+    subgraph Environement Types
+      development
+      staging
+      production
     end
   end
 ```
