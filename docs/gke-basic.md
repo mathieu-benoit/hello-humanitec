@@ -1,6 +1,6 @@
 [_<< Previous section: Common setup_](/docs/common.md) | [_Next section: GKE advanced setup in Production >>_](/docs/gke-advanced.md)
 
-# GKE basic setup
+# GKE basic setup in Staging
 
 - [[PA-GCP] Create the GKE cluster](#pa-gcp-create-the-gke-cluster)
 - [[PA-GCP] Deploy the Nginx Ingress controller](#pa-gcp-deploy-the-nginx-ingress-controller)

@@ -1,4 +1,4 @@
-[_<< Previous section: Humanitec default setup_](/docs/humanitec-default.md) | [_Next section: GKE basic setup in Staging >>_](/docs/gke-basic.md)
+[_<< Previous section: Humanitec default setup in Development_](/docs/humanitec-default.md) | [_Next section: GKE basic setup in Staging >>_](/docs/gke-basic.md)
 
 ## Common setup
 
@@ -295,4 +295,4 @@ curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/env-types \
 EOF
 ```
 
-[_<< Previous section: Humanitec default setup_](/docs/humanitec-default.md) | [_Next section: GKE basic setup in Staging >>_](/docs/gke-basic.md)
+[_<< Previous section: Humanitec default setup in Development_](/docs/humanitec-default.md) | [_Next section: GKE basic setup in Staging >>_](/docs/gke-basic.md)

@@ -7,7 +7,7 @@
 ![personas](/images/personas.png)
 
 Agenda:
-- [Humanitec default setup](./docs/humanitec-default.md)
+- [Humanitec default setup in Development](./docs/humanitec-default.md)
   - [PA-HUM] Create Online Boutique App
   - [PA-HUM] Create an in-cluster Redis database
   - [DE-HUM] Deploy Online Boutique Workloads in `development` Environment

@@ -1,6 +1,6 @@
 [_Next section: Common setup >>_](/docs/common.md)
 
-## Online Boutique
+## Humanitec default setup in Development
 
 - [[PA-HUM] Create the Online Boutique App](#pa-hum-create-the-online-boutique-app)
 - [[PA-HUM] Create an in-cluster Redis database](#pa-hum-create-an-in-cluster-redis-database)
