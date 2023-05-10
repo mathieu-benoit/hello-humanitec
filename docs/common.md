@@ -15,7 +15,7 @@ flowchart LR
       custom-service-account>custom-service-account]
       custom-workload>custom-workload]
     end
-    subgraph Environement Types
+    subgraph Environment Types
       development
       staging
       production
