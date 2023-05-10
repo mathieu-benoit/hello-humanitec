@@ -1,10 +1,11 @@
-[_<< Previous section: Humanitec default setup_](/docs/humanitec-default.md) | [_Next section: GKE basic setup >>_](/docs/gke-basic.md)
+[_<< Previous section: Humanitec default setup_](/docs/humanitec-default.md) | [_Next section: GKE basic setup in Staging >>_](/docs/gke-basic.md)
 
 ## Common setup
 
 - [[PA-HUM] Create a custom `Namespace` resource definition](#pa-hum-create-a-custom-namespace-resource-definition)
 - [[PA-HUM] Create a custom `ServiceAccount` resource definition](#pa-hum-create-a-custom-serviceaccount-resource-definition)
 - [[PA-HUM] Create a custom Workload resource definition](#pa-hum-create-a-custom-workload-resource-definition)
+- [[PA-HUM] Create `staging` and `production` Environment types](#pa-hum-create-staging-and-production-environment-types)
 
 ```mermaid
 flowchart LR
@@ -255,4 +256,38 @@ humctl create \
   ```
 </details>
 
-[_<< Previous section: Humanitec default setup_](/docs/humanitec-default.md) | [_Next section: GKE basic setup >>_](/docs/gke-basic.md)
+##
+
+### [PA-HUM] Create `staging` and `production` Environment types
+
+Create `staging` Environment type:
+```bash
+STAGING_ENV="staging"
+curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/env-types \
+  -X POST \
+  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d @- <<EOF
+{
+  "id": "${STAGING_ENV}",
+  "description": "Default environment type for ${STAGING_ENV}."
+}
+EOF
+```
+
+Create `production` Environment type:
+```bash
+PRODUCTION_ENV="production"
+curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/env-types \
+  -X POST \
+  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d @- <<EOF
+{
+  "id": "${PRODUCTION_ENV}",
+  "description": "Default environment type for ${PRODUCTION_ENV}."
+}
+EOF
+```
+
+[_<< Previous section: Humanitec default setup_](/docs/humanitec-default.md) | [_Next section: GKE basic setup in Staging >>_](/docs/gke-basic.md)

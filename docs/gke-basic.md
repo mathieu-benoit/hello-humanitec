@@ -1,4 +1,4 @@
-[_<< Previous section: Common setup_](/docs/common.md) | [_Next section: GKE advanced setup >>_](/docs/gke-advanced.md)
+[_<< Previous section: Common setup_](/docs/common.md) | [_Next section: GKE advanced setup in Production >>_](/docs/gke-advanced.md)
 
 # GKE basic setup
 
@@ -6,10 +6,10 @@
 - [[PA-GCP] Deploy the Nginx Ingress controller](#pa-gcp-deploy-the-nginx-ingress-controller)
 - [[PA-GCP] Create the Google Service Account to access the GKE cluster](#pa-gcp-create-the-google-service-account-to-access-the-gke-cluster)
 - [[PA-HUM] Create the GKE access resource definition](#pa-hum-create-the-gke-access-resource-definition)
-- [[PA-HUM] Create the `gke-basic` Environment](#pa-hum-create-the-gke-basic-environment)
+- [[PA-HUM] Create the Staging Environment](#pa-hum-create-the-gke-basic-environment)
 - [[PA-GCP] Create a Memorystore (Redis) database](#pa-gcp-create-a-memorystore-redis-database)
 - [[PA-HUM] Create the Memorystore (Redis) access resource definition](#pa-hum-create-the-memorystore-redis-access-resource-definition)
-- [[PA-HUM] Deploy the new `gke-basic` Environment](#pa-hum-deploy-the-new-gke-basic-environment)
+- [[PA-HUM] Deploy the new Staging Environment](#pa-hum-deploy-the-new-gke-basic-environment)
 - [Test the Online Boutique website](#test-the-online-boutique-website)
 
 ```mermaid
@@ -17,9 +17,11 @@ flowchart LR
   subgraph Humanitec
     direction LR
     subgraph onlineboutique-app [Online Boutique App]
-      direction LR
-      cartservice-workload([cartservice])
-      frontend-workload([frontend])
+      subgraph staging
+        direction LR
+        cartservice-workload([cartservice])
+        frontend-workload([frontend])
+      end
     end
     subgraph Resources
         custom-namespace>custom-namespace]
@@ -64,7 +66,7 @@ HUMANITEC_ORG=FIXME
 export HUMANITEC_CONTEXT=/orgs/${HUMANITEC_ORG}
 export HUMANITEC_TOKEN=FIXME
 
-ENVIRONMENT=${CLUSTER_NAME}
+ENVIRONMENT=${STAGING_ENV}
 ```
 
 ## [PA-GCP] Create the GKE cluster
@@ -191,7 +193,7 @@ rm ${CLUSTER_NAME}.yaml
 rm ${CLUSTER_NAME}.json
 ```
 
-## [PA-HUM] Create the `gke-basic` Environment
+## [PA-HUM] Create the Staging Environment
 
 As Platform Admin, in Humanitec.
 
@@ -199,8 +201,8 @@ Create the new Environment by cloning the existing Environment from its latest D
 ```bash
 CLONED_ENVIRONMENT=development
 humctl create environment ${ENVIRONMENT} \
-    --name ${ENVIRONMENT} \
-    -t development \
+    --name Staging \
+    -t ${ENVIRONMENT} \
     --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP} \
     --from ${CLONED_ENVIRONMENT}
 ```
@@ -222,8 +224,8 @@ humctl create environment ${ENVIRONMENT} \
   cat <<EOF > ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.yaml
   from_deploy_id: ${LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT}
   id: ${ENVIRONMENT}
-  name: ${ENVIRONMENT}
-  type: development
+  name: Staging
+  type: ${ENVIRONMENT}
   EOF
   yq -o json ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.yaml > ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.json
   curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs" \
@@ -330,7 +332,7 @@ Clean sensitive information locally:
 rm ${REDIS_NAME}.yaml
 ```
 
-## [PA-HUM] Deploy the new `gke-basic` Environment
+## [PA-HUM] Deploy the new Staging Environment
 
 As Platform admin, in Humanitec.
 
@@ -364,4 +366,4 @@ echo -e "https://$(humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${ONL
 
 _Note: re-run the above command until you get a value._
 
-[_<< Previous section: Common setup_](/docs/common.md) | [_Next section: GKE advanced setup >>_](/docs/gke-advanced.md)
+[_<< Previous section: Common setup_](/docs/common.md) | [_Next section: GKE advanced setup in Production >>_](/docs/gke-advanced.md)

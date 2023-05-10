@@ -13,9 +13,11 @@ flowchart LR
   subgraph Humanitec
     direction LR
     subgraph onlineboutique-app [Online Boutique App]
-        direction LR
-        cartservice-workload([cartservice])
-        frontend-workload([frontend])
+        subgraph development
+          direction LR
+          cartservice-workload([cartservice])
+          frontend-workload([frontend])
+        end
     end
     subgraph Resources
         redis-cart-connection>redis-cart-connection]

@@ -1,4 +1,4 @@
-[_<< Previous section: GKE basic setup_](/docs/gke-basic.md)
+[_<< Previous section: GKE basic setup in Staging_](/docs/gke-basic.md)
 
 # GKE advanced setup
 
@@ -9,7 +9,7 @@
 - [[PA-GCP] Create the Google Service Account to access the GKE cluster](#pa-gcp-create-the-google-service-account-to-access-the-gke-cluster)
 - [[PA-HUM] Create the GKE access resource definition](#pa-hum-create-the-gke-access-resource-definition)
 - [[PA-GCP] Create the Google Service Account to access Cloud Logging](#pa-gcp-create-the-google-service-account-to-access-cloud-logging)
-- [[PA-HUM] Create the `gke-advanced` Environment](#pa-hum-create-the-gke-advanced-environment)
+- [[PA-HUM] Create the Production Environment](#pa-hum-create-the-gke-advanced-environment)
 - _More to come, stay tuned!_
 
 ```mermaid
@@ -17,9 +17,11 @@ flowchart LR
   subgraph Humanitec
     direction LR
     subgraph onlineboutique-app [Online Boutique App]
-      direction LR
-      cartservice-workload([cartservice])
-      frontend-workload([frontend])
+      subgraph production
+        direction LR
+        cartservice-workload([cartservice])
+        frontend-workload([frontend])
+      end
     end
     subgraph Resources
         custom-namespace>custom-namespace]
@@ -79,7 +81,7 @@ HUMANITEC_ORG=FIXME
 export HUMANITEC_CONTEXT=/orgs/${HUMANITEC_ORG}
 export HUMANITEC_TOKEN=FIXME
 
-ENVIRONMENT=${CLUSTER_NAME}
+ENVIRONMENT=${PRODUCTION_ENV}
 ```
 
 ## [PA-GCP] Create the GKE cluster
@@ -595,7 +597,7 @@ rm ${CLUSTER_NAME}-logging.yaml
 rm ${CLUSTER_NAME}-logging.json
 ```
 
-## [PA-HUM] Create the `gke-advanced` Environment
+## [PA-HUM] Create the Production Environment
 
 As Platform Admin, in Humanitec.
 
@@ -603,8 +605,8 @@ Create the new Environment by cloning the existing Environment from its latest D
 ```bash
 CLONED_ENVIRONMENT=development
 humctl create environment ${ENVIRONMENT} \
-    --name ${ENVIRONMENT} \
-    -t development \
+    --name Production \
+    -t ${ENVIRONMENT} \
     --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP} \
     --from ${CLONED_ENVIRONMENT}
 ```
@@ -626,8 +628,8 @@ humctl create environment ${ENVIRONMENT} \
   cat <<EOF > ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.yaml
   from_deploy_id: ${LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT}
   id: ${ENVIRONMENT}
-  name: ${ENVIRONMENT}
-  type: development
+  name: Production
+  type: ${ENVIRONMENT}
   EOF
   yq -o json ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.yaml > ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.json
   curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs" \
@@ -678,4 +680,4 @@ curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
   	-d @custom-sa.json
 ```
 
-[_<< Previous section: GKE basic setup_](/docs/gke-basic.md)
+[_<< Previous section: GKE basic setup in Staging_](/docs/gke-basic.md)

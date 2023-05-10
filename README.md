@@ -15,21 +15,22 @@ Agenda:
   - [PA-HUM] Create custom name `Namespace`
   - [PA-HUM] Create custom `ServiceAccount`
   - [PA-HUM] Create custom unprivileged Workload
-- [GKE basic setup](./docs/gke-basic.md)
+  - [PA-HUM] Create `staging` and `production` Environment types
+- [GKE basic setup in Staging](./docs/gke-basic.md)
   - [PA-GCP] Create basic GKE setup
   - [PA-GCP] Deploy a simple Nginx Ingress controller
-  - [PA-HUM] Create `gke-basic` Environment
+  - [PA-HUM] Create Staging Environment
   - [PA-GCP] Create a Memorystore (Redis) database
-  - [PA-HUM] Deploy the new `gke-basic` Environment
-- [GKE advanced setup - _under construction_](./docs/gke-advanced.md)
+  - [PA-HUM] Deploy the new Staging Environment
+- [GKE advanced setup in Production- _under construction_](./docs/gke-advanced.md)
   - [PA-GCP] Create advanced and secured GKE setup
   - [PA-GCP] Deploy an Nginx Ingress controller
   - [PA-GCP] Protect the Nginx Ingress controller behind a Global Cloud Load Balancer (GCLB) and Cloud Armor (WAF)
   - [PA-GCP] Use Cloud Logging for Workload's logs
-  - [PA-HUM] Create `gke-advanced` Environment
+  - [PA-HUM] Create Production Environment
   - [PA-GCP] Create a Spanner database
   - [PA-GCP] Create Kubernetes and Google Service Accounts to access Spanner via Workload Identity
-  - [PA-HUM] Deploy the new `gke-advanced` Environment
+  - [PA-HUM] Deploy the new Production Environment
 
 
 Backlog and future considerations:
