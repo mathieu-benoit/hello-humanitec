@@ -5,7 +5,7 @@
 - [[PA-HUM] Create the Online Boutique App](#pa-hum-create-the-online-boutique-app)
 - [[PA-HUM] Create an in-cluster Redis database](#pa-hum-create-an-in-cluster-redis-database)
 - [[PA-HUM] Create the in-cluster Redis access resource definition](#pa-hum-create-the-in-cluster-redis-access-resource-definition)
-- [[DE-HUM] Deploy the Online Boutique Workloads in `development` Environment](#de-hum-deploy-the-online-boutique-workloads-in-development-environment)
+- [[DE-HUM] Deploy the Online Boutique Workloads in Development Environment](#de-hum-deploy-the-online-boutique-workloads-in-development-environment)
 - [Test the Online Boutique website](#test-the-online-boutique-website)
 
 ```mermaid
@@ -138,7 +138,7 @@ humctl create \
   ```
 </details>
 
-## [DE-HUM] Deploy the Online Boutique Workloads in `development` Environment
+## [DE-HUM] Deploy the Online Boutique Workloads in Development Environment
 
 As Developer, in Humanitec.
 
