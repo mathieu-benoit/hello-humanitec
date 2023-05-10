@@ -91,27 +91,50 @@ _Note: this part in the near future will be replaced by a Redis resource definit
 As Platform Admin, in Humanitec.
 
 ```bash
-REDIS_HOST=redis-cart
 REDIS_PORT=6379
 cat <<EOF > ${REDIS_NAME}-${ENVIRONMENT}.yaml
-id: ${REDIS_NAME}-${ENVIRONMENT}
-name: ${REDIS_NAME}-${ENVIRONMENT}
-type: redis
-driver_type: humanitec/static
-driver_inputs:
-  values:
-    host: ${REDIS_HOST}
-    port: ${REDIS_PORT}
-criteria:
-  - env_id: ${ENVIRONMENT}
+apiVersion: core.api.humanitec.io/v1
+kind: Definition
+metadata:
+  id: ${REDIS_NAME}-${ENVIRONMENT}
+object:
+  name: ${REDIS_NAME}-${ENVIRONMENT}
+  type: redis
+  driver_type: humanitec/static
+  driver_inputs:
+    values:
+      host: ${REDIS_NAME}
+      port: ${REDIS_PORT}
+  criteria:
+    - env_id: ${ENVIRONMENT}
 EOF
-yq -o json ${REDIS_NAME}-${ENVIRONMENT}.yaml > ${REDIS_NAME}-${ENVIRONMENT}.json
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
-    -X POST \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -d @${REDIS_NAME}-${ENVIRONMENT}.json
+humctl create \
+    -f ${REDIS_NAME}-${ENVIRONMENT}.yaml
 ```
+<details>
+  <summary>With curl.</summary>
+
+  ```bash
+  cat <<EOF > ${REDIS_NAME}-${ENVIRONMENT}.yaml
+  id: ${REDIS_NAME}-${ENVIRONMENT}
+  name: ${REDIS_NAME}-${ENVIRONMENT}
+  type: redis
+  driver_type: humanitec/static
+  driver_inputs:
+    values:
+      host: ${REDIS_NAME}
+      port: ${REDIS_PORT}
+  criteria:
+    - env_id: ${ENVIRONMENT}
+  EOF
+  yq -o json ${REDIS_NAME}-${ENVIRONMENT}.yaml > ${REDIS_NAME}-${ENVIRONMENT}.json
+  curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+      -X POST \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+      -d @${REDIS_NAME}-${ENVIRONMENT}.json
+  ```
+</details>
 
 ## [DE-HUM] Deploy the Online Boutique Workloads in `development` Environment
 

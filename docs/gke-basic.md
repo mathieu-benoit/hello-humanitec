@@ -285,7 +285,7 @@ metadata:
 object:
   name: ${REDIS_NAME}
   type: redis
-  driver_type: humanitec/k8s-cluster-gke
+  driver_type: humanitec/static
   driver_inputs:
     values:
       host: ${REDIS_HOST}
