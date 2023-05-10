@@ -3,8 +3,8 @@
 ```bash
 ONLINEBOUTIQUE_APP=onlineboutique
 humctl create app ${ONLINEBOUTIQUE_APP} \
-    --context /orgs/${HUMANITEC_ORG} \
-    --name ${ONLINEBOUTIQUE_APP}
+	--context /orgs/${HUMANITEC_ORG} \
+	--name ${ONLINEBOUTIQUE_APP}
 ```
 
 ## Deploy the Online Boutique Workloads
@@ -117,5 +117,5 @@ humctl create \
 humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources \
 	-o json \
 	| jq -c '.[] | select(.object.type | contains("dns"))' \
-    | jq -r .object.resource.host
+	| jq -r .object.resource.host
 ```

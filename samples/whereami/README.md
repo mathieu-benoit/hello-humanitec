@@ -3,8 +3,8 @@
 ```bash
 WHEREAMI_APP=whereami
 humctl create app ${WHEREAMI_APP} \
-    --context /orgs/${HUMANITEC_ORG} \
-    --name ${WHEREAMI_APP}
+	--context /orgs/${HUMANITEC_ORG} \
+	--name ${WHEREAMI_APP}
 ```
 
 ## Deploy the Whereami Workload
@@ -31,5 +31,5 @@ score-humanitec delta \
 humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${WHEREAMI_APP}/envs/${ENVIRONMENT}/resources \
 	-o json \
 	| jq -c '.[] | select(.object.type | contains("dns"))' \
-    | jq -r .object.resource.host
+	| jq -r .object.resource.host
 ```

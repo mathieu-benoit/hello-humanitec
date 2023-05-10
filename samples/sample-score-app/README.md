@@ -3,8 +3,8 @@
 ```bash
 SAMPLE_SCORE_APP=sample-score-app
 humctl create app ${SAMPLE_SCORE_APP} \
-    --context /orgs/${HUMANITEC_ORG} \
-    --name ${SAMPLE_SCORE_APP}
+	--context /orgs/${HUMANITEC_ORG} \
+	--name ${SAMPLE_SCORE_APP}
 ```
 
 ## Deploy the Sample Score Workload
@@ -31,5 +31,5 @@ score-humanitec delta \
 humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${SAMPLE_SCORE_APP}/envs/${ENVIRONMENT}/resources \
 	-o json \
 	| jq -c '.[] | select(.object.type | contains("dns"))' \
-    | jq -r .object.resource.host
+	| jq -r .object.resource.host
 ```
