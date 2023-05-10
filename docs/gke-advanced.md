@@ -160,16 +160,17 @@ As Platform Admin, in Google Cloud.
 
 Deploy the Nginx Ingress Controller:
 ```bash
-NGINX_NEG_PORT=80
+NGINX_NEG_PORT=443
 NGINX_NEG_NAME=${CLUSTER_NAME}-ingress-nginx-${NGINX_NEG_PORT}-neg
 cat <<EOF > ${CLUSTER_NAME}-nginx-ingress-controller-values.yaml
 controller:
   service:
+    enableHttp: false
     type: ClusterIP
     annotations:
       cloud.google.com/neg: '{"exposed_ports": {"${NGINX_NEG_PORT}":{"name": "${NGINX_NEG_NAME}"}}}'
   config:
-    use-forwarded-headers: "true"
+    use-forwarded-headers: true
 EOF
 helm upgrade \
     --install ingress-nginx ingress-nginx \
@@ -191,17 +192,17 @@ gcloud compute firewall-rules create k8s-masters-to-nodes-on-8443 \
 
 ## [PA-GCP] Protect the Nginx Ingress controller behind a Global Cloud Load Balancer (GCLB) and Cloud Armor (WAF)
 
-Allow traffic from the Global Loab Balancer (GCLB) to the node pool on port `80` for Nginx Ingress controller:
+Allow traffic from the Global Load Balancer (GCLB) to the node pool on port `443` for Nginx Ingress controller:
 ```bash
 gcloud compute firewall-rules create ${CLUSTER_NAME}-allow-tcp-loadbalancer \
     --network ${NETWORK} \
     --allow tcp:${NGINX_NEG_PORT} \
-	  --source-ranges 130.211.0.0/22,35.191.0.0/16 \
-	  --target-tags ${CLUSTER_FIREWALL_RULE_TAG}
+    --source-ranges 130.211.0.0/22,35.191.0.0/16 \
+    --target-tags ${CLUSTER_FIREWALL_RULE_TAG}
 ```
 
 ```bash
-gcloud compute health-checks create http ${CLUSTER_NAME}-ingress-nginx-health-check \
+gcloud compute health-checks create https ${CLUSTER_NAME}-ingress-nginx-health-check \
     --port ${NGINX_NEG_PORT} \
     --check-interval 60 \
     --unhealthy-threshold 3 \
@@ -211,8 +212,8 @@ gcloud compute health-checks create http ${CLUSTER_NAME}-ingress-nginx-health-ch
 
 gcloud compute backend-services create ${CLUSTER_NAME}-ingress-nginx-backend-service \
     --load-balancing-scheme EXTERNAL_MANAGED \
-    --protocol HTTP \
-    --port-name http \
+    --protocol HTTPS \
+    --port-name https \
     --health-checks ${CLUSTER_NAME}-ingress-nginx-health-check \
     --enable-logging \
     --global
