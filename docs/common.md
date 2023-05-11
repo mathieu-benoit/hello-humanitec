@@ -54,7 +54,6 @@ EOF
 humctl create \
     -f custom-namespace.yaml
 ```
-
 <details>
   <summary>With curl.</summary>
 
@@ -116,7 +115,6 @@ EOF
 humctl create \
     -f custom-service-account.yaml
 ```
-
 <details>
   <summary>With curl.</summary>
 
@@ -208,7 +206,6 @@ EOF
 humctl create \
     -f custom-workload.yaml
 ```
-
 <details>
   <summary>With curl.</summary>
 
@@ -268,31 +265,47 @@ humctl create \
 Create `staging` Environment type:
 ```bash
 STAGING_ENV="staging"
-curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/env-types \
-  -X POST \
-  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d @- <<EOF
-{
-  "id": "${STAGING_ENV}",
-  "description": "Default environment type for ${STAGING_ENV}."
-}
-EOF
+humctl create environment-type ${STAGING_ENV} \
+    --description "Environment type for ${STAGING_ENV}."
 ```
+<details>
+  <summary>With curl.</summary>
+
+  ```bash
+  curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/env-types \
+    -X POST \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Content-Type: application/json" \
+    -d @- <<EOF
+  {
+    "id": "${STAGING_ENV}",
+    "description": "Environment type for ${STAGING_ENV}."
+  }
+  EOF
+  ```
+</details>
 
 Create `production` Environment type:
 ```bash
 PRODUCTION_ENV="production"
-curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/env-types \
-  -X POST \
-  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d @- <<EOF
-{
-  "id": "${PRODUCTION_ENV}",
-  "description": "Default environment type for ${PRODUCTION_ENV}."
-}
-EOF
+humctl create environment-type ${PRODUCTION_ENV} \
+    --description "Environment type for ${PRODUCTION_ENV}."
 ```
+<details>
+  <summary>With curl.</summary>
+
+  ```bash
+  curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/env-types \
+    -X POST \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Content-Type: application/json" \
+    -d @- <<EOF
+  {
+    "id": "${PRODUCTION_ENV}",
+    "description": "Environment type for ${PRODUCTION_ENV}."
+  }
+  EOF
+  ```
+</details>
 
 [_<< Previous section: Humanitec default setup in Development_](/docs/humanitec-default.md) | [_Next section: GKE basic setup in Staging >>_](/docs/gke-basic.md)
