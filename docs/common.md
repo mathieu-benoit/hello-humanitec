@@ -164,9 +164,9 @@ cat <<EOF > custom-workload.yaml
 apiVersion: core.api.humanitec.io/v1
 kind: Definition
 metadata:
-  id: custom-workload2
+  id: custom-workload
 object:
-  name: custom-workload2
+  name: custom-workload
   type: workload
   driver_type: humanitec/template
   driver_inputs:
