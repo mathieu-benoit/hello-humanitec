@@ -91,7 +91,7 @@ humctl create \
   Deploy the `redis-cart` database as a Workload:
   ```bash
   score-humanitec delta \
-  	  --app ${ONLINEBOUTIQUE_APP} \
+	  --app ${ONLINEBOUTIQUE_APP} \
 	  --env ${ENVIRONMENT} \
 	  --org ${HUMANITEC_ORG} \
 	  --token ${HUMANITEC_TOKEN} \
@@ -120,7 +120,7 @@ humctl create \
       - env_id: ${ENVIRONMENT}
   EOF
   humctl create \
-      -f ${REDIS_NAME}-${ENVIRONMENT}.yaml
+	  -f ${REDIS_NAME}-${ENVIRONMENT}.yaml
   ```
 </details>
 
