@@ -3,8 +3,7 @@
 ## Humanitec default setup in Development
 
 - [[PA-HUM] Create the Online Boutique App](#pa-hum-create-the-online-boutique-app)
-- [[PA-HUM] Create an in-cluster Redis database](#pa-hum-create-an-in-cluster-redis-database)
-- [[PA-HUM] Create the in-cluster Redis access resource definition](#pa-hum-create-the-in-cluster-redis-access-resource-definition)
+- [[PA-HUM] Create the in-cluster Redis resource definition](#pa-hum-create-the-in-cluster-redis-resource-definition)
 - [[DE-HUM] Deploy the Online Boutique Workloads in Development Environment](#de-hum-deploy-the-online-boutique-workloads-in-development-environment)
 - [Test the Online Boutique website](#test-the-online-boutique-website)
 
@@ -69,74 +68,71 @@ humctl create app ${ONLINEBOUTIQUE_APP} \
   ```
 </details>
 
-## [PA-HUM] Create an in-cluster Redis database
+## [PA-HUM] Create the in-cluster Redis resource definition
 
 As Platform Admin, in Humanitec.
 
-Create the in-cluster `redis-cart` database as a Workload:
-```bash
-REDIS_NAME=redis-cart
-score-humanitec delta \
-    --app ${ONLINEBOUTIQUE_APP} \
-    --env ${ENVIRONMENT} \
-    --org ${HUMANITEC_ORG} \
-    --token ${HUMANITEC_TOKEN} \
-    --deploy \
-    --retry \
-    -f ${REDIS_NAME}/score.yaml \
-    --extensions ${REDIS_NAME}/humanitec.score.yaml
-```
-_Note: this part in the near future will be replaced by a Redis resource definition deploying an in-cluster Redis database._
-
-## [PA-HUM] Create the in-cluster Redis access resource definition
-
-As Platform Admin, in Humanitec.
-
+Create the in-cluster Redis resource definition:
 ```bash
 REDIS_PORT=6379
-cat <<EOF > ${REDIS_NAME}-${ENVIRONMENT}.yaml
+cat <<EOF > ${REDIS_NAME}-in-cluster.yaml
 apiVersion: core.api.humanitec.io/v1
 kind: Definition
 metadata:
-  id: ${REDIS_NAME}-${ENVIRONMENT}
+  id: ${REDIS_NAME}-in-cluster
 object:
-  name: ${REDIS_NAME}-${ENVIRONMENT}
+  name: ${REDIS_NAME}-in-cluster
   type: redis
-  driver_type: humanitec/static
+  driver_type: humanitec/template
   driver_inputs:
     values:
-      host: ${REDIS_NAME}
-      port: ${REDIS_PORT}
+      templates:
+        manifests: |-
+          deployment.yaml:
+            location: namespace
+            data:
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: ${REDIS_NAME}
+              spec:
+                selector:
+                  matchLabels:
+                    app: ${REDIS_NAME}
+                template:
+                  metadata:
+                    labels:
+                      app: ${REDIS_NAME}
+                  spec:
+                    containers:
+                    - name: redis
+                      image: redis:alpine
+                      ports:
+                      - containerPort: ${REDIS_PORT}
+          service.yaml:
+            location: namespace
+            data:
+              apiVersion: v1
+              kind: Service
+              metadata:
+                name: ${REDIS_NAME}
+              spec:
+                type: ClusterIP
+                selector:
+                  app: ${REDIS_NAME}
+                ports:
+                - name: tcp-redis
+                  port: ${REDIS_PORT}
+                  targetPort: ${REDIS_PORT}
+        outputs: |
+          host: ${REDIS_NAME}
+          port: ${REDIS_PORT}
   criteria:
-    - env_id: ${ENVIRONMENT}
+    - {}
 EOF
-humctl create \
-    -f ${REDIS_NAME}-${ENVIRONMENT}.yaml
+humctl update \
+    -f ${REDIS_NAME}-in-cluster.yaml
 ```
-<details>
-  <summary>With curl.</summary>
-
-  ```bash
-  cat <<EOF > ${REDIS_NAME}-${ENVIRONMENT}.yaml
-  id: ${REDIS_NAME}-${ENVIRONMENT}
-  name: ${REDIS_NAME}-${ENVIRONMENT}
-  type: redis
-  driver_type: humanitec/static
-  driver_inputs:
-    values:
-      host: ${REDIS_NAME}
-      port: ${REDIS_PORT}
-  criteria:
-    - env_id: ${ENVIRONMENT}
-  EOF
-  yq -o json ${REDIS_NAME}-${ENVIRONMENT}.yaml > ${REDIS_NAME}-${ENVIRONMENT}.json
-  curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
-      -X POST \
-      -H "Content-Type: application/json" \
-      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-      -d @${REDIS_NAME}-${ENVIRONMENT}.json
-  ```
-</details>
 
 ## [DE-HUM] Deploy the Online Boutique Workloads in Development Environment
 

@@ -57,11 +57,14 @@ _This section is dedicated to the Platform admin, not the Developer._
 
 ```bash
 REDIS_NAME=redis-cart
+REDIS_PORT=6379
 ```
 
-3 options:
+2 options:
+- `redis-cart` as Workload
+- `redis-cart` as Resource type
 
-- `redis-cart` as Workload:
+### `redis-cart` as Workload
 
 ```bash
 score-humanitec delta \
@@ -75,22 +78,9 @@ score-humanitec delta \
 	--extensions ${REDIS_NAME}/humanitec.score.yaml
 ```
 
-- `redis-cart` as Kubernetes `Deployment`:
+Create the `redis-cart` connection string resource definition
 
 ```bash
-kubectl apply \
-	-f ${REDIS_NAME}/${REDIS_NAME}.yaml \
-	-n ${ENVIRONMENT}-${ONLINEBOUTIQUE_APP}
-```
-
-- `redis-cart` as Resource type:
-
-FIXME - _Coming soon... stay tuned!_
-
-## Create the `redis-cart` connection string resource definition
-
-```bash
-REDIS_PORT=6379
 cat <<EOF > ${REDIS_NAME}-${ENVIRONMENT}.yaml
 apiVersion: core.api.humanitec.io/v1
 kind: Definition
@@ -109,6 +99,68 @@ object:
 EOF
 humctl create \
     -f ${REDIS_NAME}-${ENVIRONMENT}.yaml
+```
+
+### `redis-cart` as Resource type
+
+```bash
+cat <<EOF > ${REDIS_NAME}-in-cluster.yaml
+apiVersion: core.api.humanitec.io/v1
+kind: Definition
+metadata:
+  id: ${REDIS_NAME}-in-cluster
+object:
+  name: ${REDIS_NAME}-in-cluster
+  type: redis
+  driver_type: humanitec/template
+  driver_inputs:
+    values:
+      templates:
+        manifests: |-
+          deployment.yaml:
+            location: namespace
+            data:
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: ${REDIS_NAME}
+              spec:
+                selector:
+                  matchLabels:
+                    app: ${REDIS_NAME}
+                template:
+                  metadata:
+                    labels:
+                      app: ${REDIS_NAME}
+                  spec:
+                    containers:
+                    - name: redis
+                      image: redis:alpine
+                      ports:
+                      - containerPort: ${REDIS_PORT}
+          service.yaml:
+            location: namespace
+            data:
+              apiVersion: v1
+              kind: Service
+              metadata:
+                name: ${REDIS_NAME}
+              spec:
+                type: ClusterIP
+                selector:
+                  app: ${REDIS_NAME}
+                ports:
+                - name: tcp-redis
+                  port: ${REDIS_PORT}
+                  targetPort: ${REDIS_PORT}
+        outputs: |
+          host: ${REDIS_NAME}
+          port: ${REDIS_PORT}
+  criteria:
+    - {}
+EOF
+humctl update \
+	-f ${REDIS_NAME}-in-cluster.yaml
 ```
 
 ## Get the public DNS exposing the `frontend` Workloads
