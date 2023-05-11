@@ -1,10 +1,12 @@
-Deploying the Online Boutique sample apps in Humanitec consists in 3 main steps:
+Deploying the Online Boutique sample apps in Humanitec consists in 4 main steps:
 - [Create the Online Boutique App](#create-the-online-boutique-app)
 - [Deploy the Online Boutique `redis-cart` database](#deploy-the-online-boutique-redis-cart-database)
 - [Deploy the Online Boutique Workloads](#deploy-the-online-boutique-workloads)
 - [Enjoy!](#test-the-online-boutique-website)
 
 ## Create the Online Boutique App
+
+As Platform Admin, in Humanitec.
 
 ```bash
 ONLINEBOUTIQUE_APP=onlineboutique
@@ -19,7 +21,7 @@ ENVIRONMENT=development
 
 ## Deploy the Online Boutique `redis-cart` database
 
-_This section is dedicated to the Platform admin, not the Developer._
+As Platform Admin, in Humanitec.
 
 ```bash
 REDIS_NAME=redis-cart
@@ -130,6 +132,8 @@ humctl create \
 ```
 
 ## Deploy the Online Boutique Workloads
+
+As Developer, in Humanitec.
 
 ### All in once
 

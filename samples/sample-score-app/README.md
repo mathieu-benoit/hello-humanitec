@@ -1,5 +1,7 @@
 ## Create the Sample Score App
 
+As Platform admin, in Humanitec.
+
 ```bash
 SAMPLE_SCORE_APP=sample-score-app
 humctl create app ${SAMPLE_SCORE_APP} \
@@ -8,6 +10,8 @@ humctl create app ${SAMPLE_SCORE_APP} \
 ```
 
 ## Deploy the Sample Score Workload
+
+As Developer, in Humanitec.
 
 ```bash
 ENVIRONMENT=development

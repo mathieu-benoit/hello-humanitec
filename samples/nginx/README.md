@@ -1,5 +1,7 @@
 ## Create the Nginx App
 
+As Platform admin, in Humanitec.
+
 ```bash
 NGINX_APP=nginx
 humctl create app ${NGINX_APP} \
@@ -8,6 +10,8 @@ humctl create app ${NGINX_APP} \
 ```
 
 ## Deploy the Sample Apps Workloads
+
+As Developer, in Humanitec.
 
 ```bash
 ENVIRONMENT=development

@@ -1,5 +1,7 @@
 ## Create the Whereami App
 
+As Platform admin, in Humanitec.
+
 ```bash
 WHEREAMI_APP=whereami
 humctl create app ${WHEREAMI_APP} \
@@ -8,6 +10,8 @@ humctl create app ${WHEREAMI_APP} \
 ```
 
 ## Deploy the Whereami Workload
+
+As Developer, in Humanitec.
 
 ```bash
 ENVIRONMENT=development

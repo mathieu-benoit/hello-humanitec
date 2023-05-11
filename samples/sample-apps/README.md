@@ -1,5 +1,7 @@
 ## Create the Sample Apps App
 
+As Platform admin, in Humanitec.
+
 ```bash
 SAMPLE_APPS_APP=sample-apps
 humctl create app ${SAMPLE_APPS_APP} \
@@ -8,6 +10,8 @@ humctl create app ${SAMPLE_APPS_APP} \
 ```
 
 ## Deploy the Sample Apps Workloads
+
+As Developer, in Humanitec.
 
 ```bash
 ENVIRONMENT=development
