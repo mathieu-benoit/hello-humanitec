@@ -343,7 +343,8 @@ humctl deploy env ${ENVIRONMENT} ${ENVIRONMENT} \
 
 Get the public DNS exposing the `frontend` Workload:
 ```bash
-echo -e "https://$(humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources \
+echo -e "https://$(humctl get active-resources \
+    --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT} \
     -o json \
     | jq -c '.[] | select(.object.type | contains("dns"))' \
     | jq -r .object.resource.host)"

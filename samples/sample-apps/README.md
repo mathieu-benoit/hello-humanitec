@@ -51,7 +51,8 @@ score-humanitec delta \
 ## Get the public DNS exposing the Sample App Workload
 
 ```bash
-humctl get active-resources /orgs/${HUMANITEC_ORG}/apps/${SAMPLE_APPS_APP}/envs/${ENVIRONMENT}/resources \
+humctl get active-resources \
+	--context /orgs/${HUMANITEC_ORG}/apps/${SAMPLE_APPS_APP}/envs/${ENVIRONMENT} \
 	-o json \
 	| jq -c '.[] | select(.object.type | contains("dns"))' \
 	| jq -r .object.resource.host
