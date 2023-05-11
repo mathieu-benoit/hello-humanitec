@@ -26,15 +26,6 @@ As Platform Admin, in Humanitec.
 ```bash
 REDIS_NAME=redis-cart
 REDIS_PORT=6379
-```
-
-2 options:
-- `redis-cart` as a Resource type (preferred setup)
-- `redis-cart` as a Workload
-
-### `redis-cart` as Resource type
-
-```bash
 cat <<EOF > ${REDIS_NAME}-in-cluster.yaml
 apiVersion: core.api.humanitec.io/v1
 kind: Definition
@@ -90,46 +81,48 @@ object:
   criteria:
     - {}
 EOF
-humctl update \
+humctl create \
 	-f ${REDIS_NAME}-in-cluster.yaml
 ```
 
-### `redis-cart` as Workload
+<details>
+  <summary>Alternative with redis-cart as Workload.</summary>
 
-```bash
-score-humanitec delta \
-	--app ${ONLINEBOUTIQUE_APP} \
-	--env ${ENVIRONMENT} \
-	--org ${HUMANITEC_ORG} \
-	--token ${HUMANITEC_TOKEN} \
-	--deploy \
-	--retry \
-	-f ${REDIS_NAME}/score.yaml \
-	--extensions ${REDIS_NAME}/humanitec.score.yaml
-```
+  Deploy the `redis-cart` database as a Workload:
+  ```bash
+  score-humanitec delta \
+  	  --app ${ONLINEBOUTIQUE_APP} \
+	  --env ${ENVIRONMENT} \
+	  --org ${HUMANITEC_ORG} \
+	  --token ${HUMANITEC_TOKEN} \
+	  --deploy \
+	  --retry \
+	  -f ${REDIS_NAME}/score.yaml \
+	  --extensions ${REDIS_NAME}/humanitec.score.yaml
+  ```
 
-Create the `redis-cart` connection string resource definition
-
-```bash
-cat <<EOF > ${REDIS_NAME}-${ENVIRONMENT}.yaml
-apiVersion: core.api.humanitec.io/v1
-kind: Definition
-metadata:
-  id: ${REDIS_NAME}-${ENVIRONMENT}
-object:
-  name: ${REDIS_NAME}-${ENVIRONMENT}
-  type: redis
-  driver_type: humanitec/static
-  driver_inputs:
-    values:
-      host: ${REDIS_NAME}
-      port: ${REDIS_PORT}
-  criteria:
-    - env_id: ${ENVIRONMENT}
-EOF
-humctl create \
-    -f ${REDIS_NAME}-${ENVIRONMENT}.yaml
-```
+  Create the `redis-cart` connection string resource definition:
+  ```bash
+  cat <<EOF > ${REDIS_NAME}-${ENVIRONMENT}.yaml
+  apiVersion: core.api.humanitec.io/v1
+  kind: Definition
+  metadata:
+    id: ${REDIS_NAME}-${ENVIRONMENT}
+  object:
+    name: ${REDIS_NAME}-${ENVIRONMENT}
+    type: redis
+    driver_type: humanitec/static
+    driver_inputs:
+      values:
+        host: ${REDIS_NAME}
+        port: ${REDIS_PORT}
+    criteria:
+      - env_id: ${ENVIRONMENT}
+  EOF
+  humctl create \
+      -f ${REDIS_NAME}-${ENVIRONMENT}.yaml
+  ```
+</details>
 
 ## Deploy the Online Boutique Workloads
 
