@@ -10,7 +10,7 @@ Agenda:
 - [Humanitec default setup in Development](./docs/humanitec-default.md)
   - [PA-HUM] Create Online Boutique App
   - [PA-HUM] Create an in-cluster Redis database
-  - [DE-HUM] Deploy Online Boutique Workloads in `development` Environment
+  - [DE-HUM] Deploy Online Boutique Workloads in the Development Environment
 - [Common setup](./docs/common.md)
   - [PA-HUM] Create custom name `Namespace`
   - [PA-HUM] Create custom `ServiceAccount`
