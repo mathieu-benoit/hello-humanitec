@@ -637,6 +637,43 @@ humctl create environment ${ENVIRONMENT} \
   ```
 </details>
 
+### [PA-GCP] Create a Spanner database
+
+Create the Spanner instance and database:
+```bash
+gcloud services enable spanner.googleapis.com
+
+SPANNER_REGION_CONFIG=regional-us-east5
+SPANNER_INSTANCE_NAME=${ONLINEBOUTIQUE_APP}
+gcloud spanner instances create ${SPANNER_INSTANCE_NAME} \
+    --description="online boutique shopping cart" \
+    --instance-type free-instance \
+    --config ${SPANNER_REGION_CONFIG}
+
+SPANNER_DATABASE_NAME=carts
+gcloud spanner databases create ${SPANNER_DATABASE_NAME} \
+    --instance ${SPANNER_INSTANCE_NAME} \
+    --database-dialect GOOGLE_STANDARD_SQL \
+    --ddl "CREATE TABLE CartItems (userId STRING(1024), productId STRING(1024), quantity INT64) PRIMARY KEY (userId, productId); CREATE INDEX CartItemsByUserId ON CartItems(userId);"
+```
+
+Create a dedicated Google Service Account for the `cartservice` to access this Spanner database:
+```bash
+SPANNER_DB_USER_GSA_NAME=spanner-db-user-sa
+SPANNER_DB_USER_GSA_ID=${SPANNER_DB_USER_GSA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
+ONLINEBOUTIQUE_NAMESPACE=${ENVIRONMENT}-${ONLINEBOUTIQUE_APP}
+CARTSERVICE_KSA_NAME=cartservice
+gcloud iam service-accounts create ${SPANNER_DB_USER_GSA_NAME} \
+    --display-name=${SPANNER_DB_USER_GSA_NAME}
+gcloud spanner databases add-iam-policy-binding ${SPANNER_DATABASE_NAME} \
+    --instance ${SPANNER_INSTANCE_NAME} \
+    --member "serviceAccount:${SPANNER_DB_USER_GSA_ID}" \
+    --role roles/spanner.databaseUser
+gcloud iam service-accounts add-iam-policy-binding ${SPANNER_DB_USER_GSA_ID} \
+    --member "serviceAccount:${PROJECT_ID}.svc.id.goog[${ONLINEBOUTIQUE_NAMESPACE}/${CARTSERVICE_KSA_NAME}]" \
+    --role roles/iam.workloadIdentityUser
+```
+
 **BELOW IS UNDER CONSTRUCTION, NOT READY YET... STAY TUNED!**
 
 ### Custom Service Account resource definition
