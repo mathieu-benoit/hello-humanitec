@@ -31,7 +31,9 @@ export HUMANITEC_TOKEN=FIXME
 
 ### [PA-HUM] Create `staging` and `production` Environment types
 
-Create `staging` Environment type:
+The `development` Environment type is already created by default in Humanitec.
+
+Create the `staging` Environment type:
 ```bash
 STAGING_ENV="staging"
 humctl create environment-type ${STAGING_ENV} \
@@ -54,7 +56,7 @@ humctl create environment-type ${STAGING_ENV} \
   ```
 </details>
 
-Create `production` Environment type:
+Create the `production` Environment type:
 ```bash
 PRODUCTION_ENV="production"
 humctl create environment-type ${PRODUCTION_ENV} \
@@ -81,8 +83,7 @@ humctl create environment-type ${PRODUCTION_ENV} \
 
 As Platform Admin, in Humanitec.
 
-Here we want to customize the name of the Kubernetes `Namespace` for all our Apps ([reference](https://docs.humanitec.com/guides/orchestrate-infrastructure/define-namespaces)).
-
+Customize the name of the Kubernetes `Namespace` for all our Apps ([reference](https://docs.humanitec.com/guides/orchestrate-infrastructure/define-namespaces)). One per App/Env. We also adding the label to enforce [Pod Security Standards `restricted`](https://kubernetes.io/docs/concepts/security/pod-security-standards/):
 ```bash
 cat <<EOF > custom-namespace.yaml
 apiVersion: core.api.humanitec.io/v1
@@ -160,8 +161,7 @@ humctl create \
 
 As Platform Admin, in Humanitec.
 
-Here we want to create a dedicated Kubernetes `ServiceAccount` for all our Apps.
-
+Create a dedicated Kubernetes `ServiceAccount` for all our Apps, one per Workload:
 ```bash
 cat <<EOF > custom-service-account.yaml
 apiVersion: core.api.humanitec.io/v1
@@ -233,10 +233,7 @@ humctl create \
 
 As Platform Admin, in Humanitec.
 
-Here we want to customize the Kubernetes `Deployment` manifests for all our Workloads by adding the `securityContext` sections and other security features ([reference](https://docs.humanitec.com/integrations/resource-types/workload)).
-
-_Important note: the `${resources.k8s-service-account.outputs.name}` part is necessary to create the custom `ServiceAccount` defined above._
-
+Customize the Kubernetes `Deployment` manifests for all our Workloads by adding the `securityContext` sections and other security features ([reference](https://docs.humanitec.com/integrations/resource-types/workload)):
 ```bash
 cat <<EOF > custom-workload.yaml
 apiVersion: core.api.humanitec.io/v1
@@ -337,5 +334,7 @@ humctl create \
       -d @custom-workload.json
   ```
 </details>
+
+_Important note: the `${resources.k8s-service-account.outputs.name}` part is necessary to create the custom `ServiceAccount` defined above._
 
 [_<< Previous section: Humanitec default setup in Development_](/docs/humanitec-default.md) | [_Next section: GKE basic setup in Staging >>_](/docs/gke-basic.md)
