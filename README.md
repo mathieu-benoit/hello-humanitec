@@ -12,10 +12,10 @@ Agenda:
   - [PA-HUM] Create an in-cluster Redis database
   - [DE-HUM] Deploy Online Boutique Workloads in the Development Environment
 - [Common setup](./docs/common.md)
+  - [PA-HUM] Create `staging` and `production` Environment types
   - [PA-HUM] Create custom name `Namespace`
   - [PA-HUM] Create custom `ServiceAccount`
   - [PA-HUM] Create custom unprivileged Workload
-  - [PA-HUM] Create `staging` and `production` Environment types
 - [GKE basic setup in Staging](./docs/gke-basic.md)
   - [PA-GCP] Create basic GKE setup
   - [PA-GCP] Deploy a simple Nginx Ingress controller

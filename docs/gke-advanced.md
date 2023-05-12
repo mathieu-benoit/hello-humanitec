@@ -10,6 +10,7 @@
 - [[PA-HUM] Create the GKE access resource definition](#pa-hum-create-the-gke-access-resource-definition)
 - [[PA-GCP] Create the Google Service Account to access Cloud Logging](#pa-gcp-create-the-google-service-account-to-access-cloud-logging)
 - [[PA-HUM] Create the Production Environment](#pa-hum-create-the-gke-advanced-environment)
+- [[PA-GCP] Create a Spanner database](#pa-gcp-create-a-spanner-database)
 - _More to come, stay tuned!_
 
 ```mermaid

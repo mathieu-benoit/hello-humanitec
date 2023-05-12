@@ -2,10 +2,10 @@
 
 ## Common setup
 
+- [[PA-HUM] Create `staging` and `production` Environment types](#pa-hum-create-staging-and-production-environment-types)
 - [[PA-HUM] Create a custom `Namespace` resource definition](#pa-hum-create-a-custom-namespace-resource-definition)
 - [[PA-HUM] Create a custom `ServiceAccount` resource definition](#pa-hum-create-a-custom-serviceaccount-resource-definition)
 - [[PA-HUM] Create a custom Workload resource definition](#pa-hum-create-a-custom-workload-resource-definition)
-- [[PA-HUM] Create `staging` and `production` Environment types](#pa-hum-create-staging-and-production-environment-types)
 
 ```mermaid
 flowchart LR
@@ -29,6 +29,54 @@ export HUMANITEC_CONTEXT=/orgs/${HUMANITEC_ORG}
 export HUMANITEC_TOKEN=FIXME
 ```
 
+### [PA-HUM] Create `staging` and `production` Environment types
+
+Create `staging` Environment type:
+```bash
+STAGING_ENV="staging"
+humctl create environment-type ${STAGING_ENV} \
+    --description "Environment type for ${STAGING_ENV}."
+```
+<details>
+  <summary>With curl.</summary>
+
+  ```bash
+  curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/env-types \
+    -X POST \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Content-Type: application/json" \
+    -d @- <<EOF
+  {
+    "id": "${STAGING_ENV}",
+    "description": "Environment type for ${STAGING_ENV}."
+  }
+  EOF
+  ```
+</details>
+
+Create `production` Environment type:
+```bash
+PRODUCTION_ENV="production"
+humctl create environment-type ${PRODUCTION_ENV} \
+    --description "Environment type for ${PRODUCTION_ENV}."
+```
+<details>
+  <summary>With curl.</summary>
+
+  ```bash
+  curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/env-types \
+    -X POST \
+    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+    -H "Content-Type: application/json" \
+    -d @- <<EOF
+  {
+    "id": "${PRODUCTION_ENV}",
+    "description": "Environment type for ${PRODUCTION_ENV}."
+  }
+  EOF
+  ```
+</details>
+
 ### [PA-HUM] Create a custom `Namespace` resource definition
 
 As Platform Admin, in Humanitec.
@@ -44,12 +92,27 @@ metadata:
 object:
   name: custom-namespace
   type: k8s-namespace
-  driver_type: humanitec/static
+  driver_type: humanitec/template
   driver_inputs:
     values:
-      namespace: \${context.env.id}-\${context.app.id}
+      templates:
+        init: |
+          name: \${context.env.id}-\${context.app.id}
+        manifests: |-
+          namespace.yaml:
+            location: cluster
+            data:
+              apiVersion: v1
+              kind: Namespace
+              metadata:
+                labels:
+                  pod-security.kubernetes.io/enforce: restricted
+                name: {{ .init.name }}
+        outputs: |
+          namespace: {{ .init.name }}
   criteria:
-    - {}
+    - env_type: ${STAGING_ENV}
+    - env_type: ${PRODUCTION_ENV}
 EOF
 humctl create \
     -f custom-namespace.yaml
@@ -62,12 +125,27 @@ humctl create \
   id: custom-namespace
   name: custom-namespace
   type: k8s-namespace
-  driver_type: humanitec/static
+  driver_type: humanitec/template
   driver_inputs:
     values:
-      namespace: \${context.env.id}-\${context.app.id}
+      templates:
+        init: |
+          name: \${context.env.id}-\${context.app.id}
+        manifests: |-
+          namespace.yaml:
+            location: cluster
+            data:
+              apiVersion: v1
+              kind: Namespace
+              metadata:
+                labels:
+                  pod-security.kubernetes.io/enforce: restricted
+                name: {{ .init.name }}
+        outputs: |
+          namespace: {{ .init.name }}
   criteria:
-    - {}
+    - env_type: ${STAGING_ENV}
+    - env_type: ${PRODUCTION_ENV}
   EOF
   yq -o json custom-namespace.yaml > custom-namespace.json
   curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
@@ -201,7 +279,8 @@ object:
                     - ALL
             {{- end }}
   criteria:
-    - {}
+    - env_type: ${STAGING_ENV}
+    - env_type: ${PRODUCTION_ENV}
 EOF
 humctl create \
     -f custom-workload.yaml
@@ -247,7 +326,8 @@ humctl create \
                     - ALL
             {{- end }}
   criteria:
-    - {}
+    - env_type: ${STAGING_ENV}
+    - env_type: ${PRODUCTION_ENV}
   EOF
   yq -o json custom-workload.yaml > custom-workload.json
   curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
@@ -255,56 +335,6 @@ humctl create \
       -H "Content-Type: application/json" \
       -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
       -d @custom-workload.json
-  ```
-</details>
-
-##
-
-### [PA-HUM] Create `staging` and `production` Environment types
-
-Create `staging` Environment type:
-```bash
-STAGING_ENV="staging"
-humctl create environment-type ${STAGING_ENV} \
-    --description "Environment type for ${STAGING_ENV}."
-```
-<details>
-  <summary>With curl.</summary>
-
-  ```bash
-  curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/env-types \
-    -X POST \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -H "Content-Type: application/json" \
-    -d @- <<EOF
-  {
-    "id": "${STAGING_ENV}",
-    "description": "Environment type for ${STAGING_ENV}."
-  }
-  EOF
-  ```
-</details>
-
-Create `production` Environment type:
-```bash
-PRODUCTION_ENV="production"
-humctl create environment-type ${PRODUCTION_ENV} \
-    --description "Environment type for ${PRODUCTION_ENV}."
-```
-<details>
-  <summary>With curl.</summary>
-
-  ```bash
-  curl https://api.humanitec.io/orgs/${HUMANITEC_ORG}/env-types \
-    -X POST \
-    -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-    -H "Content-Type: application/json" \
-    -d @- <<EOF
-  {
-    "id": "${PRODUCTION_ENV}",
-    "description": "Environment type for ${PRODUCTION_ENV}."
-  }
-  EOF
   ```
 </details>
 
