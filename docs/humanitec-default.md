@@ -82,6 +82,7 @@ As Platform Admin, in Humanitec.
 
 Create the in-cluster Redis resource definition:
 ```bash
+REDIS_NAME=redis-cart
 REDIS_PORT=6379
 cat <<EOF > ${REDIS_NAME}-in-cluster.yaml
 apiVersion: core.api.humanitec.io/v1
@@ -112,11 +113,29 @@ object:
                     labels:
                       app: ${REDIS_NAME}
                   spec:
+                    securityContext:
+                      fsGroup: 1000
+                      runAsGroup: 1000
+                      runAsNonRoot: true
+                      runAsUser: 1000
                     containers:
                     - name: redis
+                      securityContext:
+                        allowPrivilegeEscalation: false
+                        capabilities:
+                          drop:
+                            - ALL
+                        privileged: false
+                        readOnlyRootFilesystem: true
                       image: redis:alpine
                       ports:
                       - containerPort: ${REDIS_PORT}
+                      volumeMounts:
+                      - mountPath: /data
+                        name: redis-data
+                    volumes:
+                    - name: redis-data
+                      emptyDir: {}
           service.yaml:
             location: namespace
             data:
