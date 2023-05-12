@@ -130,7 +130,7 @@ object:
   criteria:
     - {}
 EOF
-humctl update \
+humctl create \
     -f ${REDIS_NAME}-in-cluster.yaml
 ```
 
