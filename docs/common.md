@@ -83,7 +83,7 @@ humctl create environment-type ${PRODUCTION_ENV} \
 
 As Platform Admin, in Humanitec.
 
-Customize the name of the Kubernetes `Namespace` for all our Apps ([reference](https://docs.humanitec.com/guides/orchestrate-infrastructure/define-namespaces)). One per App/Env. We also adding the label to enforce [Pod Security Standards `restricted`](https://kubernetes.io/docs/concepts/security/pod-security-standards/):
+Customize the name of the Kubernetes `Namespace` for all our Apps in Production Environment ([reference](https://docs.humanitec.com/guides/orchestrate-infrastructure/define-namespaces)). One per App/Env. We are also adding the label to enforce [Pod Security Standards `restricted`](https://kubernetes.io/docs/concepts/security/pod-security-standards/):
 ```bash
 cat <<EOF > custom-namespace.yaml
 apiVersion: core.api.humanitec.io/v1
@@ -112,7 +112,6 @@ object:
         outputs: |
           namespace: {{ .init.name }}
   criteria:
-    - env_type: ${STAGING_ENV}
     - env_type: ${PRODUCTION_ENV}
 EOF
 humctl create \
@@ -145,7 +144,6 @@ humctl create \
         outputs: |
           namespace: {{ .init.name }}
   criteria:
-    - env_type: ${STAGING_ENV}
     - env_type: ${PRODUCTION_ENV}
   EOF
   yq -o json custom-namespace.yaml > custom-namespace.json
@@ -233,7 +231,7 @@ humctl create \
 
 As Platform Admin, in Humanitec.
 
-Customize the Kubernetes `Deployment` manifests for all our Workloads by adding the `securityContext` sections and other security features ([reference](https://docs.humanitec.com/integrations/resource-types/workload)):
+Customize the Kubernetes `Deployment` manifests for all our Workloads in Production Environment by adding the `securityContext` sections and other security features ([reference](https://docs.humanitec.com/integrations/resource-types/workload)):
 ```bash
 cat <<EOF > custom-workload.yaml
 apiVersion: core.api.humanitec.io/v1
@@ -276,7 +274,6 @@ object:
                 readOnlyRootFilesystem: true
             {{- end }}
   criteria:
-    - env_type: ${STAGING_ENV}
     - env_type: ${PRODUCTION_ENV}
 EOF
 humctl create \
@@ -323,7 +320,6 @@ humctl create \
                     - ALL
             {{- end }}
   criteria:
-    - env_type: ${STAGING_ENV}
     - env_type: ${PRODUCTION_ENV}
   EOF
   yq -o json custom-workload.yaml > custom-workload.json

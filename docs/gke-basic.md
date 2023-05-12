@@ -265,13 +265,17 @@ gcloud redis instances create ${REDIS_NAME} \
 REDIS_HOST=$(gcloud redis instances describe ${REDIS_NAME} \
     --region ${REGION} \
     --format 'get(host)')
+echo ${REDIS_HOST}
 REDIS_PORT=$(gcloud redis instances describe ${REDIS_NAME} \
     --region ${REGION} \
     --format 'get(port)')
+echo ${REDIS_PORT}
 REDIS_AUTH=$(gcloud redis instances get-auth-string ${REDIS_NAME} \
     --region ${REGION} \
     --format 'get(authString)')
+echo ${REDIS_AUTH}
 ```
+_Note: re-run the above commands until you get the 3 values._
 
 ## [PA-HUM] Create the Memorystore (Redis) access resource definition
 
@@ -335,7 +339,7 @@ rm ${REDIS_NAME}.yaml
 
 As Platform admin, in Humanitec.
 
-Deploy the new Environment with all the new resource definitions:
+Deploy the new Environment to take into account all the new resource definitions:
 ```bash
 humctl deploy env ${ENVIRONMENT} ${ENVIRONMENT} \
     --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}
