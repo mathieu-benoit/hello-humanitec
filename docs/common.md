@@ -258,22 +258,22 @@ object:
             - op: add
               path: /spec/securityContext
               value:
-                seccompProfile:
-                  type: RuntimeDefault
-                runAsNonRoot: true
                 fsGroup: 1000
                 runAsGroup: 1000
+                runAsNonRoot: true
                 runAsUser: 1000
+                seccompProfile:
+                  type: RuntimeDefault
             {{- range \$containerId, \$value := .resource.spec.containers }}
             - op: add
               path: /spec/containers/{{ \$containerId }}/securityContext
               value:
-                privileged: false
                 allowPrivilegeEscalation: false
-                readOnlyRootFilesystem: true
                 capabilities:
                   drop:
                     - ALL
+                privileged: false
+                readOnlyRootFilesystem: true
             {{- end }}
   criteria:
     - env_type: ${STAGING_ENV}

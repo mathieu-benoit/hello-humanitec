@@ -118,6 +118,8 @@ object:
                       runAsGroup: 1000
                       runAsNonRoot: true
                       runAsUser: 1000
+                      seccompProfile:
+                        type: RuntimeDefault
                     containers:
                     - name: redis
                       securityContext:

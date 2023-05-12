@@ -102,7 +102,9 @@ Grab the Public IP address of that Ingress Controller:
 INGRESS_IP=$(kubectl get svc ingress-nginx-controller \
     -n ingress-nginx \
     -o jsonpath="{.status.loadBalancer.ingress[*].ip}")
+echo ${INGRESS_IP}
 ```
+_Note: re-run the above command until you get a value._
 
 ## [PA-GCP] Create the Google Service Account to access the GKE cluster
 
