@@ -744,7 +744,7 @@ humctl create \
 ```
 </details>
 
-_Note: Here, we create a Redis resource definition but in a near future, this will be a Spanner resource definition._
+_Note: Here we create a Redis resource definition but in a near future, this will be a Spanner resource type._
 
 ## [PA-HUM] Update the custom Service Account resource definition with the Workload Identity annotation for `cartservice`
 
@@ -771,9 +771,9 @@ object:
               apiVersion: v1
               kind: ServiceAccount
               metadata:
-                {{if eq .init.name "cartservice" }}
+                {{if hasPrefix "projects/" \${resources.redis.outputs.host} }}
                 annotations:
-                  iam.gke.io/gcp-service-account: ${SPANNER_DB_USER_GSA_ID}
+                  iam.gke.io/gcp-service-account: \${resources.redis.outputs.user}
                 {{end}}
                 name: {{ .init.name }}
         outputs: |
@@ -785,7 +785,7 @@ humctl apply \
     -f custom-service-account.yaml
 ```
 
-_Note: Here, we create hard-code the values of the `ServiceAccount` name with `cartservice` and the value of the Google Service Account, but in a near future we will add a resource selector placeholder in order to dynamically get these values from the dependent resource._
+_Note: Here we test if the `${resources.redis.outputs.host}` starts with `projects/` which is the beginning of a the connection string of the Spanner database. In a near future, we will leverage the Spanner resource type instead._
 
 ## [DE-HUM] Deploy the `cartservice` connected to the Spanner database
 
