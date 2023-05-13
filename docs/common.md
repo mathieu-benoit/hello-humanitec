@@ -83,7 +83,7 @@ humctl create environment-type ${PRODUCTION_ENV} \
 
 As Platform Admin, in Humanitec.
 
-Customize the name of the Kubernetes `Namespace` for all our Apps in Production Environment ([reference](https://docs.humanitec.com/guides/orchestrate-infrastructure/define-namespaces)). One per App/Env. We are also adding the label to enforce [Pod Security Standards `restricted`](https://kubernetes.io/docs/concepts/security/pod-security-standards/):
+Customize the name of the Kubernetes `Namespace` for all our Apps in Production Environment Type ([reference](https://docs.humanitec.com/guides/orchestrate-infrastructure/define-namespaces)). One per App/Env. We are also adding the label to enforce [Pod Security Standards `restricted`](https://kubernetes.io/docs/concepts/security/pod-security-standards/):
 ```bash
 cat <<EOF > custom-namespace.yaml
 apiVersion: core.api.humanitec.io/v1
@@ -231,7 +231,7 @@ humctl create \
 
 As Platform Admin, in Humanitec.
 
-Customize the Kubernetes `Deployment` manifests for all our Workloads in Production Environment by adding the `securityContext` sections and other security features ([reference](https://docs.humanitec.com/integrations/resource-types/workload)):
+Customize the Kubernetes `Deployment` manifests for all our Workloads in Production Environment Type by adding the `securityContext` sections and other security features ([reference](https://docs.humanitec.com/integrations/resource-types/workload)):
 ```bash
 cat <<EOF > custom-workload.yaml
 apiVersion: core.api.humanitec.io/v1

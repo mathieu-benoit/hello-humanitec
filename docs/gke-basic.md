@@ -6,10 +6,10 @@
 - [[PA-GCP] Deploy the Nginx Ingress controller](#pa-gcp-deploy-the-nginx-ingress-controller)
 - [[PA-GCP] Create the Google Service Account to access the GKE cluster](#pa-gcp-create-the-google-service-account-to-access-the-gke-cluster)
 - [[PA-HUM] Create the GKE access resource definition](#pa-hum-create-the-gke-access-resource-definition)
-- [[PA-HUM] Create the Staging Environment](#pa-hum-create-the-gke-basic-environment)
+- [[PA-HUM] Create the Staging Environment](#pa-hum-create-the-staging-environment)
 - [[PA-GCP] Create a Memorystore (Redis) database](#pa-gcp-create-a-memorystore-redis-database)
 - [[PA-HUM] Create the Memorystore (Redis) access resource definition](#pa-hum-create-the-memorystore-redis-access-resource-definition)
-- [[PA-HUM] Deploy the new Staging Environment](#pa-hum-deploy-the-new-gke-basic-environment)
+- [[PA-HUM] Deploy the Staging Environment](#pa-hum-deploy-the-staging-environment)
 - [Test the Online Boutique website](#test-the-online-boutique-website)
 
 ```mermaid
@@ -335,7 +335,7 @@ Clean sensitive information locally:
 rm ${REDIS_NAME}.yaml
 ```
 
-## [PA-HUM] Deploy the new Staging Environment
+## [PA-HUM] Deploy the Staging Environment
 
 As Platform admin, in Humanitec.
 

@@ -21,8 +21,8 @@ Agenda:
   - [PA-GCP] Deploy a simple Nginx Ingress controller
   - [PA-HUM] Create Staging Environment
   - [PA-GCP] Create a Memorystore (Redis) database
-  - [PA-HUM] Deploy the new Staging Environment
-- [GKE advanced setup in Production- _under construction_](./docs/gke-advanced.md)
+  - [PA-HUM] Deploy the Staging Environment
+- [GKE advanced setup in Production](./docs/gke-advanced.md)
   - [PA-GCP] Create advanced and secured GKE setup
   - [PA-GCP] Deploy an Nginx Ingress controller
   - [PA-GCP] Protect the Nginx Ingress controller behind a Global Cloud Load Balancer (GCLB) and Cloud Armor (WAF)
@@ -30,7 +30,7 @@ Agenda:
   - [PA-HUM] Create Production Environment
   - [PA-GCP] Create a Spanner database
   - [PA-GCP] Create Kubernetes and Google Service Accounts to access Spanner via Workload Identity
-  - [PA-HUM] Deploy the new Production Environment
+  - [DE-HUM] Deploy `cartservice` Workload connected to the Spanner database in the Production Environment
 
 
 Backlog and future considerations:
@@ -38,3 +38,5 @@ Backlog and future considerations:
 - Sample Apps with PostreSQL
 - Istio Service Mesh
 - Dynamic infra (databases) provisioning via Humanitec and Terraform
+- `NetworkPolicies`
+- Terraform snippets in addition to the existing CLI commands

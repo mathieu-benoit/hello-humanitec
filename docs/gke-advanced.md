@@ -9,9 +9,12 @@
 - [[PA-GCP] Create the Google Service Account to access the GKE cluster](#pa-gcp-create-the-google-service-account-to-access-the-gke-cluster)
 - [[PA-HUM] Create the GKE access resource definition](#pa-hum-create-the-gke-access-resource-definition)
 - [[PA-GCP] Create the Google Service Account to access Cloud Logging](#pa-gcp-create-the-google-service-account-to-access-cloud-logging)
-- [[PA-HUM] Create the Production Environment](#pa-hum-create-the-gke-advanced-environment)
+- [[PA-HUM] Create the Production Environment](#pa-hum-create-the-production-environment)
 - [[PA-GCP] Create a Spanner database](#pa-gcp-create-a-spanner-database)
-- _More to come, stay tuned!_
+- [[PA-HUM] Create the Spanner access resource definition](#pa-hum-create-the-spanner-access-resource-definition)
+- [[PA-HUM] Update the custom Service Account resource definition with the Workload Identity annotation for `cartservice`](#pa-hum-update-the-custom-service-account-resource-definition-with-the-workload-identity-annotation-for-cartservice)
+- [[DE-HUM] Deploy the `cartservice` connected to the Spanner database](#de-hum-deploy-the-cartservice-connected-to-the-spanner-database)
+- [Test the Online Boutique website](#test-the-online-boutique-website)
 
 ```mermaid
 flowchart LR
@@ -536,7 +539,7 @@ gcloud iam service-accounts keys create ${LOGGING_READER_SA_NAME}.json \
 
 As Platform Admin, in Humanitec.
 
-Create the Cloud Logging access resource definition:
+Create the Cloud Logging access resource definition for the Production Environment Type:
 ```bash
 cat <<EOF > ${CLUSTER_NAME}-logging.yaml
 apiVersion: core.api.humanitec.io/v1
@@ -555,7 +558,7 @@ object:
     secrets:
       credentials: $(cat ${LOGGING_READER_SA_NAME}.json)
   criteria:
-    - env_id: ${ENVIRONMENT}
+    - env_type: ${PRODUCTION_ENV}
 EOF
 humctl create \
     -f ${CLUSTER_NAME}-logging.yaml
@@ -638,6 +641,14 @@ humctl create environment ${ENVIRONMENT} \
   ```
 </details>
 
+Deploy the new Environment:
+```bash
+humctl deploy env ${CLONED_ENVIRONMENT} ${ENVIRONMENT} \
+    --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}
+```
+
+At this stage, you can already [test the Online Boutique website](#test-the-online-boutique-website) in its existing state.
+
 ### [PA-GCP] Create a Spanner database
 
 Create the Spanner instance and database:
@@ -675,44 +686,144 @@ gcloud iam service-accounts add-iam-policy-binding ${SPANNER_DB_USER_GSA_ID} \
     --role roles/iam.workloadIdentityUser
 ```
 
-**BELOW IS UNDER CONSTRUCTION, NOT READY YET... STAY TUNED!**
+Get the Spanner database connection string:
+```bash
+SPANNER_DB_CONNECTION_STRING=$(gcloud spanner databases describe ${SPANNER_DATABASE_NAME} \
+    --instance ${SPANNER_INSTANCE_NAME} \
+    --format 'get(name)')
+echo ${SPANNER_DB_CONNECTION_STRING}
+```
+_Note: re-run the above the command until you get the value._
 
-### Custom Service Account resource definition
+## [PA-HUM] Create the Spanner access resource definition
+
+As Platform Admin, in Humanitec.
 
 ```bash
-cat <<EOF > custom-sa.yaml
-id: custom-sa
-name: custom-sa
-type: k8s-service-account
-driver_type: humanitec/template
-driver_inputs:
-  values:
-    templates:
-      init: |
-        name: {{ index (regexSplit "\\." "$${context.res.id}" -1) 1 }}
-      manifests: |
-        service-account.yaml:
-          location: namespace
-          data:
-            apiVersion: v1
-            kind: ServiceAccount
-            metadata:
-              {{if eq .init.name "cartservice" }}
-              annotations:
-                iam.gke.io/gcp-service-account: spanner-db-user-sa@mathieu-benoit-gcp.iam.gserviceaccount.com
-              {{end}}
-              name: {{ .init.name }}
-      outputs: |
-        name: {{ .init.name }}
-criteria:
-  - {}
+cat <<EOF > ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner.yaml
+apiVersion: core.api.humanitec.io/v1
+kind: Definition
+metadata:
+  id: ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner
+object:
+  name: ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner
+  type: redis
+  driver_type: humanitec/static
+  driver_inputs:
+    values:
+      host: ${SPANNER_DB_CONNECTION_STRING}
+      user: ${SPANNER_DB_USER_GSA_ID}
+  criteria:
+    - env_id: ${ENVIRONMENT}
 EOF
-yq -o json custom-sa.yaml > custom-sa.json
-curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
-    -X POST \
-  	-H "Content-Type: application/json" \
-	  -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
-  	-d @custom-sa.json
+humctl create \
+    -f ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner.yaml
 ```
+<details>
+  <summary>With curl.</summary>
+
+  ```bash
+  cat <<EOF > ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner.yaml
+  id: ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner
+  name: ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner
+  type: redis
+  driver_type: humanitec/static
+  driver_inputs:
+    values:
+      host: ${SPANNER_DB_CONNECTION_STRING}
+      user: ${SPANNER_DB_USER_GSA_ID}
+  criteria:
+    - env_id: ${ENVIRONMENT}
+  EOF
+  yq -o json ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner.yaml > ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner.json
+  curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
+      -X POST \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+      -d @${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner.json
+```
+</details>
+
+_Note: Here, we create a Redis resource definition but in a near future, this will be a Spanner resource definition._
+
+## [PA-HUM] Update the custom Service Account resource definition with the Workload Identity annotation for `cartservice`
+
+Update the Kubernetes `ServiceAccount` to add the Workload Identity annotation for allowing the `cartservice` to access the Spanner database:
+```bash
+cat <<EOF > custom-service-account.yaml
+apiVersion: core.api.humanitec.io/v1
+kind: Definition
+metadata:
+  id: custom-service-account
+object:
+  name: custom-service-account
+  type: k8s-service-account
+  driver_type: humanitec/template
+  driver_inputs:
+    values:
+      templates:
+        init: |
+          name: {{ index (regexSplit "\\\\." "\$\${context.res.id}" -1) 1 }}
+        manifests: |-
+          service-account.yaml:
+            location: namespace
+            data:
+              apiVersion: v1
+              kind: ServiceAccount
+              metadata:
+                {{if eq .init.name "cartservice" }}
+                annotations:
+                  iam.gke.io/gcp-service-account: ${SPANNER_DB_USER_GSA_ID}
+                {{end}}
+                name: {{ .init.name }}
+        outputs: |
+          name: {{ .init.name }}
+  criteria:
+    - {}
+EOF
+humctl apply \
+    -f custom-service-account.yaml
+```
+
+_Note: Here, we create hard-code the values of the `ServiceAccount` name with `cartservice` and the value of the Google Service Account, but in a near future we will add a resource selector placeholder in order to dynamically get these values from the dependent resource._
+
+## [DE-HUM] Deploy the `cartservice` connected to the Spanner database
+
+```bash
+score-humanitec delta \
+	--app ${ONLINEBOUTIQUE_APP} \
+	--env ${ENVIRONMENT} \
+	--org ${HUMANITEC_ORG} \
+	--token ${HUMANITEC_TOKEN} \
+	--deploy \
+	--retry \
+	-f samples/onlineboutique/cartservice/score-spanner.yaml \
+	--extensions samples/onlineboutique/cartservice/humanitec.score.yaml
+```
+
+## Test the Online Boutique website
+
+Get the public DNS exposing the `frontend` Workload:
+```bash
+echo -e "https://$(humctl get active-resources \
+    --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT} \
+    -o json \
+    | jq -c '.[] | select(.object.type | contains("dns"))' \
+    | jq -r .object.resource.host)"
+```
+<details>
+  <summary>With curl.</summary>
+  
+  ```bash
+  echo -e "https://$(curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT}/resources" \
+      -s \
+      -H "Authorization: Bearer ${HUMANITEC_TOKEN}" \
+      -H "Content-Type: application/json" \
+      | jq -c '.[] | select(.type | contains("dns"))' \
+      | jq -r .resource.host)"
+  ```
+</details>
+
+_Note: re-run the above command until you get a value._
 
 [_<< Previous section: GKE basic setup in Staging_](/docs/gke-basic.md)
