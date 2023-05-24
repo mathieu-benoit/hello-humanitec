@@ -3,7 +3,7 @@ metadata:
   name: cartservice
 containers:
   cartservice:
-    image: gcr.io/google-samples/microservices-demo/cartservice:v0.6.0
+    image: gcr.io/google-samples/microservices-demo/cartservice:v0.7.0
     variables:
       SPANNER_CONNECTION_STRING: "${resources.redis-cart.host}"
 resources:

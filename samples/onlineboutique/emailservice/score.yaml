@@ -3,7 +3,7 @@ metadata:
   name: emailservice
 containers:
   emailservice:
-    image: gcr.io/google-samples/microservices-demo/emailservice:v0.6.0
+    image: gcr.io/google-samples/microservices-demo/emailservice:v0.7.0
     variables:
       DISABLE_PROFILER: "1"
       PORT: "8080"

@@ -3,7 +3,7 @@ metadata:
   name: loadgenerator
 containers:
   loadgenerator:
-    image: gcr.io/google-samples/microservices-demo/loadgenerator:v0.6.0
+    image: gcr.io/google-samples/microservices-demo/loadgenerator:v0.7.0
     variables:
       FRONTEND_ADDR: "${resources.frontend.name}:80"
       USERS: "10"
