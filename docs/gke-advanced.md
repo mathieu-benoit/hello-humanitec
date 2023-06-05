@@ -101,7 +101,11 @@ GKE_NODE_SA_ID=${GKE_NODE_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
 gcloud iam service-accounts create ${GKE_NODE_SA_NAME} \
     --display-name=${GKE_NODE_SA_NAME}
 roles="roles/logging.logWriter roles/monitoring.metricWriter roles/monitoring.viewer"
-for r in $roles; do gcloud projects add-iam-policy-binding ${PROJECT_ID} --member "serviceAccount:${GKE_NODE_SA_ID}" --role $r; done
+for r in $roles; do \
+    gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member "serviceAccount:${GKE_NODE_SA_ID}" \
+    --role $r; \
+done
 ```
 
 Create an Artifact Registry repository in order to store the container images:
@@ -791,14 +795,14 @@ _Note: Here we test if the `${resources.redis.outputs.host}` starts with `projec
 
 ```bash
 score-humanitec delta \
-	--app ${ONLINEBOUTIQUE_APP} \
-	--env ${ENVIRONMENT} \
-	--org ${HUMANITEC_ORG} \
-	--token ${HUMANITEC_TOKEN} \
-	--deploy \
-	--retry \
-	-f samples/onlineboutique/cartservice/score-spanner.yaml \
-	--extensions samples/onlineboutique/cartservice/humanitec.score.yaml
+    --app ${ONLINEBOUTIQUE_APP} \
+    --env ${ENVIRONMENT} \
+    --org ${HUMANITEC_ORG} \
+    --token ${HUMANITEC_TOKEN} \
+    --deploy \
+    --retry \
+    -f samples/onlineboutique/cartservice/score-spanner.yaml \
+    --extensions samples/onlineboutique/cartservice/humanitec.score.yaml
 ```
 
 ## Test the Online Boutique website
