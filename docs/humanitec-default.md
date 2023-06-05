@@ -171,7 +171,18 @@ As Developer, in Humanitec.
 FIRST_WORKLOAD="adservice"
 COMBINED_DELTA=$(score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --retry -f samples/onlineboutique/${FIRST_WORKLOAD}/score.yaml --extensions samples/onlineboutique/${FIRST_WORKLOAD}/humanitec.score.yaml | jq -r .id)
 WORKLOADS="cartservice checkoutservice currencyservice emailservice frontend loadgenerator paymentservice productcatalogservice recommendationservice shippingservice"
-for w in ${WORKLOADS}; do COMBINED_DELTA=$(score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --delta ${COMBINED_DELTA} --retry -f samples/onlineboutique/$w/score.yaml --extensions samples/onlineboutique/$w/humanitec.score.yaml | jq -r .id); done
+for w in ${WORKLOADS}; do \
+    COMBINED_DELTA=$(score-humanitec delta \
+        --app ${ONLINEBOUTIQUE_APP} \
+        --env ${ENVIRONMENT} \
+        --org ${HUMANITEC_ORG} \
+        --token ${HUMANITEC_TOKEN} \
+        --delta ${COMBINED_DELTA} \
+        --retry \
+        -f samples/onlineboutique/$w/score.yaml \
+        --extensions samples/onlineboutique/$w/humanitec.score.yaml \
+        | jq -r .id); \
+done
 humctl deploy delta ${COMBINED_DELTA} ${ENVIRONMENT} \
     --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}
 ```
