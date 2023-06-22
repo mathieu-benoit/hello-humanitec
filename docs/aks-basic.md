@@ -23,16 +23,44 @@ az aks create \
 
 az aks get-credentials \
   -g $RG \
-  -n $RG
+  -n $AKS
 ```
 
+## [PA-GCP] Deploy the Nginx Ingress controller
+
+As Platform Admin, in Azure.
+
+Deploy the Nginx Ingress Controller:
 ```bash
+helm upgrade \
+    --install ingress-nginx ingress-nginx \
+    --repo https://kubernetes.github.io/ingress-nginx \
+    --namespace ingress-nginx \
+    --create-namespace
+```
+
+Grab the Public IP address of that Ingress Controller:
+```bash
+INGRESS_IP=$(kubectl get svc ingress-nginx-controller \
+    -n ingress-nginx \
+    -o jsonpath="{.status.loadBalancer.ingress[*].ip}")
+echo ${INGRESS_IP}
+```
+_Note: re-run the above command until you get a value._
+
+```bash
+REDIS_NAME=redis-cart-${ENVIRONMENT}
+REDIS_SKU="basic"
+REDIS_SIZE="C0"
+
+az provider register --namespace Microsoft.Cache
+
 az redis create \
-    --name $cache \
-    --resource-group $resourceGroup \
-    --location "$location" \
-    --sku $sku \
-    --vm-size $size
+    --name $REDIS_NAME \
+    --resource-group $RG \
+    --location "$LOCATION" \
+    --sku $REDIS_SKU \
+    --vm-size $REDIS_SIZE
 
 # Get details of an Azure Cache for Redis
 echo "Showing details of $cache"
