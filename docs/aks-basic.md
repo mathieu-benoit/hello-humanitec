@@ -62,15 +62,32 @@ az redis create \
     --sku $REDIS_SKU \
     --vm-size $REDIS_SIZE
 
-# Get details of an Azure Cache for Redis
-echo "Showing details of $cache"
-az redis show --name "$cache" --resource-group $resourceGroup 
+REDIS_HOST=$(az redis show \
+    --name "$REDIS_NAME" \
+    --resource-group $RG \
+    --query [hostName] \
+    --output tsv)
+echo ${REDIS_HOST}
+REDIS_PORT=$(az redis show \
+    --name "$REDIS_NAME" \
+    --resource-group $RG \
+    --query [port] \
+    --output tsv)
+echo ${REDIS_PORT}
+REDIS_AUTH=$(az redis list-keys \
+    --name "$REDIS_NAME" \
+    --resource-group $RG \
+    --query [primaryKey] \
+    --output tsv)
+echo ${REDIS_AUTH}
+
+
 
 # Retrieve the hostname and ports for an Azure Redis Cache instance
-redis=($(az redis show --name "$cache" --resource-group $resourceGroup --query [hostName,enableNonSslPort,port,sslPort] --output tsv))
+redis=($(az redis show --name "$REDIS_NAME" --resource-group $RG --query [hostName,enableNonSslPort,port,sslPort] --output tsv))
 
 # Retrieve the keys for an Azure Redis Cache instance
-keys=($(az redis list-keys --name "$cache" --resource-group $resourceGroup --query [primaryKey,secondaryKey] --output tsv))
+keys=($(az redis list-keys --name "$REDIS_NAME" --resource-group $RG --query [primaryKey,secondaryKey] --output tsv))
 ```
 
 
