@@ -22,8 +22,8 @@ az aks create \
     --no-ssh-key
 
 az aks get-credentials \
-  -g $RG \
-  -n $AKS
+    -g $RG \
+    -n $AKS
 ```
 
 ## [PA-GCP] Deploy the Nginx Ingress controller
@@ -71,7 +71,7 @@ echo ${REDIS_HOST}
 REDIS_PORT=$(az redis show \
     --name "$REDIS_NAME" \
     --resource-group $RG \
-    --query [port] \
+    --query [sslPort] \
     --output tsv)
 echo ${REDIS_PORT}
 REDIS_AUTH=$(az redis list-keys \
@@ -80,28 +80,15 @@ REDIS_AUTH=$(az redis list-keys \
     --query [primaryKey] \
     --output tsv)
 echo ${REDIS_AUTH}
-
-
-
-# Retrieve the hostname and ports for an Azure Redis Cache instance
-redis=($(az redis show --name "$REDIS_NAME" --resource-group $RG --query [hostName,enableNonSslPort,port,sslPort] --output tsv))
-
-# Retrieve the keys for an Azure Redis Cache instance
-keys=($(az redis list-keys --name "$REDIS_NAME" --resource-group $RG --query [primaryKey,secondaryKey] --output tsv))
 ```
 
-
-
 ```bash
-az provider register --namespace Microsoft.OperationsManagement
-az provider register --namespace Microsoft.OperationalInsights
-
-az aks create \
-    -g $RG \
-    -n $AKS \
-    --enable-managed-identity \
-    --node-count 1 \
-    --enable-addons monitoring \
-    --enable-msi-auth-for-monitoring \
-    --no-ssh-key
+NAMESPACE=onlineboutique
+helm upgrade onlineboutique oci://us-docker.pkg.dev/online-boutique-ci/charts/onlineboutique \
+    --install \
+    --create-namespace \
+    -n ${NAMESPACE} \
+    --set frontend.platform=azure \
+    --set cartDatabase.inClusterRedis.create=false \
+    --set cartDatabase.connectionString="${REDIS_HOST}:${REDIS_PORT}\,abortConnect=false\,ssl=true\,password=${REDIS_AUTH}"
 ```
