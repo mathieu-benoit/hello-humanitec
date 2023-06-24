@@ -1,4 +1,6 @@
-[_<< Previous section: Common setup_](/docs/common.md) | [_Next section: GKE advanced setup in Production >>_](/docs/gke-advanced.md)
+[_<< Previous section: Common setup_](/docs/common.md)
+
+| [_Next section: GKE advanced setup in Production >>_](/docs/gke-advanced.md)
 
 # GKE basic setup in Staging
 
@@ -82,6 +84,11 @@ gcloud container clusters create ${CLUSTER_NAME} \
     --enable-master-authorized-networks \
     --master-authorized-networks ${HUMANITEC_IP_ADDRESSES},${LOCAL_IP_ADRESS}/32 \
     --no-enable-google-cloud-access
+```
+
+```bash
+gcloud container clusters get-credentials ${CLUSTER_NAME} \
+    --zone ${ZONE}
 ```
 
 ## [PA-GCP] Deploy the Nginx Ingress controller
@@ -224,7 +231,7 @@ humctl create environment ${ENVIRONMENT} \
   from_deploy_id: ${LAST_DEPLOYMENT_IN_CLONED_ENVIRONMENT}
   id: ${ENVIRONMENT}
   name: Staging
-  type: ${ENVIRONMENT}
+  type: ${STAGING_ENV}
   EOF
   yq -o json ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.yaml > ${ONLINEBOUTIQUE_APP}-${ENVIRONMENT}-env.json
   curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs" \
@@ -370,4 +377,6 @@ echo -e "https://$(humctl get active-resources \
 
 _Note: re-run the above command until you get a value._
 
-[_<< Previous section: Common setup_](/docs/common.md) | [_Next section: GKE advanced setup in Production >>_](/docs/gke-advanced.md)
+[_<< Previous section: Common setup_](/docs/common.md)
+
+| [_Next section: GKE advanced setup in Production >>_](/docs/gke-advanced.md)

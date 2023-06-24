@@ -1,7 +1,7 @@
 # hello-humanitec
 
 2 personas:
-- **Platform admin** (PA) interacting with either Google Cloud (**PA-GCP**) or Humanitec (**PA-HUM**)
+- **Platform admin** (PA) interacting with either Google Cloud (**PA-GCP**), Azure (**PA-AZ**) or Humanitec (**PA-HUM**)
 - **Developer** (DE) interacting with Humanitec (**DE-HUM**)
 
 ![personas](/images/personas.png)
@@ -21,6 +21,12 @@ Agenda:
   - [PA-GCP] Deploy a simple Nginx Ingress controller
   - [PA-HUM] Create Staging Environment
   - [PA-GCP] Create a Memorystore (Redis) database
+  - [PA-HUM] Deploy the Staging Environment
+- [AKS basic setup in Staging](./docs/aks-basic.md)
+  - [PA-AZ] Create basic AKS setup
+  - [PA-AZ] Deploy a simple Nginx Ingress controller
+  - [PA-HUM] Create Staging Environment
+  - [PA-AZ] Create a Memorystore (Redis) database
   - [PA-HUM] Deploy the Staging Environment
 - [GKE advanced setup in Production](./docs/gke-advanced.md)
   - [PA-GCP] Create advanced and secured GKE setup

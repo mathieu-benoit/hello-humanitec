@@ -611,7 +611,7 @@ Create the new Environment by cloning the existing Environment from its latest D
 CLONED_ENVIRONMENT=development
 humctl create environment ${ENVIRONMENT} \
     --name Production \
-    -t ${ENVIRONMENT} \
+    -t ${PRODUCTION_ENV} \
     --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP} \
     --from ${CLONED_ENVIRONMENT}
 ```

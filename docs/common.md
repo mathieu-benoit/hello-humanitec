@@ -1,4 +1,8 @@
-[_<< Previous section: Humanitec default setup in Development_](/docs/humanitec-default.md) | [_Next section: GKE basic setup in Staging >>_](/docs/gke-basic.md)
+[_<< Previous section: Humanitec default setup in Development_](/docs/humanitec-default.md)
+
+| [_Next section: GKE basic setup in Staging >>_](/docs/gke-basic.md)
+
+| [_Next section: AKS basic setup in Staging >>_](/docs/aks-basic.md)
 
 ## Common setup
 
@@ -333,4 +337,8 @@ humctl create \
 
 _Important note: the `${resources.k8s-service-account.outputs.name}` part is necessary to create the custom `ServiceAccount` defined above._
 
-[_<< Previous section: Humanitec default setup in Development_](/docs/humanitec-default.md) | [_Next section: GKE basic setup in Staging >>_](/docs/gke-basic.md)
+[_<< Previous section: Humanitec default setup in Development_](/docs/humanitec-default.md)
+
+| [_Next section: GKE basic setup in Staging >>_](/docs/gke-basic.md)
+
+| [_Next section: AKS basic setup in Staging >>_](/docs/aks-basic.md)
