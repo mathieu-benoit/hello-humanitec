@@ -30,7 +30,7 @@ flowchart LR
         redis-cart-connection>redis-cart-connection]
     end
   end
-  subgraph Google Cloud
+  subgraph Azure
     direction TB
     subgraph aks-basic
         subgraph ingress-controller
