@@ -162,6 +162,7 @@ object:
   criteria:
     - env_id: ${ENVIRONMENT}
 EOF
+sed "s/\"displayName\": \"${AKS_ADMIN_SP_NAME}\"/\"name\": \"$(echo ${AKS_ADMIN_SP_CREDENTIALS} | jq -r .appId)\"/" ${CLUSTER_NAME}.yaml
 humctl create \
     -f ${CLUSTER_NAME}.yaml
 ```
@@ -185,6 +186,7 @@ humctl create \
   criteria:
     - env_id: ${ENVIRONMENT}
   EOF
+  sed "s/\"displayName\": \"${AKS_ADMIN_SP_NAME}\"/\"name\": \"$(echo ${AKS_ADMIN_SP_CREDENTIALS} | jq -r .appId)\"/" ${CLUSTER_NAME}.yaml
   yq -o json ${CLUSTER_NAME}.yaml > ${CLUSTER_NAME}.json
   curl "https://api.humanitec.io/orgs/${HUMANITEC_ORG}/resources/defs" \
       -X POST \
@@ -193,6 +195,12 @@ humctl create \
       -d @${CLUSTER_NAME}.json
   ```
 </details>
+
+Clean sensitive information locally:
+```bash
+rm ${CLUSTER_NAME}.yaml
+rm ${CLUSTER_NAME}.json
+```
 
 ## [PA-HUM] Create the Staging Environment
 
