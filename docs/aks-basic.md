@@ -72,7 +72,8 @@ ENVIRONMENT=${STAGING_ENV}-aks
 As Platform Admin, in Azure.
 
 ```bash
-az provider register --namespace Microsoft.ContainerService
+az provider register \
+    -n Microsoft.ContainerService
 ```
 
 ```bash
@@ -263,7 +264,8 @@ REDIS_NAME=redis-cart-${ENVIRONMENT}
 REDIS_SKU="basic"
 REDIS_SIZE="C0"
 
-az provider register --namespace Microsoft.Cache
+az provider register \
+    -n Microsoft.Cache
 
 az redis create \
     -n ${REDIS_NAME} \
