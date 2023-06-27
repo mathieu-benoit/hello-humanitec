@@ -1,7 +1,5 @@
 [_<< Previous section: Common setup_](/docs/common.md)
 
-| [_Next section: GKE advanced setup in Production >>_](/docs/gke-advanced.md)
-
 # AKS basic setup in Staging
 
 - [[PA-AZ] Create the AKS cluster](#pa-az-create-the-aks-cluster)
@@ -389,5 +387,3 @@ echo -e "https://$(humctl get active-resources \
 _Note: re-run the above command until you get a value._
 
 [_<< Previous section: Common setup_](/docs/common.md)
-
-| [_Next section: GKE advanced setup in Production >>_](/docs/gke-advanced.md)
