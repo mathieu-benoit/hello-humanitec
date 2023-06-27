@@ -55,7 +55,7 @@ flowchart LR
 SUBSCRIPTION_ID=FIXME
 RESOURCE_GROUP=FIXME
 CLUSTER_NAME=aks-basic
-REGION=canadacentral
+LOCATION=canadacentral
 NETWORK=default
 HUMANITEC_IP_ADDRESSES="34.159.97.57/32,35.198.74.96/32,34.141.77.162/32,34.89.188.214/32,34.159.140.35/32,34.89.165.141/32"
 LOCAL_IP_ADRESS=$(curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//')
@@ -79,7 +79,7 @@ az provider register --namespace Microsoft.ContainerService
 az aks create \
     -g ${RESOURCE_GROUP} \
     -n ${CLUSTER_NAME} \
-    -l ${REGION} \
+    -l ${LOCATION} \
     --node-count 3 \
     --api-server-authorized-ip-ranges ${HUMANITEC_IP_ADDRESSES},${LOCAL_IP_ADRESS}/32 \
     --no-ssh-key
@@ -268,7 +268,7 @@ az provider register --namespace Microsoft.Cache
 az redis create \
     -n ${REDIS_NAME} \
     -g ${RESOURCE_GROUP} \
-    -l ${REGION} \
+    -l ${LOCATION} \
     --sku ${REDIS_SKU} \
     --vm-size ${REDIS_SIZE}
 ```
