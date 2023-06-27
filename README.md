@@ -40,7 +40,7 @@ Agenda:
 
 
 Backlog and future considerations:
-- Azure setup
+- Azure advanced setup
 - Sample Apps with PostreSQL
 - Istio Service Mesh
 - Dynamic infra (databases) provisioning via Humanitec and Terraform
