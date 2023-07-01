@@ -167,6 +167,8 @@ humctl create \
 
 As Developer, in Humanitec.
 
+### On Linux
+
 ```bash
 FIRST_WORKLOAD="adservice"
 COMBINED_DELTA=$(score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --retry -f samples/onlineboutique/${FIRST_WORKLOAD}/score.yaml --extensions samples/onlineboutique/${FIRST_WORKLOAD}/humanitec.score.yaml | jq -r .id)
@@ -186,6 +188,29 @@ done
 humctl deploy delta ${COMBINED_DELTA} ${ENVIRONMENT} \
     --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}
 ```
+
+### On MacOS
+
+```
+FIRST_WORKLOAD="adservice"
+COMBINED_DELTA=$(score-humanitec delta --app ${ONLINEBOUTIQUE_APP} --env ${ENVIRONMENT} --org ${HUMANITEC_ORG} --token ${HUMANITEC_TOKEN} --retry -f samples/onlineboutique/${FIRST_WORKLOAD}/score.yaml --extensions samples/onlineboutique/${FIRST_WORKLOAD}/humanitec.score.yaml | jq -r .id)
+WORKLOADS=(cartservice checkoutservice currencyservice emailservice frontend loadgenerator paymentservice productcatalogservice recommendationservice shippingservice)
+for ((i = 1; i < ${#WORKLOADS[@]}; i++)); do \
+    COMBINED_DELTA=$(score-humanitec delta \
+        --app ${ONLINEBOUTIQUE_APP} \
+        --env ${ENVIRONMENT} \
+        --org ${HUMANITEC_ORG} \
+        --token ${HUMANITEC_TOKEN} \
+        --delta ${COMBINED_DELTA} \
+        --retry \
+        -f samples/onlineboutique/${WORKLOADS[$i]}/score.yaml \
+        --extensions samples/onlineboutique/${WORKLOADS[$i]}/humanitec.score.yaml \
+        | jq -r .id); \
+done
+humctl deploy delta ${COMBINED_DELTA} ${ENVIRONMENT} \
+    --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}
+```
+
 _Note: `loadgenerator` is deployed to generate both: traffic on these apps and data in the database. If you don't want this, feel free to remove it from the above list of `WORKLOADS`._
 
 ## Test the Online Boutique website
