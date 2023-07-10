@@ -4,12 +4,10 @@ spec:
   containers:
     emailservice:
       liveness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:8080'
-        type: command
+        grpc:
+          port: 8080
+        type: grpc
       readiness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:8080'
-        type: command
+        grpc:
+          port: 8080
+        type: grpc
