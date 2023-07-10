@@ -4,12 +4,10 @@ spec:
   containers:
     productcatalogservice:
       liveness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:3550'
-        type: command
+        grpc:
+          port: 3550
+        type: grpc
       readiness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:3550'
-        type: command
+        grpc:
+          port: 3550
+        type: grpc

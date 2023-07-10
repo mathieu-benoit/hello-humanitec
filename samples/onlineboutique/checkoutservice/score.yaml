@@ -3,7 +3,7 @@ metadata:
   name: checkoutservice
 containers:
   checkoutservice:
-    image: gcr.io/google-samples/microservices-demo/checkoutservice:v0.7.0
+    image: gcr.io/google-samples/microservices-demo/checkoutservice:v0.8.0
     variables:
       CART_SERVICE_ADDR: "${resources.cartservice.name}:7070"
       CURRENCY_SERVICE_ADDR: "${resources.currencyservice.name}:7000"
