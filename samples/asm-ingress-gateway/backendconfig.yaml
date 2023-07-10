@@ -1,0 +1,12 @@
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: asm-ingressgateway
+  namespace: asm-ingress
+spec:
+  healthCheck:
+    requestPath: /healthz/ready
+    port: 15021
+    type: HTTP
+  securityPolicy:
+    name: ${SECURITY_POLICY_NAME}

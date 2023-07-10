@@ -1,0 +1,10 @@
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: asm-ingressgateway
+  namespace: asm-ingress
+spec:
+  sslPolicy: ${SSL_POLICY_NAME}
+  redirectToHttps:
+    enabled: true
+    responseCodeName: MOVED_PERMANENTLY_DEFAULT
