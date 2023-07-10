@@ -5,7 +5,7 @@
 - [[PA-AZ] Create the AKS cluster](#pa-az-create-the-aks-cluster)
 - [[PA-AZ] Deploy the Nginx Ingress controller](#pa-az-deploy-the-nginx-ingress-controller)
 - [[PA-AZ] Create the Service Principal to access the AKS cluster](#pa-az-create-the-service-principal-to-access-the-aks-cluster)
-- [[PA-HUM] Create the GKE access resource definition](#pa-hum-create-the-gke-access-resource-definition)
+- [[PA-HUM] Create the AKS access resource definition](#pa-hum-create-the-aks-access-resource-definition)
 - [[PA-HUM] Create the Staging Environment](#pa-hum-create-the-staging-environment)
 - [[PA-AZ] Create an Azure Redis Cache database](#pa-az-create-an-azure-redis-cache-database)
 - [[PA-HUM] Create the Azure Redis Cache access resource definition](#pa-hum-create-the-azure-redis-cache-access-resource-definition)
