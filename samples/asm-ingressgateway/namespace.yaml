@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-injection: enabled
+    pod-security.kubernetes.io/enforce: restricted
+  name: asm-ingress

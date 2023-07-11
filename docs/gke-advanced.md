@@ -123,7 +123,7 @@ gcloud artifacts repositories add-iam-policy-binding ${CONTAINERS_REGISTRY_NAME}
     --role roles/artifactregistry.reader
 ```
 
-Create the GKE cluster with advanced and secure features (like Workload Identity, Network Policies, Confidential nodes, private nodes)
+Create the GKE cluster with advanced and secure features (like Workload Identity, Network Policies, Confidential nodes, private nodes):
 ```bash
 CLUSTER_FIREWALL_RULE_TAG=${CLUSTER_NAME}-nodes
 CLUSTER_MASTER_IP_CIDR=172.16.0.32/28

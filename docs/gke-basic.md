@@ -81,6 +81,7 @@ gcloud container clusters create ${CLUSTER_NAME} \
     --zone ${ZONE} \
     --network ${NETWORK} \
     --workload-pool=${PROJECT_ID}.svc.id.goog \
+    --machine-type n2d-standard-4 \
     --enable-master-authorized-networks \
     --master-authorized-networks ${HUMANITEC_IP_ADDRESSES},${LOCAL_IP_ADRESS}/32 \
     --no-enable-google-cloud-access
