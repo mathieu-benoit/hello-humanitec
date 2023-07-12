@@ -69,6 +69,12 @@ virtual-service.yaml:
       {{- end }}
 ```
 
+Current issue:
+```
+curl https://strosinbaumbachkoch.newapp.io/
+curl: (7) Failed to connect to strosinbaumbachkoch.newapp.io port 443 after 133 ms: Connection refused
+```
+
 I even tried with:
 ```
 host: '*'
