@@ -69,6 +69,24 @@ virtual-service.yaml:
       {{- end }}
 ```
 
+I even tried with:
+```
+host: '*'
+```
+Or:
+```
+    tls:
+    - match:
+      - port: 443
+        sniHosts:
+        - '*'
+      route:
+      - destination:
+          host: frontend
+          port:
+            number: 80
+```
+
 Annotate onlineboutique ns
 
 Redeploy
