@@ -30,6 +30,8 @@ kubectl apply -f samples/asm-ingressgateway/
 k get svc -n asm-ingress
 ```
 
+## Create a custom Ingress template:
+
 ```yaml
 id: "${context.res.id}"
 
