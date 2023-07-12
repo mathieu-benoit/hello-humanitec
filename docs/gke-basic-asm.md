@@ -1,3 +1,5 @@
+WORK IN PROGRESS - NOT READY - ROUGH DRAFT MODE
+
 # GKE basic setup with ASM/Istio in Staging
 
 ```bash
