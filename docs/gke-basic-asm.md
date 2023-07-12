@@ -32,9 +32,13 @@ k get svc -n asm-ingress
 
 ## Create a custom Ingress template:
 
+For `init`:
 ```yaml
 id: "${context.res.id}"
+```
 
+For `manifests`:
+```yaml
 virtual-service.yaml:
   location: namespace
   data:
