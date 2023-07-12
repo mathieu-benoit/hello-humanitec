@@ -28,6 +28,7 @@ kubectl apply -f samples/asm-ingressgateway/
 k get svc -n asm-ingress
 ```
 
+```yaml
 id: "${context.res.id}"
 
 virtual-service.yaml:
@@ -58,7 +59,7 @@ virtual-service.yaml:
                 prefix: {{ $path }}
         {{- end}}
       {{- end }}
-
+```
 
 Annotate onlineboutique ns
 
