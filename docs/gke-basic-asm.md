@@ -87,6 +87,11 @@ Or:
             number: 80
 ```
 
+Some investigations:
+- https://ibm.github.io/cloud-native-starter-security-workshop/app-env-exercise-01/SETUP_ISTIO_INGRESS_TLS/
+- https://istio.io/latest/docs/tasks/traffic-management/ingress/ingress-control/
+- https://istio.io/v1.1/docs/setup/kubernetes/prepare/requirements/
+
 Annotate onlineboutique ns
 
 Redeploy
