@@ -34,7 +34,7 @@ k get svc -n asm-ingress
 
 For `init`:
 ```yaml
-id: "${context.res.id}"
+id: {{ index (regexSplit "\\." "$${context.res.id}" -1) 1 }}
 ```
 
 For `manifests`:
@@ -45,7 +45,7 @@ virtual-service.yaml:
     apiVersion: networking.istio.io/v1beta1
     kind: VirtualService
     metadata:
-      name: ${context.res.id}
+      name: {{ .init.id }}
       namespace: {{ .resource.namespace }}
     spec:
       hosts:
