@@ -70,7 +70,7 @@ ENVIRONMENT=${STAGING_ENV}
 
 ## [PA-GCP] Create the GKE cluster
 
-As Platform Admin, in Google Cloud.
+As Platform Engineer, in Google Cloud.
 
 ```bash
 gcloud services enable container.googleapis.com
@@ -93,7 +93,7 @@ gcloud container clusters get-credentials ${CLUSTER_NAME} \
 
 ## [PA-GCP] Deploy the Nginx Ingress controller
 
-As Platform Admin, in Google Cloud.
+As Platform Engineer, in Google Cloud.
 
 Deploy the Nginx Ingress Controller:
 ```bash
@@ -115,7 +115,7 @@ _Note: re-run the above command until you get a value._
 
 ## [PA-GCP] Create the Google Service Account to access the GKE cluster
 
-As Platform Admin, in Google Cloud.
+As Platform Engineer, in Google Cloud.
 
 Create the Google Service Account (GSA) with the appropriate role:
 ```bash
@@ -136,7 +136,7 @@ gcloud iam service-accounts keys create ${GKE_ADMIN_SA_NAME}.json \
 
 ## [PA-HUM] Create the GKE access resource definition
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Create the GKE access resource definition:
 ```bash
@@ -201,7 +201,7 @@ rm ${CLUSTER_NAME}.json
 
 ## [PA-HUM] Create the Staging Environment
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Create the new Environment by cloning the existing Environment from its latest Deployment:
 ```bash
@@ -252,7 +252,7 @@ At this stage, you can already [test the Online Boutique website](#test-the-onli
 
 ## [PA-GCP] Create a Memorystore (Redis) database
 
-As Platform Admin, in Google Cloud.
+As Platform Engineer, in Google Cloud.
 
 Create the Memorystore (Redis) database with a password in same region and network as the GKE cluster:
 ```bash
@@ -286,7 +286,7 @@ _Note: re-run the above commands until you get the 3 values._
 
 ## [PA-HUM] Create the Memorystore (Redis) access resource definition
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 ```bash
 cat <<EOF > ${REDIS_NAME}.yaml
@@ -344,7 +344,7 @@ rm ${REDIS_NAME}.yaml
 
 ## [PA-HUM] Deploy the Staging Environment
 
-As Platform admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Deploy the new Environment to take into account all the new resource definitions:
 ```bash
