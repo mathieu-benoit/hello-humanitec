@@ -42,8 +42,8 @@ jobs:
             EOF
       - name: Install score-humanitec
         run: |
-          wget https://github.com/score-spec/score-humanitec/releases/download/${{ env.BASE_ENVIRONMENT }}/score-humanitec_${{ env.BASE_ENVIRONMENT }}_linux_amd64.tar.gz
-          tar -xvf score-humanitec_${{ env.BASE_ENVIRONMENT }}_linux_amd64.tar.gz
+          wget https://github.com/score-spec/score-humanitec/releases/download/${{ env.SCORE_HUMANITEC_VERSION }}/score-humanitec_${{ env.SCORE_HUMANITEC_VERSION }}_linux_amd64.tar.gz
+          tar -xvf score-humanitec_${{ env.SCORE_HUMANITEC_VERSION }}_linux_amd64.tar.gz
           chmod +x score-humanitec
           mv score-humanitec /usr/local/bin
       - name: Run Score
