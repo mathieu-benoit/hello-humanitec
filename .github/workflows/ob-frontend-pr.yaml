@@ -76,7 +76,7 @@ jobs:
           
           ENV_URL=$(jq -r ".metadata.url" score_output.json)
           DEPLOYMENT_ID=$(jq -r ".id" score_output.json)
-          DOMAINS=$(humctl get active-resources \
+          DOMAINS=$(.github/workflows/bin/humctl get active-resources \
                       --context /orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/pr-${{ github.event.number }} \
                       -o json \
                       | jq -r '. | map(. | select(.object.type == "dns") | map((.object.res_id | split(".") | .[1]) + ": [" + .object.resource.host + "](https://" + .object.resource.host + ")") | join("\n")')
