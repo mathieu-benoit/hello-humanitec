@@ -13,6 +13,7 @@ env:
   ENVIRONMENT_TYPE: 'development'
   SCORE_HUMANITEC_VERSION: 0.5.0
   ENVIRONMENT_ID: pr-${{ github.event.number }}
+  ENVIRONMENT_NAME: PR-${{ github.event.number }}
 jobs:
   ob-frontend-pr:
     runs-on: ubuntu-latest
@@ -23,9 +24,9 @@ jobs:
           export HUMANITEC_ORG=${{ secrets.HUMANITEC_ORG }}
           export HUMANITEC_TOKEN=${{ secrets.HUMANITEC_TOKEN }}
             
-          .github/workflows/bin/humctl create environment env-${{ env.ENVIRONMENT_ID }} \
+          .github/workflows/bin/humctl create environment ${{ env.ENVIRONMENT_ID }} \
               --context /orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }} \
-              --name PR-${{ github.event.number }} \
+              --name ${{ env.ENVIRONMENT_NAME }} \
               -t ${{ env.ENVIRONMENT_TYPE }} \
               --from ${{ env.BASE_ENVIRONMENT }} \
               || true
@@ -43,7 +44,7 @@ jobs:
               --token ${{ secrets.HUMANITEC_TOKEN }} \
               --org ${{ secrets.HUMANITEC_ORG }} \
               --app ${{ vars.APP_NAME }} \
-              --env pr-${{ github.event.number }} \
+              --env ${{ env.ENVIRONMENT_ID }} \
               -f ${{ env.APP_FOLDER }}/score.yaml \
               --extensions ${{ env.APP_FOLDER }}/humanitec.score.yaml \
               | tee score_output.json
@@ -57,7 +58,7 @@ jobs:
           IS_DONE=false
 
           while [ "$IS_DONE" = false ]; do
-            CURRENT_STATUS=$(.github/workflows/bin/humctl get environment pr-${{ github.event.number }} -o json \
+            CURRENT_STATUS=$(.github/workflows/bin/humctl get environment ${{ env.ENVIRONMENT_ID }} -o json \
               --context /orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }} \
               | jq -r .object.last_deploy.status)
             
@@ -79,10 +80,10 @@ jobs:
           ENV_URL=$(jq -r ".metadata.url" score_output.json)
           DEPLOYMENT_ID=$(jq -r ".id" score_output.json)
           DOMAINS=$(.github/workflows/bin/humctl get active-resources \
-                      --context /orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/pr-${{ github.event.number }} -o json \
+                      --context /orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/${{ env.ENVIRONMENT_ID }} -o json \
                       | jq -r '. | map(. | select(.object.type == "dns")) | map((.object.res_id | split(".") | .[1]) + ": [" + .object.resource.host + "](https://" + .object.resource.host + ")") | join("\n")')
           
-          echo "## Deployment Complete for PR-${{ github.event.number }}! :tada:" >> pr_message.txt
+          echo "## Deployment Complete for ${{ env.ENVIRONMENT_NAME }}! :tada:" >> pr_message.txt
           echo "" >> pr_message.txt
           
           echo "### [View in Humanitec]($ENV_URL)" >> pr_message.txt
