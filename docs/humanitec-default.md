@@ -50,7 +50,7 @@ cd hello-humanitec/
 
 ## [PA-HUM] Create the Online Boutique App
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 ```bash
 ONLINEBOUTIQUE_APP=onlineboutique
@@ -78,7 +78,7 @@ humctl create app ${ONLINEBOUTIQUE_APP} \
 
 ## [PA-HUM] Create the in-cluster Redis resource definition
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Create the in-cluster Redis resource definition:
 ```bash

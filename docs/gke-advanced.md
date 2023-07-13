@@ -87,7 +87,7 @@ ENVIRONMENT=${PRODUCTION_ENV}
 
 ## [PA-GCP] Create the GKE cluster
 
-As Platform Admin, in Google Cloud.
+As Platform Engineer, in Google Cloud.
 
 ```bash
 gcloud services enable container.googleapis.com
@@ -163,7 +163,7 @@ gcloud compute routers nats create ${CLUSTER_NAME} \
 
 ## [PA-GCP] Deploy the Nginx Ingress controller
 
-As Platform Admin, in Google Cloud.
+As Platform Engineer, in Google Cloud.
 
 Deploy the Nginx Ingress Controller:
 ```bash
@@ -335,7 +335,7 @@ gcloud compute backend-services update ${CLUSTER_NAME}-ingress-nginx-backend-ser
 
 ## [PA-HUM] Create the associated DNS and TLS resource definitions
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Create the custom Ingress resource definition:
 ```bash
@@ -433,7 +433,7 @@ humctl create \
 
 ## [PA-GCP] Create the Google Service Account to access the GKE cluster
 
-As Platform Admin, in Google Cloud.
+As Platform Engineer, in Google Cloud.
 
 Create the Google Service Account (GSA) with the appropriate role:
 ```bash
@@ -455,7 +455,7 @@ gcloud iam service-accounts keys create ${GKE_ADMIN_SA_NAME}.json \
 
 ## [PA-HUM] Create the GKE access resource definition
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Create the GKE access resource definition:
 ```bash
@@ -520,7 +520,7 @@ rm ${CLUSTER_NAME}.json
 
 ## [PA-GCP] Create the Google Service Account to access Cloud Logging
 
-As Platform Admin, in Google Cloud.
+As Platform Engineer, in Google Cloud.
 
 Create the Google Service Account (GSA) with the appropriate role:
 ```bash
@@ -541,7 +541,7 @@ gcloud iam service-accounts keys create ${LOGGING_READER_SA_NAME}.json \
 
 ## [PA-HUM] Create the Cloud Logging access resource definition
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Create the Cloud Logging access resource definition for the Production Environment Type:
 ```bash
@@ -604,7 +604,7 @@ rm ${CLUSTER_NAME}-logging.json
 
 ## [PA-HUM] Create the Production Environment
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Create the new Environment by cloning the existing Environment from its latest Deployment:
 ```bash
@@ -701,7 +701,7 @@ _Note: re-run the above the command until you get the value._
 
 ## [PA-HUM] Create the Spanner access resource definition
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 ```bash
 cat <<EOF > ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner.yaml
