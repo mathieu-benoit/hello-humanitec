@@ -23,7 +23,7 @@ jobs:
             curl \
             -H "Content-Type: application/json" \
             -H 'Authorization: Bearer ${{ secrets.HUMANITEC_TOKEN }}' \
-            https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/${{ vars.BASE_ENVIRONMENT }} \
+            https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/${{ env.BASE_ENVIRONMENT }} \
             | jq -r ".last_deploy.id" > deploy_id.txt
 
             # Create a new environment for the PR
@@ -36,7 +36,7 @@ jobs:
               "from_deploy_id": "$(cat deploy_id.txt)",
               "id": "pr-${{ github.event.number }}",
               "name": "PR-${{ github.event.number }}",
-              "type": "${{ vars.BASE_ENVIRONMENT }}"
+              "type": "${{ env.BASE_ENVIRONMENT }}"
             }
             EOF
       # - name: create preview environment
@@ -46,6 +46,7 @@ jobs:
       #     humanitec-org: ${{ secrets.HUMANITEC_ORG }}
       #     humanitec-app: ${{ vars.APP_NAME }}
       #     action: create
+      #     base-env: ${{ env.BASE_ENVIRONMENT }}
       #     github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install score-humanitec
         run: |
