@@ -11,41 +11,42 @@ permissions:
   pull-requests: write
 env:
   APP_FOLDER: 'samples/onlineboutique/frontend/'
+  BASE_ENVIRONMENT: 'developement'
 jobs:
   ob-frontend-pr:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      # - name: Create Humanitec Env
-      #   run: |
-      #       # Get deployment ID of the main development environment
-      #       curl \
-      #       -H "Content-Type: application/json" \
-      #       -H 'Authorization: Bearer ${{ secrets.HUMANITEC_TOKEN }}' \
-      #       https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/development \
-      #       | jq -r ".last_deploy.id" > deploy_id.txt
+      - name: Create Humanitec Env
+        run: |
+            # Get deployment ID of the base environment
+            curl \
+            -H "Content-Type: application/json" \
+            -H 'Authorization: Bearer ${{ secrets.HUMANITEC_TOKEN }}' \
+            https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/${{ vars.BASE_ENVIRONMENT }} \
+            | jq -r ".last_deploy.id" > deploy_id.txt
 
-      #       # Create a new environment for the PR
-      #       curl -X POST \
-      #       -H "Content-Type: application/json" \
-      #       -H 'Authorization: Bearer ${{ secrets.HUMANITEC_TOKEN }}' \
-      #       https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs \
-      #       --data-binary @- << EOF
-      #       {
-      #         "from_deploy_id": "$(cat deploy_id.txt)",
-      #         "id": "pr-${{ github.event.number }}",
-      #         "name": "PR-${{ github.event.number }}",
-      #         "type": "development"
-      #       }
-      #       EOF
-      - name: create preview environment
-        uses: humanitec/preview-envs-action@v1
-        with:
-          humanitec-token: ${{ secrets.HUMANITEC_TOKEN }}
-          humanitec-org: ${{ secrets.HUMANITEC_ORG }}
-          humanitec-app: ${{ vars.APP_NAME }}
-          action: create
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+            # Create a new environment for the PR
+            curl -X POST \
+            -H "Content-Type: application/json" \
+            -H 'Authorization: Bearer ${{ secrets.HUMANITEC_TOKEN }}' \
+            https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs \
+            --data-binary @- << EOF
+            {
+              "from_deploy_id": "$(cat deploy_id.txt)",
+              "id": "pr-${{ github.event.number }}",
+              "name": "PR-${{ github.event.number }}",
+              "type": "${{ vars.BASE_ENVIRONMENT }}"
+            }
+            EOF
+      # - name: create preview environment
+      #   uses: humanitec/preview-envs-action@v1
+      #   with:
+      #     humanitec-token: ${{ secrets.HUMANITEC_TOKEN }}
+      #     humanitec-org: ${{ secrets.HUMANITEC_ORG }}
+      #     humanitec-app: ${{ vars.APP_NAME }}
+      #     action: create
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install score-humanitec
         run: |
           wget https://github.com/score-spec/score-humanitec/releases/download/0.5.0/score-humanitec_0.5.0_linux_amd64.tar.gz
