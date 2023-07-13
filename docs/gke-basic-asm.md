@@ -82,7 +82,7 @@ curl: (7) Failed to connect to strosinbaumbachkoch.newapp.io port 443 after 133 
 
 I think the issue comes with the fact that we need to configure the TLS certificate/termination at the `Gateway` level, in the shared `asm-ingress` namespace. The `Secret` with the TLS certificate is in the App/Env's namespace.
 
-
+Typically, doing something like [this](https://istio.io/latest/docs/tasks/traffic-management/ingress/secure-ingress/).
 
 [See also the Gateway deployment topologies](https://istio.io/latest/docs/setup/additional-setup/gateway/#gateway-deployment-topologies).
 
