@@ -14,7 +14,7 @@ jobs:
       - name: Delete Humanitec Env
         run: |
           export HUMANITEC_ORG=${{ secrets.HUMANITEC_ORG }}
-          export HUMANITEC_CONTEXT=/orgs/${HUMANITEC_ORG}
           export HUMANITEC_TOKEN=${{ secrets.HUMANITEC_TOKEN }}
             
-          .github/workflows/bin/humctl delete env pr-${{ github.event.number }}
+          .github/workflows/bin/humctl delete env pr-${{ github.event.number }} \
+              --context /orgs/${HUMANITEC_ORG}
