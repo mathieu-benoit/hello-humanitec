@@ -1,0 +1,125 @@
+name: Pull Request
+
+on:
+  pull_request:
+    paths:
+      - 'samples/onlineboutique/frontend/**'
+      - '.github/workflows/ob-frontend-pr.yaml'
+
+permissions:
+  contents: read
+  pull-requests: write
+env:
+  APP_FOLDER: 'samples/onlineboutique/frontend/'
+  BASE_ENVIRONMENT: 'developement'
+jobs:
+  ob-frontend-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create Humanitec Env
+        run: |
+            # Get deployment ID of the base environment
+            curl \
+            -H "Content-Type: application/json" \
+            -H 'Authorization: Bearer ${{ secrets.HUMANITEC_TOKEN }}' \
+            https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/${{ env.BASE_ENVIRONMENT }} \
+            | jq -r ".last_deploy.id" > deploy_id.txt
+
+            # Create a new environment for the PR
+            curl -X POST \
+            -H "Content-Type: application/json" \
+            -H 'Authorization: Bearer ${{ secrets.HUMANITEC_TOKEN }}' \
+            https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs \
+            --data-binary @- << EOF
+            {
+              "from_deploy_id": "$(cat deploy_id.txt)",
+              "id": "pr-${{ github.event.number }}",
+              "name": "PR-${{ github.event.number }}",
+              "type": "${{ env.BASE_ENVIRONMENT }}"
+            }
+            EOF
+      # - name: create preview environment
+      #   uses: humanitec/preview-envs-action@v1
+      #   with:
+      #     humanitec-token: ${{ secrets.HUMANITEC_TOKEN }}
+      #     humanitec-org: ${{ secrets.HUMANITEC_ORG }}
+      #     humanitec-app: ${{ vars.APP_NAME }}
+      #     action: create
+      #     base-env: ${{ env.BASE_ENVIRONMENT }}
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install score-humanitec
+        run: |
+          wget https://github.com/score-spec/score-humanitec/releases/download/0.5.0/score-humanitec_0.5.0_linux_amd64.tar.gz
+          tar -xvf score-humanitec_0.5.0_linux_amd64.tar.gz
+          chmod +x score-humanitec
+          mv score-humanitec /usr/local/bin
+      - name: Run Score
+        run: |
+          score-humanitec delta \
+              --retry \
+              --deploy \
+              --token ${{ secrets.HUMANITEC_TOKEN }} \
+              --org ${{ secrets.HUMANITEC_ORG }} \
+              --app ${{ vars.APP_NAME }} \
+              --env pr-${{ github.event.number }} \
+              -f ${{ env.APP_FOLDER }}/score.yaml \
+              --extensions ${{ env.APP_FOLDER }}/humanitec.score.yaml \
+              | tee score_output.json
+      - name: Wait for deployment
+        run: |
+          sleep 1
+
+          IS_DONE=false
+
+          while [ "$IS_DONE" = false ]; do
+            CURRENT_STATUS=$(curl \
+              -H "Content-Type: application/json" \
+              -H 'Authorization: Bearer ${{ secrets.HUMANITEC_TOKEN }}' \
+              https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/pr-${{ github.event.number }} \
+              | jq -r ".last_deploy.status")
+            
+            INPROGRESS="in progress"
+
+            if [ "$CURRENT_STATUS" = "$INPROGRESS" ]; then
+              echo "Deployment still in progress..."
+              sleep 1
+            else
+              echo "Deployment complete!"
+              IS_DONE=true
+            fi
+          done
+      - name: Build Comment Message
+        run: |
+          ENV_URL=$(jq -r ".metadata.url" score_output.json)
+          DEPLOYMENT_ID=$(jq -r ".id" score_output.json)
+          DOMAINS=$(curl -H "Authorization: Bearer ${{ secrets.HUMANITEC_TOKEN }}" https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/pr-${{ github.event.number }}/resources | jq -r '. | map(. | select(.type == "dns")) | map((.res_id | split(".") | .[1]) + ": [" + .resource.host + "](https://" + .resource.host + ")") | join("\n")')
+          
+          echo "## Deployment Complete for PR-${{ github.event.number }}! :tada:" >> pr_message.txt
+          echo "" >> pr_message.txt
+          
+          echo "### [View in Humanitec]($ENV_URL)" >> pr_message.txt
+          echo "Deployment ID: $DEPLOYMENT_ID" >> pr_message.txt
+
+          echo "" >> pr_message.txt
+          echo "### Domains:" >> pr_message.txt
+          echo "" >> pr_message.txt
+          echo "$DOMAINS" >> pr_message.txt
+          echo "" >> pr_message.txt
+
+          echo "<details><summary>Score Output</summary>" >> pr_message.txt
+          echo "" >> pr_message.txt
+          echo "### Score Output:" >> pr_message.txt
+          echo '```json' >> pr_message.txt
+          echo "" >> pr_message.txt
+          cat score_output.json >> pr_message.txt
+          echo "" >> pr_message.txt
+          echo '```' >> pr_message.txt
+          echo "" >> pr_message.txt
+          echo "</details>" >> pr_message.txt
+
+          cat pr_message.txt
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: pr_message.txt
