@@ -12,6 +12,7 @@ env:
   BASE_ENVIRONMENT: 'development'
   ENVIRONMENT_TYPE: 'development'
   SCORE_HUMANITEC_VERSION: 0.5.0
+  ENVIRONMENT_ID: pr-${{ github.event.number }}
 jobs:
   ob-frontend-pr:
     runs-on: ubuntu-latest
@@ -22,7 +23,7 @@ jobs:
           export HUMANITEC_ORG=${{ secrets.HUMANITEC_ORG }}
           export HUMANITEC_TOKEN=${{ secrets.HUMANITEC_TOKEN }}
             
-          .github/workflows/bin/humctl create environment pr-${{ github.event.number }} \
+          .github/workflows/bin/humctl create environment env-${{ env.ENVIRONMENT_ID }} \
               --context /orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }} \
               --name PR-${{ github.event.number }} \
               -t ${{ env.ENVIRONMENT_TYPE }} \
