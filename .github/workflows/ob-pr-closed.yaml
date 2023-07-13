@@ -12,10 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Delete Humanitec Env
-        env:
-          HUMANITEC_ORG: ${{ secrets.HUMANITEC_ORG }}
-          HUMANITEC_CONTEXT: /orgs/${{ secrets.HUMANITEC_ORG }}
-          HUMANITEC_TOKEN: ${{ secrets.HUMANITEC_TOKEN }}
         run: |
-            alias humctl=.github/workflows/bin/humctl
-            humctl delete env pr-${{ github.event.number }}
+          export HUMANITEC_ORG=${{ secrets.HUMANITEC_ORG }}
+          export HUMANITEC_CONTEXT=/orgs/${HUMANITEC_ORG}
+          export HUMANITEC_TOKEN=${{ secrets.HUMANITEC_TOKEN }}
+            
+          .github/workflows/bin/humctl delete env pr-${{ github.event.number }}
