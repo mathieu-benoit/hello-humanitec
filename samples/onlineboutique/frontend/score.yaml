@@ -30,6 +30,7 @@ containers:
       RECOMMENDATION_SERVICE_ADDR: "${resources.recommendationservice.name}:8080"
       SHIPPING_SERVICE_ADDR: "${resources.shippingservice.name}:50051"
       CYMBAL_BRANDING: "true"
+      FRONTEND_MESSAGE: "Hello, Ephemeral Env with Humanitec!"
 resources:
   adservice:
     type: service
