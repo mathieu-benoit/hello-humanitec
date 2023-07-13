@@ -17,4 +17,4 @@ jobs:
           export HUMANITEC_TOKEN=${{ secrets.HUMANITEC_TOKEN }}
             
           .github/workflows/bin/humctl delete env pr-${{ github.event.number }} \
-              --context /orgs/${HUMANITEC_ORG}
+              --context /orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }}
