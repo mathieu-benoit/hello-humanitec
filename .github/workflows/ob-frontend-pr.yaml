@@ -56,7 +56,7 @@ jobs:
           IS_DONE=false
 
           while [ "$IS_DONE" = false ]; do
-            CURRENT_STATUS=$(.github/workflows/bin/humctl get environment -o json \
+            CURRENT_STATUS=$(.github/workflows/bin/humctl get environment pr-${{ github.event.number }} -o json \
               --context /orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }} \
               | jq -r .object.last_deploy.status)
             
