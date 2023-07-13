@@ -7,9 +7,9 @@ jobs:
   ob-pr-closed:
     runs-on: ubuntu-latest
     steps:
-      - name: Delete Humanitec App
+      - name: Delete Humanitec env
         run: |
             curl -X DELETE \
             -H "Content-Type: application/json" \
             -H 'Authorization: Bearer ${{ secrets.HUMANITEC_TOKEN }}' \
-            https://api.humanitec.io/orgs/${{ vars.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/pr-${{ github.event.number }}
+            https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/pr-${{ github.event.number }}
