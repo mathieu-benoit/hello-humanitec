@@ -17,5 +17,5 @@ jobs:
           HUMANITEC_CONTEXT: /orgs/${{ secrets.HUMANITEC_ORG }}
           HUMANITEC_TOKEN: ${{ secrets.HUMANITEC_TOKEN }}
         run: |
-            cd .github/workflows/bin
+            alias humctl=.github/workflows/bin/humctl
             humctl delete env pr-${{ github.event.number }}
