@@ -10,6 +10,7 @@ permissions:
 env:
   APP_FOLDER: 'samples/onlineboutique/frontend/'
   BASE_ENVIRONMENT: 'development'
+  ENVIRONMENT_TYPE: 'development'
   SCORE_HUMANITEC_VERSION: 0.5.0
 jobs:
   ob-frontend-pr:
@@ -17,27 +18,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Create Humanitec Env
+        if: github.event.action == 'opened' || github.event.action == 'reopened'
         run: |
-            # Get deployment ID of the base environment
-            curl \
-            -H "Content-Type: application/json" \
-            -H 'Authorization: Bearer ${{ secrets.HUMANITEC_TOKEN }}' \
-            https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/${{ env.BASE_ENVIRONMENT }} \
-            | jq -r ".last_deploy.id" > deploy_id.txt
-
-            # Create a new environment for the PR
-            curl -X POST \
-            -H "Content-Type: application/json" \
-            -H 'Authorization: Bearer ${{ secrets.HUMANITEC_TOKEN }}' \
-            https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs \
-            --data-binary @- << EOF
-            {
-              "from_deploy_id": "$(cat deploy_id.txt)",
-              "id": "pr-${{ github.event.number }}",
-              "name": "PR-${{ github.event.number }}",
-              "type": "${{ env.BASE_ENVIRONMENT }}"
-            }
-            EOF
+          export HUMANITEC_ORG=${{ secrets.HUMANITEC_ORG }}
+          export HUMANITEC_TOKEN=${{ secrets.HUMANITEC_TOKEN }}
+            
+          .github/workflows/bin/humctl create environment pr-${{ github.event.number }} \
+              --context /orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }} \
+              --name PR-${{ github.event.number }} \
+              -t ${{ env.ENVIRONMENT_TYPE }} \
+              --from ${{ env.BASE_ENVIRONMENT }}
       - name: Install score-humanitec
         run: |
           wget https://github.com/score-spec/score-humanitec/releases/download/${{ env.SCORE_HUMANITEC_VERSION }}/score-humanitec_${{ env.SCORE_HUMANITEC_VERSION }}_linux_amd64.tar.gz
@@ -58,16 +48,16 @@ jobs:
               | tee score_output.json
       - name: Wait for deployment
         run: |
+          export HUMANITEC_ORG=${{ secrets.HUMANITEC_ORG }}
+          export HUMANITEC_TOKEN=${{ secrets.HUMANITEC_TOKEN }}
+          
           sleep 1
 
           IS_DONE=false
 
           while [ "$IS_DONE" = false ]; do
-            CURRENT_STATUS=$(curl \
-              -H "Content-Type: application/json" \
-              -H 'Authorization: Bearer ${{ secrets.HUMANITEC_TOKEN }}' \
-              https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/pr-${{ github.event.number }} \
-              | jq -r ".last_deploy.status")
+            CURRENT_STATUS=$(.github/workflows/bin/humctl get environment -o json \
+              | jq -r .object.last_deploy.status)
             
             INPROGRESS="in progress"
 
@@ -81,9 +71,14 @@ jobs:
           done
       - name: Build Comment Message
         run: |
+          export HUMANITEC_ORG=${{ secrets.HUMANITEC_ORG }}
+          export HUMANITEC_TOKEN=${{ secrets.HUMANITEC_TOKEN }}
+          
           ENV_URL=$(jq -r ".metadata.url" score_output.json)
           DEPLOYMENT_ID=$(jq -r ".id" score_output.json)
-          DOMAINS=$(curl -H "Authorization: Bearer ${{ secrets.HUMANITEC_TOKEN }}" https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/pr-${{ github.event.number }}/resources | jq -r '. | map(. | select(.type == "dns")) | map((.res_id | split(".") | .[1]) + ": [" + .resource.host + "](https://" + .resource.host + ")") | join("\n")')
+          DOMAINS=$(.github/workflows/bin/humctl get active-resources \
+                      --context /orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/pr-${{ github.event.number }} -o json \
+                      | jq -r '. | map(. | select(.object.type == "dns")) | map((.object.res_id | split(".") | .[1]) + ": [" + .object.resource.host + "](https://" + .object.resource.host + ")") | join("\n")')
           
           echo "## Deployment Complete for PR-${{ github.event.number }}! :tada:" >> pr_message.txt
           echo "" >> pr_message.txt
