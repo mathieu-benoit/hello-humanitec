@@ -21,10 +21,10 @@ jobs:
         if: github.event.action == 'opened' || github.event.action == 'reopened'
         run: |
           export HUMANITEC_ORG=${{ secrets.HUMANITEC_ORG }}
-          export HUMANITEC_CONTEXT=/orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }}
           export HUMANITEC_TOKEN=${{ secrets.HUMANITEC_TOKEN }}
             
           .github/workflows/bin/humctl create environment pr-${{ github.event.number }} \
+              --context /orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }} \
               --name PR-${{ github.event.number }} \
               -t ${{ env.ENVIRONMENT_TYPE }} \
               --from ${{ env.BASE_ENVIRONMENT }}
@@ -71,12 +71,15 @@ jobs:
           done
       - name: Build Comment Message
         run: |
+          export HUMANITEC_ORG=${{ secrets.HUMANITEC_ORG }}
+          export HUMANITEC_TOKEN=${{ secrets.HUMANITEC_TOKEN }}
+          
           ENV_URL=$(jq -r ".metadata.url" score_output.json)
           DEPLOYMENT_ID=$(jq -r ".id" score_output.json)
           DOMAINS=$(humctl get active-resources \
-                      --context /orgs/${HUMANITEC_ORG}/apps/${ONLINEBOUTIQUE_APP}/envs/${ENVIRONMENT} \
+                      --context /orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/pr-${{ github.event.number }} \
                       -o json \
-                      | jq -r '. | map(. | select(.object.type | contains("dns")) | map((.object.res_id | split(".") | .[1]) + ": [" + .object.resource.host + "](https://" + .object.resource.host + ")") | join("\n")')
+                      | jq -r '. | map(. | select(.object.type == "dns") | map((.object.res_id | split(".") | .[1]) + ": [" + .object.resource.host + "](https://" + .object.resource.host + ")") | join("\n")')
           
           echo "## Deployment Complete for PR-${{ github.event.number }}! :tada:" >> pr_message.txt
           echo "" >> pr_message.txt
