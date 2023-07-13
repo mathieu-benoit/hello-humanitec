@@ -3,16 +3,19 @@ name: Pull Request
 on:
   pull_request:
     types: [opened, reopened, synchronize]
+    paths:
+      - 'samples/onlineboutique/frontend/**'
 
 permissions:
   contents: read
   pull-requests: write
+env:
+  APP_FOLDER: 'samples/onlineboutique/frontend/'
 jobs:
-  build:
+  ob-frontend-pr:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - name: Create Humanitec App
         run: |
             # Get deployment ID of the main development environment
@@ -35,14 +38,12 @@ jobs:
               "type": "development"
             }
             EOF
-
       - name: Install score-humanitec
         run: |
           wget https://github.com/score-spec/score-humanitec/releases/download/0.5.0/score-humanitec_0.5.0_linux_amd64.tar.gz
           tar -xvf score-humanitec_0.5.0_linux_amd64.tar.gz
           chmod +x score-humanitec
           mv score-humanitec /usr/local/bin
-
       - name: Run Score
         run: |
           score-humanitec delta \
@@ -52,8 +53,9 @@ jobs:
               --org ${{ secrets.HUMANITEC_ORG }} \
               --app ${{ vars.APP_NAME }} \
               --env pr-${{ github.event.number }} \
+              -f ${{ env.APP_FOLDER }}/score.yaml \
+              --extensions ${{ env.APP_FOLDER }}/humanitec.score.yaml \
               | tee score_output.json
-
       - name: Wait for deployment
         run: |
           sleep 1
@@ -77,7 +79,6 @@ jobs:
               IS_DONE=true
             fi
           done
-
       - name: Build Comment Message
         run: |
           ENV_URL=$(jq -r ".metadata.url" score_output.json)
@@ -108,7 +109,6 @@ jobs:
           echo "</details>" >> pr_message.txt
 
           cat pr_message.txt
-
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v2
         with:
