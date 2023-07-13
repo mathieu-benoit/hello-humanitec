@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'samples/onlineboutique/frontend/**'
+      - '.github/workflows/ob-frontend-pr.yaml'
 
 permissions:
   contents: read
