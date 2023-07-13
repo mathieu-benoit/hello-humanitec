@@ -46,7 +46,6 @@ virtual-service.yaml:
     kind: VirtualService
     metadata:
       name: {{ .init.id }}
-      namespace: {{ .resource.namespace }}
     spec:
       hosts:
       {{- range $i, $host := (splitList ";" .resource.host ) }}
@@ -69,35 +68,27 @@ virtual-service.yaml:
       {{- end }}
 ```
 
+Annotate onlineboutique ns
+
+Redeploy
+
+## Issue with Istio setup
+
 Current issue:
 ```
 curl https://strosinbaumbachkoch.newapp.io/
 curl: (7) Failed to connect to strosinbaumbachkoch.newapp.io port 443 after 133 ms: Connection refused
 ```
 
-I even tried with:
-```
-host: '*'
-```
-Or:
-```
-    tls:
-    - match:
-      - port: 443
-        sniHosts:
-        - '*'
-      route:
-      - destination:
-          host: frontend
-          port:
-            number: 80
-```
+I think the issue comes with the fact that we need to configure the TLS certificate/termination at the `Gateway` level, in the shared `asm-ingress` namespace. The `Secret` with the TLS certificate is in the App/Env's namespace.
 
-Some investigations:
-- https://ibm.github.io/cloud-native-starter-security-workshop/app-env-exercise-01/SETUP_ISTIO_INGRESS_TLS/
-- https://istio.io/latest/docs/tasks/traffic-management/ingress/ingress-control/
-- https://istio.io/latest/docs/ops/deployment/requirements/
 
-Annotate onlineboutique ns
 
-Redeploy
+[See also the Gateway deployment topologies](https://istio.io/latest/docs/setup/additional-setup/gateway/#gateway-deployment-topologies).
+
+I'm also not sure that the new Kubernetes's Gateway will solve that issue. Even with the notion of [`ReferenceGrant`](https://gateway-api.sigs.k8s.io/api-types/referencegrant/) meant for having the `Secret` in the App/Env's namespace, we still need to refer it and edit the `Gateway` in the share `asm-ingress` namespace.
+
+I think the solution, like we have with the [GKE advanced setup](gke-advanced.md), is to have the certificate managed/terminated outside of the Kubernetes clusters, at the GCLB/Edge. Typically following [this setup](https://cloud.google.com/architecture/exposing-service-mesh-apps-through-gke-ingress).
+
+
+
