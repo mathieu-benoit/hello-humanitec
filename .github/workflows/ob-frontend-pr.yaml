@@ -100,7 +100,7 @@ jobs:
           echo "### Deployment diff:" >> pr_message.txt
           echo '```json' >> pr_message.txt
           echo "" >> pr_message.txt
-          humctl diff env ${{ env.BASE_ENVIRONMENT }} ${{ env.ENVIRONMENT_ID }} \
+          .github/workflows/bin/humctl diff env ${{ env.BASE_ENVIRONMENT }} ${{ env.ENVIRONMENT_ID }} \
               --context /orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }} -o json >> pr_message.txt
           echo "" >> pr_message.txt
           echo '```' >> pr_message.txt
