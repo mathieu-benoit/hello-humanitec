@@ -12,6 +12,7 @@ permissions:
 env:
   APP_FOLDER: 'samples/onlineboutique/frontend/'
   BASE_ENVIRONMENT: 'developement'
+  SCORE_HUMANITEC_VERSION: 0.5.0
 jobs:
   ob-frontend-pr:
     runs-on: ubuntu-latest
@@ -39,19 +40,10 @@ jobs:
               "type": "${{ env.BASE_ENVIRONMENT }}"
             }
             EOF
-      # - name: create preview environment
-      #   uses: humanitec/preview-envs-action@v1
-      #   with:
-      #     humanitec-token: ${{ secrets.HUMANITEC_TOKEN }}
-      #     humanitec-org: ${{ secrets.HUMANITEC_ORG }}
-      #     humanitec-app: ${{ vars.APP_NAME }}
-      #     action: create
-      #     base-env: ${{ env.BASE_ENVIRONMENT }}
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install score-humanitec
         run: |
-          wget https://github.com/score-spec/score-humanitec/releases/download/0.5.0/score-humanitec_0.5.0_linux_amd64.tar.gz
-          tar -xvf score-humanitec_0.5.0_linux_amd64.tar.gz
+          wget https://github.com/score-spec/score-humanitec/releases/download/${{ env.BASE_ENVIRONMENT }}/score-humanitec_${{ env.BASE_ENVIRONMENT }}_linux_amd64.tar.gz
+          tar -xvf score-humanitec_${{ env.BASE_ENVIRONMENT }}_linux_amd64.tar.gz
           chmod +x score-humanitec
           mv score-humanitec /usr/local/bin
       - name: Run Score
