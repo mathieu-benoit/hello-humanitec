@@ -18,18 +18,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Create Humanitec Env
-        env:
-          HUMANITEC_ORG: ${{ secrets.HUMANITEC_ORG }}
-          HUMANITEC_CONTEXT: /orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }}
-          HUMANITEC_TOKEN: ${{ secrets.HUMANITEC_TOKEN }}
         run: |
-            export HUMANITEC_ORG=${{ secrets.HUMANITEC_ORG }}
-            export HUMANITEC_CONTEXT=/orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }}
-            export HUMANITEC_TOKEN=${{ secrets.HUMANITEC_TOKEN }}
-            .github/workflows/bin/humctl create environment pr-${{ github.event.number }} \
-                --name PR-${{ github.event.number }} \
-                -t ${{ env.ENVIRONMENT_TYPE }} \
-                --from ${{ env.BASE_ENVIRONMENT }}
+          export HUMANITEC_ORG=${{ secrets.HUMANITEC_ORG }}
+          export HUMANITEC_CONTEXT=/orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }}
+          export HUMANITEC_TOKEN=${{ secrets.HUMANITEC_TOKEN }}
+            
+          .github/workflows/bin/humctl create environment pr-${{ github.event.number }} \
+              --name PR-${{ github.event.number }} \
+              -t ${{ env.ENVIRONMENT_TYPE }} \
+              --from ${{ env.BASE_ENVIRONMENT }}
       - name: Install score-humanitec
         run: |
           wget https://github.com/score-spec/score-humanitec/releases/download/${{ env.SCORE_HUMANITEC_VERSION }}/score-humanitec_${{ env.SCORE_HUMANITEC_VERSION }}_linux_amd64.tar.gz
