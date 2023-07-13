@@ -26,7 +26,8 @@ jobs:
               --context /orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }} \
               --name PR-${{ github.event.number }} \
               -t ${{ env.ENVIRONMENT_TYPE }} \
-              --from ${{ env.BASE_ENVIRONMENT }}
+              --from ${{ env.BASE_ENVIRONMENT }} \
+              || true
       - name: Install score-humanitec
         run: |
           wget https://github.com/score-spec/score-humanitec/releases/download/${{ env.SCORE_HUMANITEC_VERSION }}/score-humanitec_${{ env.SCORE_HUMANITEC_VERSION }}_linux_amd64.tar.gz
