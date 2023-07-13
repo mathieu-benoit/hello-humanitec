@@ -18,6 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Create Humanitec Env
+        if: github.event.action == 'opened' || github.event.action == 'reopened'
         run: |
           export HUMANITEC_ORG=${{ secrets.HUMANITEC_ORG }}
           export HUMANITEC_CONTEXT=/orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }}
