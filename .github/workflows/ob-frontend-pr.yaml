@@ -25,7 +25,7 @@ jobs:
         run: |
             ls .github/workflows/bin
             alias humctl=.github/workflows/bin/humctl
-            humctl create environment pr-${{ github.event.number }} \
+            .github/workflows/bin/humctl create environment pr-${{ github.event.number }} \
                 --name PR-${{ github.event.number }} \
                 -t ${{ env.ENVIRONMENT_TYPE }} \
                 --from ${{ env.BASE_ENVIRONMENT }}
