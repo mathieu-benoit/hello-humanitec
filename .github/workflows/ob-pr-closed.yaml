@@ -7,7 +7,7 @@ jobs:
   ob-pr-closed:
     runs-on: ubuntu-latest
     steps:
-      - name: Delete Humanitec env
+      - name: Delete Humanitec Env
         run: |
             curl -X DELETE \
             -H "Content-Type: application/json" \
