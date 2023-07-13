@@ -11,7 +11,7 @@ permissions:
   pull-requests: write
 env:
   APP_FOLDER: 'samples/onlineboutique/frontend/'
-  BASE_ENVIRONMENT: 'developement'
+  BASE_ENVIRONMENT: 'development'
   SCORE_HUMANITEC_VERSION: 0.5.0
 jobs:
   ob-frontend-pr:
