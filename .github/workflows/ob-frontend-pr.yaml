@@ -23,8 +23,10 @@ jobs:
           HUMANITEC_CONTEXT: /orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }}
           HUMANITEC_TOKEN: ${{ secrets.HUMANITEC_TOKEN }}
         run: |
-            alias humctl=.github/workflows/bin/humctl
-            humctl create environment pr-${{ github.event.number }} \
+            export HUMANITEC_ORG=${{ secrets.HUMANITEC_ORG }}
+            export HUMANITEC_CONTEXT=/orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }}
+            export HUMANITEC_TOKEN=${{ secrets.HUMANITEC_TOKEN }}
+            .github/workflows/bin/humctl create environment pr-${{ github.event.number }} \
                 --name PR-${{ github.event.number }} \
                 -t ${{ env.ENVIRONMENT_TYPE }} \
                 --from ${{ env.BASE_ENVIRONMENT }}
