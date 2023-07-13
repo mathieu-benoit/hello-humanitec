@@ -48,16 +48,16 @@ jobs:
               | tee score_output.json
       - name: Wait for deployment
         run: |
+          export HUMANITEC_ORG=${{ secrets.HUMANITEC_ORG }}
+          export HUMANITEC_TOKEN=${{ secrets.HUMANITEC_TOKEN }}
+          
           sleep 1
 
           IS_DONE=false
 
           while [ "$IS_DONE" = false ]; do
-            CURRENT_STATUS=$(curl \
-              -H "Content-Type: application/json" \
-              -H 'Authorization: Bearer ${{ secrets.HUMANITEC_TOKEN }}' \
-              https://api.humanitec.io/orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/pr-${{ github.event.number }} \
-              | jq -r ".last_deploy.status")
+            CURRENT_STATUS=$(.github/workflows/bin/humctl get environment -o json \
+              | jq -r .object.last_deploy.status)
             
             INPROGRESS="in progress"
 
@@ -77,8 +77,7 @@ jobs:
           ENV_URL=$(jq -r ".metadata.url" score_output.json)
           DEPLOYMENT_ID=$(jq -r ".id" score_output.json)
           DOMAINS=$(.github/workflows/bin/humctl get active-resources \
-                      --context /orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/pr-${{ github.event.number }} \
-                      -o json \
+                      --context /orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}/envs/pr-${{ github.event.number }} -o json \
                       | jq -r '. | map(. | select(.object.type == "dns")) | map((.object.res_id | split(".") | .[1]) + ": [" + .object.resource.host + "](https://" + .object.resource.host + ")") | join("\n")')
           
           echo "## Deployment Complete for PR-${{ github.event.number }}! :tada:" >> pr_message.txt
