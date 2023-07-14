@@ -94,6 +94,18 @@ jobs:
           echo "" >> pr_message.txt
           echo "$DOMAINS" >> pr_message.txt
           echo "" >> pr_message.txt
+          
+          echo "<details><summary>Deployment diff</summary>" >> pr_message.txt
+          echo "" >> pr_message.txt
+          echo "### Deployment diff:" >> pr_message.txt
+          echo '```json' >> pr_message.txt
+          echo "" >> pr_message.txt
+          .github/workflows/bin/humctl diff env ${{ env.ENVIRONMENT_ID }} ${{ env.BASE_ENVIRONMENT }} \
+              --context /orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }} -o json >> pr_message.txt
+          echo "" >> pr_message.txt
+          echo '```' >> pr_message.txt
+          echo "" >> pr_message.txt
+          echo "</details>" >> pr_message.txt
 
           echo "<details><summary>Score Output</summary>" >> pr_message.txt
           echo "" >> pr_message.txt
