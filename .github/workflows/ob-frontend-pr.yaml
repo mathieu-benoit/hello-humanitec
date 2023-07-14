@@ -17,8 +17,9 @@ jobs:
   ob-frontend-pr:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Create Humanitec Env
+      - name: checkout code
+        uses: actions/checkout@v3
+      - name: create humanitec env
         run: |
           .github/workflows/bin/humctl create environment ${{ env.ENVIRONMENT_ID }} \
               --token ${{ secrets.HUMANITEC_TOKEN }} \
@@ -27,14 +28,14 @@ jobs:
               -t ${{ env.ENVIRONMENT_TYPE }} \
               --from ${{ env.BASE_ENVIRONMENT }} \
               || true
-      - name: Install score-humanitec
+      - name: install score-humanitec
         run: |
           SCORE_HUMANITEC_VERSION=$(curl -sL https://api.github.com/repos/score-spec/score-humanitec/releases/latest | jq -r .tag_name)
           wget https://github.com/score-spec/score-humanitec/releases/download/${SCORE_HUMANITEC_VERSION}/score-humanitec_${SCORE_HUMANITEC_VERSION}_linux_amd64.tar.gz
           tar -xvf score-humanitec_${SCORE_HUMANITEC_VERSION}_linux_amd64.tar.gz
           chmod +x score-humanitec
           mv score-humanitec /usr/local/bin
-      - name: Run Score
+      - name: deploy score-humanitec
         run: |
           score-humanitec delta \
               --retry \
@@ -46,7 +47,7 @@ jobs:
               -f ${{ env.APP_FOLDER }}/score.yaml \
               --extensions ${{ env.APP_FOLDER }}/humanitec.score.yaml \
               | tee score_output.json
-      - name: Wait for deployment
+      - name: wait for deployment
         run: |
           sleep 1
 
@@ -68,7 +69,7 @@ jobs:
               IS_DONE=true
             fi
           done
-      - name: Build Comment Message
+      - name: build comment message
         run: |
           ENV_URL=$(jq -r ".metadata.url" score_output.json)
           DEPLOYMENT_ID=$(jq -r ".id" score_output.json)
@@ -114,7 +115,7 @@ jobs:
           echo "</details>" >> pr_message.txt
 
           cat pr_message.txt
-      - name: Comment PR
+      - name: comment pr
         uses: thollander/actions-comment-pull-request@v2
         with:
           filePath: pr_message.txt
