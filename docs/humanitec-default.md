@@ -82,20 +82,21 @@ As Platform Engineer, in Humanitec.
 
 Create the in-cluster Redis resource definition:
 ```bash
-REDIS_NAME=redis-cart
-REDIS_PORT=6379
-cat <<EOF > ${REDIS_NAME}-in-cluster.yaml
+cat <<EOF > redis-in-cluster.yaml
 apiVersion: core.api.humanitec.io/v1
 kind: Definition
 metadata:
-  id: ${REDIS_NAME}-in-cluster
+  id: redis-in-cluster
 object:
-  name: ${REDIS_NAME}-in-cluster
+  name: redis-in-cluster
   type: redis
   driver_type: humanitec/template
   driver_inputs:
     values:
       templates:
+        init: |-
+          name: redis
+          port: 6379
         manifests: |-
           deployment.yaml:
             location: namespace
@@ -103,15 +104,15 @@ object:
               apiVersion: apps/v1
               kind: Deployment
               metadata:
-                name: ${REDIS_NAME}
+                name: {{ .init.name }}
               spec:
                 selector:
                   matchLabels:
-                    app: ${REDIS_NAME}
+                    app: {{ .init.name }}
                 template:
                   metadata:
                     labels:
-                      app: ${REDIS_NAME}
+                      app: {{ .init.name }}
                   spec:
                     securityContext:
                       fsGroup: 1000
@@ -121,7 +122,7 @@ object:
                       seccompProfile:
                         type: RuntimeDefault
                     containers:
-                    - name: redis
+                    - name: {{ .init.name }}
                       securityContext:
                         allowPrivilegeEscalation: false
                         capabilities:
@@ -131,7 +132,7 @@ object:
                         readOnlyRootFilesystem: true
                       image: redis:alpine
                       ports:
-                      - containerPort: ${REDIS_PORT}
+                      - containerPort: {{ .init.port }}
                       volumeMounts:
                       - mountPath: /data
                         name: redis-data
@@ -144,23 +145,23 @@ object:
               apiVersion: v1
               kind: Service
               metadata:
-                name: ${REDIS_NAME}
+                name: {{ .init.name }}
               spec:
                 type: ClusterIP
                 selector:
-                  app: ${REDIS_NAME}
+                  app: {{ .init.name }}
                 ports:
                 - name: tcp-redis
-                  port: ${REDIS_PORT}
-                  targetPort: ${REDIS_PORT}
+                  port: {{ .init.port }}
+                  targetPort: {{ .init.port }}
         outputs: |
-          host: ${REDIS_NAME}
-          port: ${REDIS_PORT}
+          host: {{ .init.name }}
+          port: {{ .init.port }}
   criteria:
     - {}
 EOF
 humctl create \
-    -f ${REDIS_NAME}-in-cluster.yaml
+    -f redis-in-cluster.yaml
 ```
 
 ## [DE-HUM] Deploy the Online Boutique Workloads in Development Environment
