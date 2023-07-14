@@ -10,11 +10,10 @@ jobs:
   ob-pr-closed:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Delete Humanitec Env
+      - name: checkout humctl bin
+        uses: actions/checkout@v3
+      - name: delete humanitec env
         run: |
-          export HUMANITEC_ORG=${{ secrets.HUMANITEC_ORG }}
-          export HUMANITEC_TOKEN=${{ secrets.HUMANITEC_TOKEN }}
-            
           .github/workflows/bin/humctl delete env pr-${{ github.event.number }} \
-              --context /orgs/${HUMANITEC_ORG}/apps/${{ vars.APP_NAME }}
+              --token ${{ secrets.HUMANITEC_TOKEN }} \
+              --context /orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}
