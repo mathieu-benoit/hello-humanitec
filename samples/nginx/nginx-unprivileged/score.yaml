@@ -3,7 +3,7 @@ metadata:
   name: nginx-unprivileged
 containers:
   nginx-unprivileged:
-    image: nginxinc/nginx-unprivileged:latest
+    image: nginxinc/nginx-unprivileged:alpine-slim
 resources:
   dns:
     type: dns
