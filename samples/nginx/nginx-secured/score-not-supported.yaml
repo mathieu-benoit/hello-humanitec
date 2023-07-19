@@ -1,3 +1,4 @@
+# This file doesn't work, use both score.yaml and humanitec.score.yaml instead.
 apiVersion: score.dev/v1b1
 metadata:
   name: nginx-secured
