@@ -6,6 +6,8 @@ on:
       - '.github/workflows/ob-frontend-pr.yaml'
     types:
       - closed
+env:
+  ENVIRONMENT_ID: pr-${{ github.event.number }}-frontend
 jobs:
   ob-pr-closed:
     runs-on: ubuntu-latest
@@ -14,6 +16,6 @@ jobs:
         uses: actions/checkout@v3
       - name: delete humanitec env
         run: |
-          .github/workflows/bin/humctl delete env pr-${{ github.event.number }} \
+          .github/workflows/bin/humctl delete env ${{ env.ENVIRONMENT_ID }} \
               --token ${{ secrets.HUMANITEC_TOKEN }} \
               --context /orgs/${{ secrets.HUMANITEC_ORG }}/apps/${{ vars.APP_NAME }}
