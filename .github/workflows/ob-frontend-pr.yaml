@@ -8,10 +8,10 @@ permissions:
   contents: read
   pull-requests: write
 env:
-  APP_FOLDER: 'samples/onlineboutique/frontend/'
+  WORKLOAD_FOLDER: 'samples/onlineboutique/frontend/'
   BASE_ENVIRONMENT: 'development'
   ENVIRONMENT_TYPE: 'development'
-  ENVIRONMENT_ID: pr-${{ github.event.number }}
+  ENVIRONMENT_ID: pr-${{ github.event.number }}-frontend
   ENVIRONMENT_NAME: PR-${{ github.event.number }}
 jobs:
   ob-frontend-pr:
@@ -44,8 +44,8 @@ jobs:
               --org ${{ secrets.HUMANITEC_ORG }} \
               --app ${{ vars.APP_NAME }} \
               --env ${{ env.ENVIRONMENT_ID }} \
-              -f ${{ env.APP_FOLDER }}/score.yaml \
-              --extensions ${{ env.APP_FOLDER }}/humanitec.score.yaml \
+              -f ${{ env.WORKLOAD_FOLDER }}/score.yaml \
+              --extensions ${{ env.WORKLOAD_FOLDER }}/humanitec.score.yaml \
               | tee score_output.json
       - name: wait for deployment
         run: |
