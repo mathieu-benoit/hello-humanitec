@@ -4,14 +4,14 @@
 
 # GKE basic setup in Staging
 
-- [[PA-GCP] Create the GKE cluster](#pa-gcp-create-the-gke-cluster)
-- [[PA-GCP] Deploy the Nginx Ingress controller](#pa-gcp-deploy-the-nginx-ingress-controller)
-- [[PA-GCP] Create the Google Service Account to access the GKE cluster](#pa-gcp-create-the-google-service-account-to-access-the-gke-cluster)
-- [[PA-HUM] Create the GKE access resource definition](#pa-hum-create-the-gke-access-resource-definition)
-- [[PA-HUM] Create the Staging Environment](#pa-hum-create-the-staging-environment)
-- [[PA-GCP] Create a Memorystore (Redis) database](#pa-gcp-create-a-memorystore-redis-database)
-- [[PA-HUM] Create the Memorystore (Redis) access resource definition](#pa-hum-create-the-memorystore-redis-access-resource-definition)
-- [[PA-HUM] Deploy the Staging Environment](#pa-hum-deploy-the-staging-environment)
+- [[PE-GCP] Create the GKE cluster](#pe-gcp-create-the-gke-cluster)
+- [[PE-GCP] Deploy the Nginx Ingress controller](#pe-gcp-deploy-the-nginx-ingress-controller)
+- [[PE-GCP] Create the Google Service Account to access the GKE cluster](#pe-gcp-create-the-google-service-account-to-access-the-gke-cluster)
+- [[PE-HUM] Create the GKE access resource definition](#pe-hum-create-the-gke-access-resource-definition)
+- [[PE-HUM] Create the Staging Environment](#pe-hum-create-the-staging-environment)
+- [[PE-GCP] Create a Memorystore (Redis) database](#pe-gcp-create-a-memorystore-redis-database)
+- [[PE-HUM] Create the Memorystore (Redis) access resource definition](#pe-hum-create-the-memorystore-redis-access-resource-definition)
+- [[PE-HUM] Deploy the Staging Environment](#pe-hum-deploy-the-staging-environment)
 - [Test the Online Boutique website](#test-the-online-boutique-website)
 
 ```mermaid
@@ -68,7 +68,7 @@ export HUMANITEC_TOKEN=FIXME
 ENVIRONMENT=${STAGING_ENV}
 ```
 
-## [PA-GCP] Create the GKE cluster
+## [PE-GCP] Create the GKE cluster
 
 As Platform Engineer, in Google Cloud.
 
@@ -91,7 +91,7 @@ gcloud container clusters get-credentials ${CLUSTER_NAME} \
     --zone ${ZONE}
 ```
 
-## [PA-GCP] Deploy the Nginx Ingress controller
+## [PE-GCP] Deploy the Nginx Ingress controller
 
 As Platform Engineer, in Google Cloud.
 
@@ -113,7 +113,7 @@ echo ${INGRESS_IP}
 ```
 _Note: re-run the above command until you get a value._
 
-## [PA-GCP] Create the Google Service Account to access the GKE cluster
+## [PE-GCP] Create the Google Service Account to access the GKE cluster
 
 As Platform Engineer, in Google Cloud.
 
@@ -134,7 +134,7 @@ gcloud iam service-accounts keys create ${GKE_ADMIN_SA_NAME}.json \
     --iam-account ${GKE_ADMIN_SA_ID}
 ```
 
-## [PA-HUM] Create the GKE access resource definition
+## [PE-HUM] Create the GKE access resource definition
 
 As Platform Engineer, in Humanitec.
 
@@ -199,7 +199,7 @@ rm ${CLUSTER_NAME}.yaml
 rm ${CLUSTER_NAME}.json
 ```
 
-## [PA-HUM] Create the Staging Environment
+## [PE-HUM] Create the Staging Environment
 
 As Platform Engineer, in Humanitec.
 
@@ -250,7 +250,7 @@ humctl deploy env ${CLONED_ENVIRONMENT} ${ENVIRONMENT} \
 
 At this stage, you can already [test the Online Boutique website](#test-the-online-boutique-website) in its existing state.
 
-## [PA-GCP] Create a Memorystore (Redis) database
+## [PE-GCP] Create a Memorystore (Redis) database
 
 As Platform Engineer, in Google Cloud.
 
@@ -284,7 +284,7 @@ echo ${REDIS_AUTH}
 ```
 _Note: re-run the above commands until you get the 3 values._
 
-## [PA-HUM] Create the Memorystore (Redis) access resource definition
+## [PE-HUM] Create the Memorystore (Redis) access resource definition
 
 As Platform Engineer, in Humanitec.
 
@@ -342,7 +342,7 @@ Clean sensitive information locally:
 rm ${REDIS_NAME}.yaml
 ```
 
-## [PA-HUM] Deploy the Staging Environment
+## [PE-HUM] Deploy the Staging Environment
 
 As Platform Engineer, in Humanitec.
 

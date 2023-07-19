@@ -2,8 +2,8 @@
 
 ## Humanitec default setup in Development
 
-- [[PA-HUM] Create the Online Boutique App](#pa-hum-create-the-online-boutique-app)
-- [[PA-HUM] Create the in-cluster Redis resource definition](#pa-hum-create-the-in-cluster-redis-resource-definition)
+- [[PE-HUM] Create the Online Boutique App](#pe-hum-create-the-online-boutique-app)
+- [[PE-HUM] Create the in-cluster Redis resource definition](#pe-hum-create-the-in-cluster-redis-resource-definition)
 - [[DE-HUM] Deploy the Online Boutique Workloads in Development Environment](#de-hum-deploy-the-online-boutique-workloads-in-development-environment)
 - [Test the Online Boutique website](#test-the-online-boutique-website)
 
@@ -48,7 +48,7 @@ git clone https://github.com/mathieu-benoit/hello-humanitec
 cd hello-humanitec/
 ```
 
-## [PA-HUM] Create the Online Boutique App
+## [PE-HUM] Create the Online Boutique App
 
 As Platform Engineer, in Humanitec.
 
@@ -76,7 +76,7 @@ humctl create app ${ONLINEBOUTIQUE_APP} \
   ```
 </details>
 
-## [PA-HUM] Create the in-cluster Redis resource definition
+## [PE-HUM] Create the in-cluster Redis resource definition
 
 As Platform Engineer, in Humanitec.
 
