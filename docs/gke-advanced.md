@@ -171,6 +171,8 @@ NGINX_NEG_PORT=443
 NGINX_NEG_NAME=${CLUSTER_NAME}-ingress-nginx-${NGINX_NEG_PORT}-neg
 cat <<EOF > ${CLUSTER_NAME}-nginx-ingress-controller-values.yaml
 controller:
+  image:
+    allowPrivilegeEscalation: false
   service:
     enableHttp: false
     type: ClusterIP
