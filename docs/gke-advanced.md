@@ -171,8 +171,6 @@ NGINX_NEG_PORT=443
 NGINX_NEG_NAME=${CLUSTER_NAME}-ingress-nginx-${NGINX_NEG_PORT}-neg
 cat <<EOF > ${CLUSTER_NAME}-nginx-ingress-controller-values.yaml
 controller:
-  image:
-    allowPrivilegeEscalation: false
   service:
     enableHttp: false
     type: ClusterIP
@@ -180,6 +178,17 @@ controller:
       cloud.google.com/neg: '{"exposed_ports": {"${NGINX_NEG_PORT}":{"name": "${NGINX_NEG_NAME}"}}}'
   config:
     use-forwarded-headers: true
+  containerSecurityContext:
+    capabilities:
+      drop:
+        - ALL
+      add:
+        - NET_BIND_SERVICE
+    runAsUser: 101
+    runAsGroup: 101
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    runAsNonRoot: true
 EOF
 helm upgrade \
     --install ingress-nginx ingress-nginx \
