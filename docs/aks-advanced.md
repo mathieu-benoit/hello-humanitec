@@ -10,3 +10,5 @@ az aks create \
     --enable-msi-auth-for-monitoring \
     --no-ssh-key
 ```
+
+https://denniszielke.medium.com/advanced-load-balancing-scenarios-with-the-new-azure-application-gateway-for-containers-dd35c4de64df
