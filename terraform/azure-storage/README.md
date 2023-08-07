@@ -1,3 +1,12 @@
+## Test the Azure Storage Terraform locally
+
+```bash
+terraform init
+terraform plan -var-file terraform.tfvars.example
+```
+
+## Deploy the Azure Storage Terraform Resource Definition
+
 ```bash
 HUMANITEC_ORG=
 LOCATION=

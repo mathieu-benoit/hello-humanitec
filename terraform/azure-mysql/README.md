@@ -1,3 +1,12 @@
+## Test the Azure MySQL Terraform locally
+
+```bash
+terraform init
+terraform plan -var-file terraform.tfvars.example
+```
+
+## Deploy the Azure MySQL Terraform Resource Definition
+
 ```bash
 HUMANITEC_ORG=
 LOCATION=
