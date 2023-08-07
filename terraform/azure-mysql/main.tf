@@ -55,6 +55,15 @@ resource "azurerm_mysql_flexible_server_configuration" "require_secure_transport
   value               = "OFF"
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/mysql_flexible_server_firewall_rule
+resource "azurerm_mysql_flexible_server_firewall_rule" "azure_services" {
+  name                = "azure_services"
+  resource_group_name = var.resource_group_name
+  server_name         = azurerm_mysql_flexible_server.server_name.name
+  start_ip_address    = "0.0.0.0"
+  end_ip_address      = "0.0.0.0"
+}
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/mysql_flexible_database
 resource "azurerm_mysql_flexible_database" "database" {
   charset             = "utf8mb4"
