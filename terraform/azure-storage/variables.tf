@@ -1,10 +1,10 @@
 variable "credentials" {
   description = "The credentials for connecting to Azure."
   type = object({
-    azure_subscription_id           = string
-    azure_subscription_tenant_id    = string
-    service_principal_appid         = string
-    client_secret                   = string
+    azure_subscription_id         = string
+    azure_subscription_tenant_id  = string
+    service_principal_id          = string
+    service_principal_password    = string
   })
   sensitive = true
 }
