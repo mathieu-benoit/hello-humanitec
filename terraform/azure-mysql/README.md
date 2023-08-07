@@ -30,8 +30,8 @@ object:
         credentials:
           azure_subscription_id: ${AZURE_SUBCRIPTION_ID}
           azure_subscription_tenant_id: ${AZURE_SUBCRIPTION_TENANT_ID}
-          service_principal_appid: ${AZURE_SERVICE_PRINCIPAL_ID}
-          client_secret: ${AZURE_SERVICE_PRINCIPAL_SECRET}
+          service_principal_id: ${AZURE_SERVICE_PRINCIPAL_ID}
+          service_principal_password: ${AZURE_SERVICE_PRINCIPAL_SECRET}
   criteria:
     - app_id: ${HUMANITEC_APP}
 EOF

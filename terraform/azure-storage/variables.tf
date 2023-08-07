@@ -15,7 +15,7 @@ variable "resource_group_name" {
 }
 
 variable "storage_account_location" {
-  description = "Location of Azure Storage Account"
+  description = "Location of the Azure Storage Account"
   type        = string
   default     = "eastus"
 }

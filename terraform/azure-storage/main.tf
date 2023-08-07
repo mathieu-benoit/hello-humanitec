@@ -8,6 +8,7 @@ resource "random_string" "storage_container_name_sufix" {
   special = false
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account
 resource "azurerm_storage_account" "storage_account" {
   name                     = "storage${lower(random_string.storage_account_name_sufix.result)}"
   resource_group_name      = var.resource_group_name
@@ -16,6 +17,7 @@ resource "azurerm_storage_account" "storage_account" {
   account_replication_type = "LRS"
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_container
 resource "azurerm_storage_container" "storage_container" {
   name                  = "storage${lower(random_string.storage_container_name_sufix.result)}"
   storage_account_name  = azurerm_storage_account.storage_account.name

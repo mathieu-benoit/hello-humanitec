@@ -15,7 +15,7 @@ variable "resource_group_name" {
 }
 
 variable "mysql_server_location" {
-  description = "Location of Azure Storage Account"
+  description = "Location of Azure MySQL Server"
   type        = string
   default     = "eastus"
 }

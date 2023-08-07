@@ -42,6 +42,7 @@ resource "azurerm_mysql_flexible_server" "server" {
   resource_group_name          = var.resource_group_name
   administrator_login          = random_string.login.result
   administrator_password       = random_password.password.result
+  sku_name                     = "Standard_B1ms"
   version                      = "8.0.21"
 }
 
