@@ -44,6 +44,7 @@ resource "azurerm_mysql_flexible_server" "server" {
   administrator_password       = random_password.password.result
   sku_name                     = "B_Standard_B1ms"
   version                      = "8.0.21"
+  zone                         = "1"
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/mysql_flexible_server_configuration
