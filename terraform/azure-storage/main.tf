@@ -2,12 +2,14 @@ resource "random_string" "storage_account_name_sufix" {
   length  = 16
   special = false
   lower   = true
+  upper   = false
 }
 
 resource "random_string" "storage_container_name_sufix" {
   length  = 16
   special = false
   lower   = true
+  upper   = false
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account
