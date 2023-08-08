@@ -23,7 +23,7 @@ metadata:
   id: azure-storage-terraform
 object:
   name: azure-storage-terraform
-  type: s3
+  type: azure-blob
   driver_type: ${HUMANITEC_ORG}/terraform
   driver_inputs:
     values:
