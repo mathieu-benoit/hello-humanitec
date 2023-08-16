@@ -1,0 +1,8 @@
+resource_group_name                 = "test"
+mysql_server_location               = "eastus"
+credentials = {
+    azure_subscription_id           = " "
+    azure_subscription_tenant_id    = " "
+    service_principal_id            = " "
+    service_principal_password      = " "
+}

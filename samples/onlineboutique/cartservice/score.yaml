@@ -9,11 +9,6 @@ containers:
 resources:
   redis-cart:
     type: redis
-    properties:
-      host:
-      port:
-      user:
-      password:
 service:
   ports:
     grpc:

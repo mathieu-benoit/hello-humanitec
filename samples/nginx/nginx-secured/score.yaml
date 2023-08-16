@@ -3,7 +3,11 @@ metadata:
   name: nginx-secured
 containers:
   nginx-secured:
-    image: nginxinc/nginx-unprivileged:latest
+    image: nginxinc/nginx-unprivileged:alpine-slim
+    volumes:
+    - source: volumes.tmp
+      target: /tmp
+      read_only: false
 resources:
   dns:
     type: dns

@@ -2,14 +2,14 @@
 
 # AKS basic setup in Staging
 
-- [[PA-AZ] Create the AKS cluster](#pa-az-create-the-aks-cluster)
-- [[PA-AZ] Deploy the Nginx Ingress controller](#pa-az-deploy-the-nginx-ingress-controller)
-- [[PA-AZ] Create the Service Principal to access the AKS cluster](#pa-az-create-the-service-principal-to-access-the-aks-cluster)
-- [[PA-HUM] Create the GKE access resource definition](#pa-hum-create-the-gke-access-resource-definition)
-- [[PA-HUM] Create the Staging Environment](#pa-hum-create-the-staging-environment)
-- [[PA-AZ] Create an Azure Redis Cache database](#pa-az-create-an-azure-redis-cache-database)
-- [[PA-HUM] Create the Azure Redis Cache access resource definition](#pa-hum-create-the-azure-redis-cache-access-resource-definition)
-- [[PA-HUM] Deploy the Staging Environment](#pa-hum-deploy-the-staging-environment)
+- [[PE-AZ] Create the AKS cluster](#pe-az-create-the-aks-cluster)
+- [[PE-AZ] Deploy the Nginx Ingress controller](#pe-az-deploy-the-nginx-ingress-controller)
+- [[PE-AZ] Create the Service Principal to access the AKS cluster](#pe-az-create-the-service-principal-to-access-the-aks-cluster)
+- [[PE-HUM] Create the AKS access resource definition](#pe-hum-create-the-aks-access-resource-definition)
+- [[PE-HUM] Create the Staging Environment](#pe-hum-create-the-staging-environment)
+- [[PE-AZ] Create an Azure Redis Cache database](#pe-az-create-an-azure-redis-cache-database)
+- [[PE-HUM] Create the Azure Redis Cache access resource definition](#pe-hum-create-the-azure-redis-cache-access-resource-definition)
+- [[PE-HUM] Deploy the Staging Environment](#pe-hum-deploy-the-staging-environment)
 - [Test the Online Boutique website](#test-the-online-boutique-website)
 
 ```mermaid
@@ -65,9 +65,9 @@ export HUMANITEC_TOKEN=FIXME
 ENVIRONMENT=${STAGING_ENV}-aks
 ```
 
-## [PA-AZ] Create the AKS cluster
+## [PE-AZ] Create the AKS cluster
 
-As Platform Admin, in Azure.
+As Platform Engineer, in Azure.
 
 ```bash
 az provider register \
@@ -90,9 +90,9 @@ az aks get-credentials \
     -n ${CLUSTER_NAME}
 ```
 
-## [PA-AZ] Deploy the Nginx Ingress controller
+## [PE-AZ] Deploy the Nginx Ingress controller
 
-As Platform Admin, in Azure.
+As Platform Engineer, in Azure.
 
 Deploy the Nginx Ingress Controller:
 ```bash
@@ -113,9 +113,9 @@ echo ${INGRESS_IP}
 ```
 _Note: re-run the above command until you get a value._
 
-## [PA-AZ] Create the Service Principal to access the AKS cluster
+## [PE-AZ] Create the Service Principal to access the AKS cluster
 
-As Platform Admin, in Azure.
+As Platform Engineer, in Azure.
 
 Create the Service Principal with the appropriate role:
 ```bash
@@ -135,9 +135,9 @@ az role assignment create \
     --scope ${AKS_ID}
 ```
 
-## [PA-HUM] Create the AKS access resource definition
+## [PE-HUM] Create the AKS access resource definition
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Create the AKS access resource definition:
 ```bash
@@ -199,9 +199,9 @@ rm ${CLUSTER_NAME}.yaml
 rm ${CLUSTER_NAME}.json
 ```
 
-## [PA-HUM] Create the Staging Environment
+## [PE-HUM] Create the Staging Environment
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Create the new Environment by cloning the existing Environment from its latest Deployment:
 ```bash
@@ -250,9 +250,9 @@ humctl deploy env ${CLONED_ENVIRONMENT} ${ENVIRONMENT} \
 
 At this stage, you can already [test the Online Boutique website](#test-the-online-boutique-website) in its existing state.
 
-## [PA-AZ] Create an Azure Redis Cache database
+## [PE-AZ] Create an Azure Redis Cache database
 
-As Platform Admin, in Azure.
+As Platform Engineer, in Azure.
 
 Create the Azure Redis Cache database:
 ```bash
@@ -293,9 +293,9 @@ echo ${REDIS_AUTH}
 ```
 _Note: re-run the above commands until you get the 3 values._
 
-## [PA-HUM] Create the Azure Redis Cache access resource definition
+## [PE-HUM] Create the Azure Redis Cache access resource definition
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 ```bash
 cat <<EOF > ${REDIS_NAME}.yaml
@@ -351,9 +351,9 @@ Clean sensitive information locally:
 rm ${REDIS_NAME}.yaml
 ```
 
-## [PA-HUM] Deploy the Staging Environment
+## [PE-HUM] Deploy the Staging Environment
 
-As Platform admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Deploy the new Environment to take into account all the new resource definitions:
 ```bash

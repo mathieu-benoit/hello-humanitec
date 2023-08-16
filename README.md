@@ -1,41 +1,41 @@
 # hello-humanitec
 
 2 personas:
-- **Platform admin** (PA) interacting with either Google Cloud (**PA-GCP**), Azure (**PA-AZ**) or Humanitec (**PA-HUM**)
+- **Platform Engineer** (PE) interacting with either Google Cloud (**PE-GCP**), Azure (**PE-AZ**) or Humanitec (**PE-HUM**)
 - **Developer** (DE) interacting with Humanitec (**DE-HUM**)
 
 ![personas](/images/personas.png)
 
 Agenda:
 - [Humanitec default setup in Development](./docs/humanitec-default.md)
-  - [PA-HUM] Create Online Boutique App
-  - [PA-HUM] Create an in-cluster Redis database
+  - [PE-HUM] Create Online Boutique App
+  - [PE-HUM] Create an in-cluster Redis database
   - [DE-HUM] Deploy Online Boutique Workloads in the Development Environment
 - [Common setup](./docs/common.md)
-  - [PA-HUM] Create `staging` and `production` Environment types
-  - [PA-HUM] Create custom name `Namespace`
-  - [PA-HUM] Create custom `ServiceAccount`
-  - [PA-HUM] Create custom unprivileged Workload
+  - [PE-HUM] Create `staging` and `production` Environment types
+  - [PE-HUM] Create custom name `Namespace`
+  - [PE-HUM] Create custom `ServiceAccount`
+  - [PE-HUM] Create custom unprivileged Workload
 - [GKE basic setup in Staging](./docs/gke-basic.md)
-  - [PA-GCP] Create basic GKE setup
-  - [PA-GCP] Deploy a simple Nginx Ingress controller
-  - [PA-HUM] Create Staging Environment
-  - [PA-GCP] Create a Memorystore (Redis) database
-  - [PA-HUM] Deploy the Staging Environment
+  - [PE-GCP] Create basic GKE setup
+  - [PE-GCP] Deploy a simple Nginx Ingress controller
+  - [PE-HUM] Create Staging Environment
+  - [PE-GCP] Create a Memorystore (Redis) database
+  - [PE-HUM] Deploy the Staging Environment
 - [AKS basic setup in Staging](./docs/aks-basic.md)
-  - [PA-AZ] Create basic AKS setup
-  - [PA-AZ] Deploy a simple Nginx Ingress controller
-  - [PA-HUM] Create Staging Environment
-  - [PA-AZ] Create a Memorystore (Redis) database
-  - [PA-HUM] Deploy the Staging Environment
+  - [PE-AZ] Create basic AKS setup
+  - [PE-AZ] Deploy a simple Nginx Ingress controller
+  - [PE-HUM] Create Staging Environment
+  - [PE-AZ] Create a Memorystore (Redis) database
+  - [PE-HUM] Deploy the Staging Environment
 - [GKE advanced setup in Production](./docs/gke-advanced.md)
-  - [PA-GCP] Create advanced and secured GKE setup
-  - [PA-GCP] Deploy an Nginx Ingress controller
-  - [PA-GCP] Protect the Nginx Ingress controller behind a Global Cloud Load Balancer (GCLB) and Cloud Armor (WAF)
-  - [PA-GCP] Use Cloud Logging for Workload's logs
-  - [PA-HUM] Create Production Environment
-  - [PA-GCP] Create a Spanner database
-  - [PA-GCP] Create Kubernetes and Google Service Accounts to access Spanner via Workload Identity
+  - [PE-GCP] Create advanced and secured GKE setup
+  - [PE-GCP] Deploy an Nginx Ingress controller
+  - [PE-GCP] Protect the Nginx Ingress controller behind a Global Cloud Load Balancer (GCLB) and Cloud Armor (WAF)
+  - [PE-GCP] Use Cloud Logging for Workload's logs
+  - [PE-HUM] Create Production Environment
+  - [PE-GCP] Create a Spanner database
+  - [PE-GCP] Create Kubernetes and Google Service Accounts to access Spanner via Workload Identity
   - [DE-HUM] Deploy `cartservice` Workload connected to the Spanner database in the Production Environment
 
 

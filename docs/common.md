@@ -6,10 +6,10 @@
 
 ## Common setup
 
-- [[PA-HUM] Create `staging` and `production` Environment types](#pa-hum-create-staging-and-production-environment-types)
-- [[PA-HUM] Create a custom `Namespace` resource definition](#pa-hum-create-a-custom-namespace-resource-definition)
-- [[PA-HUM] Create a custom `ServiceAccount` resource definition](#pa-hum-create-a-custom-serviceaccount-resource-definition)
-- [[PA-HUM] Create a custom Workload resource definition](#pa-hum-create-a-custom-workload-resource-definition)
+- [[PE-HUM] Create `staging` and `production` Environment types](#pe-hum-create-staging-and-production-environment-types)
+- [[PE-HUM] Create a custom `Namespace` resource definition](#pe-hum-create-a-custom-namespace-resource-definition)
+- [[PE-HUM] Create a custom `ServiceAccount` resource definition](#pe-hum-create-a-custom-serviceaccount-resource-definition)
+- [[PE-HUM] Create a custom Workload resource definition](#pe-hum-create-a-custom-workload-resource-definition)
 
 ```mermaid
 flowchart LR
@@ -33,7 +33,7 @@ export HUMANITEC_CONTEXT=/orgs/${HUMANITEC_ORG}
 export HUMANITEC_TOKEN=FIXME
 ```
 
-### [PA-HUM] Create `staging` and `production` Environment types
+### [PE-HUM] Create `staging` and `production` Environment types
 
 The `development` Environment type is already created by default in Humanitec.
 
@@ -83,9 +83,9 @@ humctl create environment-type ${PRODUCTION_ENV} \
   ```
 </details>
 
-### [PA-HUM] Create a custom `Namespace` resource definition
+### [PE-HUM] Create a custom `Namespace` resource definition
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Customize the name of the Kubernetes `Namespace` for all our Apps in Production Environment Type ([reference](https://docs.humanitec.com/guides/orchestrate-infrastructure/define-namespaces)). One per App/Env. We are also adding the label to enforce [Pod Security Standards `restricted`](https://kubernetes.io/docs/concepts/security/pod-security-standards/):
 ```bash
@@ -159,9 +159,9 @@ humctl create \
   ```
 </details>
 
-### [PA-HUM] Create a custom `ServiceAccount` resource definition
+### [PE-HUM] Create a custom `ServiceAccount` resource definition
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Create a dedicated Kubernetes `ServiceAccount` for all our Apps, one per Workload:
 ```bash
@@ -231,9 +231,9 @@ humctl create \
   ```
 </details>
 
-### [PA-HUM] Create a custom Workload resource definition
+### [PE-HUM] Create a custom Workload resource definition
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Customize the Kubernetes `Deployment` manifests for all our Workloads in Production Environment Type by adding the `securityContext` sections and other security features ([reference](https://docs.humanitec.com/integrations/resource-types/workload)):
 ```bash

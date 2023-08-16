@@ -2,17 +2,17 @@
 
 # GKE advanced setup in Production
 
-- [[PA-GCP] Create the GKE cluster](#pa-gcp-create-the-gke-cluster)
-- [[PA-GCP] Deploy the Nginx Ingress controller](#pa-gcp-deploy-the-nginx-ingress-controller)
-- [[PA-GCP] Protect the Nginx Ingress controller behind a Global Cloud Load Balancer (GCLB) and Cloud Armor (WAF)](#pa-gcp-protect-the-nginx-ingress-controller-behind-a-global-cloud-load-balancer-gclb-and-cloud-armor-waf)
-- [[PA-HUM] Create the associated DNS and TLS resource definitions](#pa-hum-create-the-associated-dns-and-tls-resource-definitions)
-- [[PA-GCP] Create the Google Service Account to access the GKE cluster](#pa-gcp-create-the-google-service-account-to-access-the-gke-cluster)
-- [[PA-HUM] Create the GKE access resource definition](#pa-hum-create-the-gke-access-resource-definition)
-- [[PA-GCP] Create the Google Service Account to access Cloud Logging](#pa-gcp-create-the-google-service-account-to-access-cloud-logging)
-- [[PA-HUM] Create the Production Environment](#pa-hum-create-the-production-environment)
-- [[PA-GCP] Create a Spanner database](#pa-gcp-create-a-spanner-database)
-- [[PA-HUM] Create the Spanner access resource definition](#pa-hum-create-the-spanner-access-resource-definition)
-- [[PA-HUM] Update the custom Service Account resource definition with the Workload Identity annotation for `cartservice`](#pa-hum-update-the-custom-service-account-resource-definition-with-the-workload-identity-annotation-for-cartservice)
+- [[PE-GCP] Create the GKE cluster](#pe-gcp-create-the-gke-cluster)
+- [[PE-GCP] Deploy the Nginx Ingress controller](#pe-gcp-deploy-the-nginx-ingress-controller)
+- [[PE-GCP] Protect the Nginx Ingress controller behind a Global Cloud Load Balancer (GCLB) and Cloud Armor (WAF)](#pe-gcp-protect-the-nginx-ingress-controller-behind-a-global-cloud-load-balancer-gclb-and-cloud-armor-waf)
+- [[PE-HUM] Create the associated DNS and TLS resource definitions](#pe-hum-create-the-associated-dns-and-tls-resource-definitions)
+- [[PE-GCP] Create the Google Service Account to access the GKE cluster](#pe-gcp-create-the-google-service-account-to-access-the-gke-cluster)
+- [[PE-HUM] Create the GKE access resource definition](#pe-hum-create-the-gke-access-resource-definition)
+- [[PE-GCP] Create the Google Service Account to access Cloud Logging](#pe-gcp-create-the-google-service-account-to-access-cloud-logging)
+- [[PE-HUM] Create the Production Environment](#pe-hum-create-the-production-environment)
+- [[PE-GCP] Create a Spanner database](#pe-gcp-create-a-spanner-database)
+- [[PE-HUM] Create the Spanner access resource definition](#pe-hum-create-the-spanner-access-resource-definition)
+- [[PE-HUM] Update the custom Service Account resource definition with the Workload Identity annotation for `cartservice`](#pe-hum-update-the-custom-service-account-resource-definition-with-the-workload-identity-annotation-for-cartservice)
 - [[DE-HUM] Deploy the `cartservice` connected to the Spanner database](#de-hum-deploy-the-cartservice-connected-to-the-spanner-database)
 - [Test the Online Boutique website](#test-the-online-boutique-website)
 
@@ -85,9 +85,9 @@ export HUMANITEC_TOKEN=FIXME
 ENVIRONMENT=${PRODUCTION_ENV}
 ```
 
-## [PA-GCP] Create the GKE cluster
+## [PE-GCP] Create the GKE cluster
 
-As Platform Admin, in Google Cloud.
+As Platform Engineer, in Google Cloud.
 
 ```bash
 gcloud services enable container.googleapis.com
@@ -161,9 +161,9 @@ gcloud compute routers nats create ${CLUSTER_NAME} \
     --auto-allocate-nat-external-ips
 ```
 
-## [PA-GCP] Deploy the Nginx Ingress controller
+## [PE-GCP] Deploy the Nginx Ingress controller
 
-As Platform Admin, in Google Cloud.
+As Platform Engineer, in Google Cloud.
 
 Deploy the Nginx Ingress Controller:
 ```bash
@@ -178,6 +178,17 @@ controller:
       cloud.google.com/neg: '{"exposed_ports": {"${NGINX_NEG_PORT}":{"name": "${NGINX_NEG_NAME}"}}}'
   config:
     use-forwarded-headers: true
+  containerSecurityContext:
+    capabilities:
+      drop:
+        - ALL
+      add:
+        - NET_BIND_SERVICE
+    runAsUser: 101
+    runAsGroup: 101
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    runAsNonRoot: true
 EOF
 helm upgrade \
     --install ingress-nginx ingress-nginx \
@@ -197,7 +208,7 @@ gcloud compute firewall-rules create k8s-masters-to-nodes-on-8443 \
     --allow tcp:8443
 ```
 
-## [PA-GCP] Protect the Nginx Ingress controller behind a Global Cloud Load Balancer (GCLB) and Cloud Armor (WAF)
+## [PE-GCP] Protect the Nginx Ingress controller behind a Global Cloud Load Balancer (GCLB) and Cloud Armor (WAF)
 
 Allow traffic from the Global Load Balancer (GCLB) to the node pool on port `443` for Nginx Ingress controller:
 ```bash
@@ -333,9 +344,9 @@ gcloud compute backend-services update ${CLUSTER_NAME}-ingress-nginx-backend-ser
     --security-policy ${CLUSTER_NAME}-security-policy
 ```
 
-## [PA-HUM] Create the associated DNS and TLS resource definitions
+## [PE-HUM] Create the associated DNS and TLS resource definitions
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Create the custom Ingress resource definition:
 ```bash
@@ -431,9 +442,9 @@ humctl create \
 ```
 </details>
 
-## [PA-GCP] Create the Google Service Account to access the GKE cluster
+## [PE-GCP] Create the Google Service Account to access the GKE cluster
 
-As Platform Admin, in Google Cloud.
+As Platform Engineer, in Google Cloud.
 
 Create the Google Service Account (GSA) with the appropriate role:
 ```bash
@@ -453,9 +464,9 @@ gcloud iam service-accounts keys create ${GKE_ADMIN_SA_NAME}.json \
     --iam-account ${GKE_ADMIN_SA_ID}
 ```
 
-## [PA-HUM] Create the GKE access resource definition
+## [PE-HUM] Create the GKE access resource definition
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Create the GKE access resource definition:
 ```bash
@@ -518,9 +529,9 @@ rm ${CLUSTER_NAME}.yaml
 rm ${CLUSTER_NAME}.json
 ```
 
-## [PA-GCP] Create the Google Service Account to access Cloud Logging
+## [PE-GCP] Create the Google Service Account to access Cloud Logging
 
-As Platform Admin, in Google Cloud.
+As Platform Engineer, in Google Cloud.
 
 Create the Google Service Account (GSA) with the appropriate role:
 ```bash
@@ -539,9 +550,9 @@ gcloud iam service-accounts keys create ${LOGGING_READER_SA_NAME}.json \
     --iam-account ${LOGGING_READER_SA_ID}
 ```
 
-## [PA-HUM] Create the Cloud Logging access resource definition
+## [PE-HUM] Create the Cloud Logging access resource definition
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Create the Cloud Logging access resource definition for the Production Environment Type:
 ```bash
@@ -602,9 +613,9 @@ rm ${CLUSTER_NAME}-logging.yaml
 rm ${CLUSTER_NAME}-logging.json
 ```
 
-## [PA-HUM] Create the Production Environment
+## [PE-HUM] Create the Production Environment
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 Create the new Environment by cloning the existing Environment from its latest Deployment:
 ```bash
@@ -653,7 +664,7 @@ humctl deploy env ${CLONED_ENVIRONMENT} ${ENVIRONMENT} \
 
 At this stage, you can already [test the Online Boutique website](#test-the-online-boutique-website) in its existing state.
 
-### [PA-GCP] Create a Spanner database
+### [PE-GCP] Create a Spanner database
 
 Create the Spanner instance and database:
 ```bash
@@ -699,9 +710,9 @@ echo ${SPANNER_DB_CONNECTION_STRING}
 ```
 _Note: re-run the above the command until you get the value._
 
-## [PA-HUM] Create the Spanner access resource definition
+## [PE-HUM] Create the Spanner access resource definition
 
-As Platform Admin, in Humanitec.
+As Platform Engineer, in Humanitec.
 
 ```bash
 cat <<EOF > ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner.yaml
@@ -750,7 +761,7 @@ humctl create \
 
 _Note: Here we create a Redis resource definition but in a near future, this will be a Spanner resource type._
 
-## [PA-HUM] Update the custom Service Account resource definition with the Workload Identity annotation for `cartservice`
+## [PE-HUM] Update the custom Service Account resource definition with the Workload Identity annotation for `cartservice`
 
 Update the Kubernetes `ServiceAccount` to add the Workload Identity annotation for allowing the `cartservice` to access the Spanner database:
 ```bash
