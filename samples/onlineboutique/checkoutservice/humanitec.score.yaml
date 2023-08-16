@@ -4,10 +4,8 @@ spec:
   containers:
     checkoutservice:
       liveness_probe:
-        grpc:
-          port: 5050
-          type: "grpc"
+        port: 5050
+        type: grpc
       readiness_probe:
-        grpc:
-          port: 5050
-          type: "grpc"
+        port: 5050
+        type: grpc

@@ -4,10 +4,8 @@ spec:
   containers:
     adservice:
       liveness_probe:
-        grpc:
-          port: 9555
-          type: "grpc"
+        port: 9555
+        type: grpc
       readiness_probe:
-        grpc:
-          port: 9555
-          type: "grpc"
+        port: 9555
+        type: grpc

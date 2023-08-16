@@ -4,10 +4,8 @@ spec:
   containers:
     productcatalogservice:
       liveness_probe:
-        grpc:
-          port: 3550
-          type: "grpc"
+        port: 3550
+        type: grpc
       readiness_probe:
-        grpc:
-          port: 3550
-          type: "grpc"
+        port: 3550
+        type: grpc
