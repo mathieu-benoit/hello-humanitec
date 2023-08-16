@@ -8,6 +8,13 @@ containers:
       DISABLE_PROFILER: "1"
       PORT: "8080"
       PRODUCT_CATALOG_SERVICE_ADDR: "${resources.productcatalogservice.name}:3550"
+    resources:
+      limits:
+        memory: "450Mi"
+        cpu: "200m"
+      requests:
+        memory: "220Mi"
+        cpu: "100m"
 service:
   ports:
     grpc:
@@ -16,5 +23,3 @@ service:
 resources:
   productcatalogservice:
     type: service
-    properties:
-      name:

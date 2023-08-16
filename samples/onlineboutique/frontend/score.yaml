@@ -31,41 +31,32 @@ containers:
       SHIPPING_SERVICE_ADDR: "${resources.shippingservice.name}:50051"
       CYMBAL_BRANDING: "false"
       FRONTEND_MESSAGE: ""
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "200m"
+      requests:
+        memory: "64Mi"
+        cpu: "100m"
 resources:
   adservice:
     type: service
-    properties:
-      name:
   cartservice:
     type: service
-    properties:
-      name:
   checkoutservice:
     type: service
-    properties:
-      name:
   currencyservice:
     type: service
-    properties:
-      name:
   dns:
     type: dns
   paymentservice:
     type: service
-    properties:
-      name:
   productcatalogservice:
     type: service
-    properties:
-      name:
   recommendationservice:
     type: service
-    properties:
-      name:
   shippingservice:
     type: service
-    properties:
-      name:
 service:
   ports:
     grpc:

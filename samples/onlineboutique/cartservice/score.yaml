@@ -6,6 +6,13 @@ containers:
     image: gcr.io/google-samples/microservices-demo/cartservice:v0.8.0
     variables:
       REDIS_ADDR: "${resources.redis-cart.host}:${resources.redis-cart.port},user=${resources.redis-cart.user},password=${resources.redis-cart.password}"
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "300m"
+      requests:
+        memory: "64Mi"
+        cpu: "200m"
 resources:
   redis-cart:
     type: redis

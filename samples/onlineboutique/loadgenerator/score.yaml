@@ -7,8 +7,13 @@ containers:
     variables:
       FRONTEND_ADDR: "${resources.frontend.name}:80"
       USERS: "10"
+    resources:
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+      requests:
+        memory: "256Mi"
+        cpu: "300m"
 resources:
   frontend:
     type: service
-    properties:
-      name:
