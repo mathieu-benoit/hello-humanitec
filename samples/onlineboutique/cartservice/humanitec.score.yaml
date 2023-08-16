@@ -4,12 +4,8 @@ spec:
   containers:
     cartservice:
       liveness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:7070'
-        type: command
+        port: 7070
+        type: grpc
       readiness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:7070'
-        type: command
+        port: 7070
+        type: grpc

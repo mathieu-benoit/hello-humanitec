@@ -4,12 +4,8 @@ spec:
   containers:
     paymentservice:
       liveness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:50051'
-        type: command
+        port: 50051
+        type: grpc
       readiness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:50051'
-        type: command
+        port: 50051
+        type: grpc

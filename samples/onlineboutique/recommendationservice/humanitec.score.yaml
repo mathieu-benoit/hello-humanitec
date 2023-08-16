@@ -4,12 +4,8 @@ spec:
   containers:
     recommendationservice:
       liveness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:8080'
-        type: command
+        port: 8080
+        type: grpc
       readiness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:8080'
-        type: command
+        port: 8080
+        type: grpc

@@ -4,12 +4,8 @@ spec:
   containers:
     currencyservice:
       liveness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:7000'
-        type: command
+        port: 7000
+        type: grpc
       readiness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:7000'
-        type: command
+        port: 7000
+        type: grpc

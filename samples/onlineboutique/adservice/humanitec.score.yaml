@@ -4,12 +4,8 @@ spec:
   containers:
     adservice:
       liveness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:9555'
-        type: command
+        port: 9555
+        type: grpc
       readiness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:9555'
-        type: command
+        port: 9555
+        type: grpc
