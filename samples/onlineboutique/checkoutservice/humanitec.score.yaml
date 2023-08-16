@@ -4,12 +4,10 @@ spec:
   containers:
     checkoutservice:
       liveness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:5050'
-        type: command
+        grpc:
+          port: 5050
+        type: grpc
       readiness_probe:
-        command:
-          - /bin/grpc_health_probe
-          - '-addr=:5050'
-        type: command
+        grpc:
+          port: 5050
+        type: grpc
