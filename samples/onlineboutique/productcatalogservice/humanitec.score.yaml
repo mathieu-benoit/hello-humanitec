@@ -6,8 +6,8 @@ spec:
       liveness_probe:
         grpc:
           port: 3550
-          type: grpc
+          type: "grpc"
       readiness_probe:
         grpc:
           port: 3550
-          type: grpc
+          type: "grpc"
