@@ -454,8 +454,7 @@ gcloud iam service-accounts create ${GKE_ADMIN_SA_NAME} \
     --display-name=${GKE_ADMIN_SA_NAME}
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
     --member "serviceAccount:${GKE_ADMIN_SA_ID}" \
-    --role "roles/container.admin" \
-    --condition='resource.name == "${CLUSTER_NAME}"'
+    --role "roles/container.admin"
 ```
 
 Download locally the GSA key:
@@ -567,9 +566,9 @@ object:
   driver_type: humanitec/logging-gcp
   driver_inputs:
     values:
-      cluster_name: ${CLUSTER_NAME}
-      cluster_zone: ${ZONE}
-      project_id: ${PROJECT_ID}
+      cluster_name: \${resources.k8s-cluster#k8s-cluster.outputs.name}
+      cluster_zone: \${resources.k8s-cluster#k8s-cluster.outputs.zone}
+      project_id: \${resources.k8s-cluster#k8s-cluster.outputs.project_id}
     secrets:
       credentials: $(cat ${LOGGING_READER_SA_NAME}.json)
   criteria:
@@ -589,9 +588,9 @@ humctl create \
   driver_type: humanitec/logging-gcp
   driver_inputs:
     values:
-      cluster_name: ${CLUSTER_NAME}
-      cluster_zone: ${ZONE}
-      project_id: ${PROJECT_ID}
+      cluster_name: \${resources.k8s-cluster#k8s-cluster.outputs.name}
+      cluster_zone: \${resources.k8s-cluster#k8s-cluster.outputs.zone}
+      project_id: \${resources.k8s-cluster#k8s-cluster.outputs.project_id}
     secrets:
       credentials: $(cat ${LOGGING_READER_SA_NAME}.json)
   criteria:
