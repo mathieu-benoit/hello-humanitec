@@ -9,10 +9,14 @@ containers:
 resources:
   dns:
     type: dns
+  route:
+    type: route
+    params:
+      host: ${resources.dns.host}
+      path: /
+      port: 80
   sample-service:
     type: service
-    properties:
-      name:
 service:
   ports:
     tcp:

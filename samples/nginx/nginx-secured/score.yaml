@@ -11,6 +11,12 @@ containers:
 resources:
   dns:
     type: dns
+  route:
+    type: route
+    params:
+      host: ${resources.dns.host}
+      path: /
+      port: 80
 service:
   ports:
     tcp:

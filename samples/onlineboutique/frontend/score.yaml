@@ -49,6 +49,12 @@ resources:
     type: service
   dns:
     type: dns
+  route:
+    type: route
+    params:
+      host: ${resources.dns.host}
+      path: /
+      port: 80
   paymentservice:
     type: service
   productcatalogservice:
