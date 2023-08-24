@@ -5,7 +5,9 @@ containers:
   cartservice:
     image: gcr.io/google-samples/microservices-demo/cartservice:v0.8.0
     variables:
-      SPANNER_CONNECTION_STRING: "${resources.redis-cart.host}"
+      SPANNER_PROJECT: "${resources.cart.project}"
+      SPANNER_INSTANCE: "${resources.cart.instance}"
+      SPANNER_DATABASE: "${resources.cart.database}"
     resources:
       limits:
         memory: "128Mi"
@@ -14,8 +16,8 @@ containers:
         memory: "64Mi"
         cpu: "200m"
 resources:
-  redis-cart:
-    type: redis
+  cart:
+    type: spanner
 service:
   ports:
     grpc:
