@@ -700,15 +700,6 @@ gcloud iam service-accounts add-iam-policy-binding ${SPANNER_DB_USER_GSA_ID} \
     --role roles/iam.workloadIdentityUser
 ```
 
-Get the Spanner database connection string:
-```bash
-SPANNER_DB_CONNECTION_STRING=$(gcloud spanner databases describe ${SPANNER_DATABASE_NAME} \
-    --instance ${SPANNER_INSTANCE_NAME} \
-    --format 'get(name)')
-echo ${SPANNER_DB_CONNECTION_STRING}
-```
-_Note: re-run the above the command until you get the value._
-
 ## [PE-HUM] Create the Spanner access resource definition
 
 As Platform Engineer, in Humanitec.
@@ -721,12 +712,13 @@ metadata:
   id: ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner
 object:
   name: ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner
-  type: redis
+  type: spanner
   driver_type: humanitec/static
   driver_inputs:
     values:
-      host: ${SPANNER_DB_CONNECTION_STRING}
-      user: ${SPANNER_DB_USER_GSA_ID}
+      project: ${PROJECT_ID}
+      instance: ${SPANNER_INSTANCE_NAME}
+      database: ${SPANNER_DATABASE_NAME}
   criteria:
     - env_id: ${ENVIRONMENT}
 EOF
