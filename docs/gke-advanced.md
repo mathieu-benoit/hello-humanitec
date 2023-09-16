@@ -700,15 +700,6 @@ gcloud iam service-accounts add-iam-policy-binding ${SPANNER_DB_USER_GSA_ID} \
     --role roles/iam.workloadIdentityUser
 ```
 
-Get the Spanner database connection string:
-```bash
-SPANNER_DB_CONNECTION_STRING=$(gcloud spanner databases describe ${SPANNER_DATABASE_NAME} \
-    --instance ${SPANNER_INSTANCE_NAME} \
-    --format 'get(name)')
-echo ${SPANNER_DB_CONNECTION_STRING}
-```
-_Note: re-run the above the command until you get the value._
-
 ## [PE-HUM] Create the Spanner access resource definition
 
 As Platform Engineer, in Humanitec.
@@ -721,12 +712,13 @@ metadata:
   id: ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner
 object:
   name: ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner
-  type: redis
+  type: spanner
   driver_type: humanitec/static
   driver_inputs:
     values:
-      host: ${SPANNER_DB_CONNECTION_STRING}
-      user: ${SPANNER_DB_USER_GSA_ID}
+      project: ${PROJECT_ID}
+      instance: ${SPANNER_INSTANCE_NAME}
+      database: ${SPANNER_DATABASE_NAME}
   criteria:
     - env_id: ${ENVIRONMENT}
 EOF
@@ -740,12 +732,13 @@ humctl create \
   cat <<EOF > ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner.yaml
   id: ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner
   name: ${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner
-  type: redis
+  type: spanner
   driver_type: humanitec/static
   driver_inputs:
     values:
-      host: ${SPANNER_DB_CONNECTION_STRING}
-      user: ${SPANNER_DB_USER_GSA_ID}
+      project: ${PROJECT_ID}
+      instance: ${SPANNER_INSTANCE_NAME}
+      database: ${SPANNER_DATABASE_NAME}
   criteria:
     - env_id: ${ENVIRONMENT}
   EOF
@@ -757,8 +750,6 @@ humctl create \
       -d @${SPANNER_INSTANCE_NAME}-${SPANNER_DATABASE_NAME}-${ENVIRONMENT}-spanner.json
 ```
 </details>
-
-_Note: Here we create a Redis resource definition but in a near future, this will be a Spanner resource type._
 
 ## [PE-HUM] Update the custom Service Account resource definition with the Workload Identity annotation for `cartservice`
 
@@ -785,10 +776,8 @@ object:
               apiVersion: v1
               kind: ServiceAccount
               metadata:
-                {{if hasPrefix "projects/" \${resources.redis.outputs.host} }}
                 annotations:
                   iam.gke.io/gcp-service-account: \${resources.redis.outputs.user}
-                {{end}}
                 name: {{ .init.name }}
         outputs: |
           name: {{ .init.name }}
@@ -798,8 +787,6 @@ EOF
 humctl apply \
     -f custom-service-account.yaml
 ```
-
-_Note: Here we test if the `${resources.redis.outputs.host}` starts with `projects/` which is the beginning of a the connection string of the Spanner database. In a near future, we will leverage the Spanner resource type instead._
 
 ## [DE-HUM] Deploy the `cartservice` connected to the Spanner database
 
@@ -812,7 +799,8 @@ score-humanitec delta \
     --deploy \
     --retry \
     -f samples/onlineboutique/cartservice/score-spanner.yaml \
-    --extensions samples/onlineboutique/cartservice/humanitec.score.yaml
+    --overrides samples/onlineboutique/cartservice/score-spanner.yaml \
+	  --extensions samples/onlineboutique/cartservice/humanitec.score-spanner.yaml
 ```
 
 ## Test the Online Boutique website

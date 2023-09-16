@@ -165,35 +165,8 @@ As Platform Engineer, in Humanitec.
 
 Create a dedicated Kubernetes `ServiceAccount` for all our Apps, one per Workload:
 ```bash
-cat <<EOF > custom-service-account.yaml
-apiVersion: core.api.humanitec.io/v1
-kind: Definition
-metadata:
-  id: custom-service-account
-object:
-  name: custom-service-account
-  type: k8s-service-account
-  driver_type: humanitec/template
-  driver_inputs:
-    values:
-      templates:
-        init: |
-          name: {{ index (regexSplit "\\\\." "\$\${context.res.id}" -1) 1 }}
-        manifests: |-
-          service-account.yaml:
-            location: namespace
-            data:
-              apiVersion: v1
-              kind: ServiceAccount
-              metadata:
-                name: {{ .init.name }}
-        outputs: |
-          name: {{ .init.name }}
-  criteria:
-    - {}
-EOF
 humctl create \
-    -f custom-service-account.yaml
+    -f resources/yaml/custom-service-account.yaml
 ```
 <details>
   <summary>With curl.</summary>

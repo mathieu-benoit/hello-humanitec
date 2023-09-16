@@ -1,0 +1,7 @@
+spanner_instance            = "test"
+spanner_database            = "test"
+kubernetes_namespace        = "test"
+kubernetes_service_account  = "test"
+credentials = {
+    project_id              = "test"
+}
