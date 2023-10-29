@@ -305,6 +305,7 @@ object:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
     secrets:
+      username: ""
       password: ${REDIS_AUTH}
   criteria:
     - env_id: ${ENVIRONMENT}
@@ -326,6 +327,7 @@ humctl create \
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
     secrets:
+      username: ""
       password: ${REDIS_AUTH}
   criteria:
     - env_id: ${ENVIRONMENT}
