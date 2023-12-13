@@ -1,3 +1,8 @@
+Repo now archived, not maintained, content splitted in different places now:
+- https://github.com/Humanitec-DemoOrg/onlineboutique-demo
+- https://github.com/Humanitec-DemoOrg/google-cloud-reference-architecture
+- https://github.com/Humanitec-DemoOrg/azure-reference-architecture
+
 # hello-humanitec
 
 2 personas:
